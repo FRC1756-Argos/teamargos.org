@@ -1,0 +1,40 @@
+---
+layout: img_banner_style
+permalink: /sponsors
+bannerImage: assets/img/general/theLift.jpg
+bannerCaption: Sponsorship
+---
+<!-- Main Container -->
+
+<div class="container">
+
+  <br>
+
+  <p> No team can get off the ground without the generous support of sponsors! </p>
+
+  <p> If you are interested, please reach out to us at 1756argos1756@limestone310.org.</p>
+
+  <p> <a href=assets/documents/Sponsorship_Packet_2020-21.pdf> Our Sponsorship Packet</a> has additional information for those looking to partner with our mission of STEM Education!</p>
+
+  <hr>
+
+  <p> FIRST Robotics Competition Team 1756 gratefully acknowledges the following sponsors: </p>
+
+
+  <!-- This little magic ditty is what parses the sponsors.yaml file and creates our list of sponsors -->
+  {% assign curYear = 'now' | date: "%Y" %}
+  {% for year in (2006..curYear) reversed %}
+    {% assign prevYear = year | plus:-1 %}
+    <h1> {{ prevYear }}-{{ year }} Season Sponsors </h1>
+    <ul>
+      {% for sponsor in site.data.sponsors %}
+        {% if sponsor.yearsActive contains year %}
+          <li><a href="{{sponsor.website}}"><img src="{{sponsor.logo}}" alt="{{sponsor.name}}" height="{{sponsor.logoHeight}}"/></a></li> <br>
+        {% endif %}
+      {% endfor %} 
+    </ul>
+    <hr>
+  {% endfor %} 
+
+</div>
+<!--End Main Container -->

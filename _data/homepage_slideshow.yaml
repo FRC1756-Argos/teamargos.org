@@ -1,0 +1,8 @@
+###################################################################################
+## Home Page Slider Configuration. Add/modify homepage slide show contents here.
+###################################################################################
+slider_config:
+  # Slide 1
+  - big_caption: Argos
+    small_caption: FRC Team 1756
+    image: assets/img/mainPageSlider/slide1.jpg

@@ -1,0 +1,20 @@
+<script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="../js/wow.min.js"></script>
+<script>
+  new WOW().init();
+</script>
+
+<!-- Custom script to highlight the proper navigation button, depending on page loaded-->
+<script>
+$(function() {
+  var curPage = location.pathname.split("/")[1];
+
+  if(curPage.length == 0){
+    //AKA at base URL - handle same as index.html
+    curPage = "index.html";
+  }
+
+  $('nav a[href^="/' + curPage + '"]').parent().addClass('active');
+});
+</script>
