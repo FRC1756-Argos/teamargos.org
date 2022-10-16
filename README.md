@@ -72,11 +72,11 @@ Where
   * `small_caption` is the not-as-big text at the bottom of the caption box
   * `image` is the image that should be displayed.
 
-Images must have a 311:100 aspect ratio to display properly, and be as high of resolution as possible. These special images should saved to the `assets/img/mainPageSlider` folder, [which can be found here](https://github.com/RobotCasserole1736/RobotCasserole1736.github.io/tree/main/assets/img/mainPageSlider).
+Images must have a 311:100 aspect ratio to display properly, and be as high of resolution as possible. These special images should saved to the `assets/img/mainPageSlider` folder, [which can be found here](https://github.com/FRC1756-Argos/teamargos.org/tree/main/assets/img/mainPageSlider).
 
 ## Adding/Modifying Front Page Info & Links
 
-Update `index.md` with new content, [which can be done here](https://github.com/RobotCasserole1736/RobotCasserole1736.github.io/edit/main/index.md).
+Update `index.md` with new content, [which can be done here](https://github.com/FRC1756-Argos/teamargos.org/edit/main/index.md).
 
 Documents for download should go in `assets/documents` folder. Avoid spaces or special characters in the names of files.
 
