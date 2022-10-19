@@ -9,7 +9,7 @@ bannerCaption: Team History
   <!-- TODO - put a picture here? -->
 </div>
 <div class="container">
-  {% assign sorted = (site.history | sort: 'year') | reverse %}
+  {% assign sorted = site.history | sort: 'year' | reverse %}
   {% for histSeg in sorted %}
     <hr>
     <h2>{{ histSeg.year }} - <a href="https://www.thebluealliance.com/team/1756/{{ histSeg.year }}"> {{ histSeg.robotName }} </a> </h2>
