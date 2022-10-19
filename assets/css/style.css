@@ -20,7 +20,7 @@ License URI:http://www.gnu.org/licenses/gpl-2.0.html
   margin-left: 20px;
 }
 .blog-title{
-  color: rgb(177, 90, 90);
+  color: rgb(239, 227, 55);
   font-family: myriad-pro, Helvetica, Arial, sans-serif;
   font-variant: small-caps;
 }
@@ -107,7 +107,7 @@ h3.col-xs-12{
     text-align: center;
 }
 .block-author{
-    color: #C40000;
+    color: rgb(232, 192, 30);
 }
 
 .btn-info{
@@ -146,16 +146,17 @@ float: right;
 body {
     font-size: 18px;
     line-height: 26px;
-    background:#F8FAFF;
+    background:rgb(50, 50, 50);
 
 
     font-family: myriad-pro, Helvetica, Arial, sans-serif;
     font-weight: 700;
     font-style: normal;
+    color: white;
 }
 
 a {
-    color: #C40000;
+    color: rgb(232, 192, 30);
     text-decoration: none;
     -o-transition: all .3s;
     -moz-transition: all .3s;
@@ -194,7 +195,7 @@ address {
 .nav-pills > li.selected > a:hover,
 .nav-pills > li.selected > a:focus {
   color: #ffffff;
-  background-color: #C40000;
+  background-color: rgb(196, 176, 0);
 }
 /*
 * ==========================================================================
@@ -218,7 +219,7 @@ address {
 .nav-pills-centered > .nav-pills > li > a.selected,
 .nav-pills-centered > .nav-pills > li > span.selected {
   color: #ffffff;
-  background-color: #C40000;
+  background-color: rgb(232, 192, 30);
 }
 /*
 * ==========================================================================
@@ -226,7 +227,7 @@ address {
 * ==========================================================================
 */
 .active{
-  background:rgb(177, 90, 90) !important;
+  background:rgb(177, 165, 90) !important;
   color: white;
 }
 .navbar {
@@ -261,7 +262,7 @@ address {
   width: auto;
 }
 .side-left{
-  background:#C40000;
+  background:rgb(232, 192, 30);
   box-shadow: 3px grey;
   color: white;
   padding: 30px;
@@ -388,7 +389,7 @@ p.blog-text{
   min-width: 400px;
   max-width: 400px;
   content: url("/assets/img/general/logo.png");
-  border: 4px solid #C40000;
+  border: 4px solid rgb(232, 192, 30);
   background-color: #FFFFFF;
 }
 
@@ -398,7 +399,7 @@ p.blog-text{
     min-width: 100px;
     max-width: 100px;
     content: url("/assets/img/general/hat.png");
-    border: 3px solid #C40000;
+    border: 3px solid rgb(232, 192, 30);
   }
 }
 @media (max-width: 768px){
@@ -406,7 +407,7 @@ p.blog-text{
       min-width: 300px;
       max-width: 300px;
       content: url("/assets/img/general/logo.png");
-      border: 2px solid #C40000;
+      border: 2px solid rgb(232, 192, 30);
   }
 
 
@@ -497,7 +498,7 @@ p.blog-text{
 .services-icon .fa:hover{
     padding: 0 10px 0 10px;
     color: white;
-    background: #C40000;
+    background: rgb(232, 192, 30);
     border-radius: 3px;
     transition:.4s;
 }
@@ -539,17 +540,17 @@ footer{
    margin-top:40px;
    left: 0;
    right: 0;
-   background: #C40000;
+   background: rgb(225, 189, 41);
    bottom: 0px;
 }
 
 footer h3 {
-    color: #dadada;
+    color: rgb(50, 50, 50);
     margin-bottom: 20px;
 }
 
 .footer-contact{
-    color: white;
+    color: rgb(50, 50, 50);
 }
 
 
@@ -569,9 +570,9 @@ footer h3 {
 }
 
 .copyright {
-    color: #fff;
+    color: rgb(237, 199, 46);
     padding: 20px 0px 10px 0px;
-    background-color: rgb(23, 23, 23);
+    background-color: rgb(50, 50, 50);
 }
 
 /*
@@ -614,7 +615,7 @@ footer h3 {
         -webkit-border-radius: 3px;
         -moz-border-radius: 3px;
         border-radius: 3px;
-        color:#D9230F;
+        color:rgb(232, 192, 30);
     }
 
     .search-query:focus + button {
@@ -707,8 +708,8 @@ footer h3 {
 .blockquote-box.blockquote-info .square{background-color:#5BC0DE;color:#FFF}
 .blockquote-box.blockquote-warning{border-color:#EEA236}
 .blockquote-box.blockquote-warning .square{background-color:#F0AD4E;color:#FFF}
-.blockquote-box.blockquote-danger{border-color:#D43F3A}
-.blockquote-box.blockquote-danger .square{background-color:#D9534F;color:#FFF}
+.blockquote-box.blockquote-danger{border-color:rgb(227, 199, 88)}
+.blockquote-box.blockquote-danger .square{background-color:rgb(227, 199, 88);color:#FFF}
 
 /*
 * ==========================================================================
@@ -822,6 +823,6 @@ th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #C40000;
+  background-color: rgb(232, 192, 30);
   color: white;
 }
