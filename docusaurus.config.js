@@ -41,15 +41,15 @@ const config = {
   },
 
   // Set the production url of your site here
-  url: 'https://litemage.github.io',
+  url: 'https://teamargos.org',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/argos1756-docs/',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'litemage', // Usually your GitHub org/user name.
-  projectName: 'argos1756-docs', // Usually your repo name.
+  organizationName: 'FRC1756-Argos', // Usually your GitHub org/user name.
+  projectName: 'teamargos.org', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -72,7 +72,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/Litemage/argos1756-docs/blob/main',
+            'https://github.com/FRC1756-Argos/teamargos.org/blob/main',
         },
         blog: {
           showReadingTime: true,
@@ -83,7 +83,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/Litemage/argos1756-docs/blob/main',
+            'https://github.com/FRC1756-Argos/teamargos.org/blob/main',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -154,7 +154,7 @@ const config = {
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
-            href: 'https://github.com/Litemage/argos1756-docs',
+            href: 'https://github.com/FRC1756-Argos/teamargos.org',
             label: 'GitHub',
             position: 'right',
           },
