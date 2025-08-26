@@ -12,7 +12,7 @@ After mastering Blockly, we will transition to C++, the same language used for o
 
 Now, let's get started!
 
-![XRP beta robot](XRP_Robot-02.webp)
+![XRP beta robot](01_Overview/XRP_Robot-02.webp)
 
 for more details on the XRP robot visit [XRP Overview](https://xrpusersguide.readthedocs.io/en/latest/course/introduction.html)
 
@@ -32,7 +32,7 @@ To move and interact with its environment, the XRP comes equipped with several c
 
 *   **Servo Outputs:** The controller board includes four outputs to control servos. Servos are small motors that allow for precise control of angular position, making them ideal for tasks like operating a gripper or a small arm.
 
-![XRP Sensor Overview](XRP_Sensor_Overview.png)
+![XRP Sensor Overview](01_Overview/XRP_Sensor_Overview.png)
 
 ## Assembling your XRP robot
 Click the video link below for instructions on assembling your XRP robot
@@ -46,4 +46,3 @@ For instructions on how to setup the XRP robot for WPILib software, see [WPILib 
 ## XRP Tutorial overview
 
 ## Useful links
-
