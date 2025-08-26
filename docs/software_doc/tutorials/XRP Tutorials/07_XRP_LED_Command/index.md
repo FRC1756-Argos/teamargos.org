@@ -26,7 +26,7 @@ Commands are useful because they:
 
 In this tutorial, we'll create a command called `LEDOnCommand` that turns the LED on and keeps it on while the button is pressed.
 
-for more information on command see [Command Quick Reference](<../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#command>)
+for more information on command see [Command Quick Reference](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#command>)
 
 ---
 
@@ -41,7 +41,7 @@ Before writing code, let's plan what we need to do:
 
 ### Flow Chart
 
-If you need a reminder on how flow charts work, see [Flow Charts Quick Reference](<../../CPP Docs/CPP_software_quick_reference/index.md#flow-charts>)
+If you need a reminder on how flow charts work, see [Flow Charts Quick Reference](<../../../CPP Docs/CPP_software_quick_reference/index.md#flow-charts>)
 
 <details>
 <summary>Try to create the flow chart before you look at it.</summary>
@@ -76,11 +76,11 @@ flowchart TD
 ## Time to Start Coding
 
 ### Creating a project
-If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../XRP%20Docs/03_XRP_project/index.md). If you have, it's time to start coding!
+If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../../XRP%20Docs/03_XRP_project/index.md). If you have, it's time to start coding!
 
 ### Create the LED On Command
 
-We need to create a command that turns the LED on and keeps it on while running. See [How to Create a Command](<../../WPILib VSCode Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `LEDOnCommand`.
+We need to create a command that turns the LED on and keeps it on while running. See [How to Create a Command](<../../../WPILib VSCode Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `LEDOnCommand`.
 
 ### LEDOnCommand.h Header File
 
@@ -286,7 +286,7 @@ Great job! You've created your first command to control the XRP LED. Now it's ti
 ### Testing Steps:
 
 1. **Build your code** - Make sure there are no compilation errors
-2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>)
+2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>)
 3. **Test the functionality**:
    - Connect an Xbox controller to your computer
    - Start the robot code
