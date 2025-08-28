@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--ifm-background-color);
+  min-height: 100vh;
+}
+
+.formContainer {
+  max-width: 600px;
+  width: 100%;
+  background-color: darkslategray;
+  padding: 0.75rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.joinForm label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: var(--ifm-font-color-base);
+}
+
+.joinForm input,
+.joinForm select,
+.joinForm textarea {
+  padding: 0.75rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  border: 3px solid grey;
+  border-radius: 8px;
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}
+
+.joinForm textarea {
+  resize: none;
+  height: 100px;
+}
+
+.joinForm button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.joinForm button:hover {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+p {
+  text-align: center;
+  color: var(--ifm-color-primary);
+  font-weight: bold;
+  margin-top: 1rem;
+}

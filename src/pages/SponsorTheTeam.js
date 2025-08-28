@@ -51,7 +51,7 @@ export default function SponsorTheTeam() {
         <div className={styles.formContainer}>
           <h1>Sponsor Our Team</h1>
           <form onSubmit={handleSubmit} className={styles.sponsorForm}>
-            <input type="hidden" name="access_key" value="660265ba-10e3-4c70-a956-ad48ae8857c6" />
+            <input type="hidden" name="access_key" value="30522979-edc6-4332-a439-8e80341df0f3" />
             <label>
               Sponsor Type:
               <select name="sponsorType" value={sponsorType} onChange={(e) => setSponsorType(e.target.value)}>
@@ -100,7 +100,7 @@ export default function SponsorTheTeam() {
         </div>
         <div className={styles.infoContainer}>
           <h5> Help shape our community's children of today to be the bright stars of tomorrow</h5>
-          <h2>Sponsorship Information</h2>
+          <h1>Sponsorship Information</h1>
           <div className={styles.sponsorshipInfo}>
             <h3>Platinum Sponsor - $15,000+</h3>
             <ul>

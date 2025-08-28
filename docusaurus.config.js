@@ -102,7 +102,7 @@ const config = {
       colorMode:
       {
         defaultMode: 'dark',
-        respectPrefersColorScheme: true
+        respectPrefersColorScheme: false
       },
       // Replace with your project's social card
       navbar: {
@@ -152,13 +152,18 @@ const config = {
             position: 'left',
             label: 'Sponsors',
           },
+          {to: '/blog', label: 'Blog', position: 'left'},
           {
             to: '/SponsorTheTeam',
             label: 'Sponsor the Team',
             position: 'left',
             className: 'flashing-text',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          {
+            to: '/JoinUs',
+            label: 'Join Us',
+            position: 'left',
+          },
           {
             href: 'https://github.com/FRC1756-Argos/teamargos.org',
             label: 'GitHub',

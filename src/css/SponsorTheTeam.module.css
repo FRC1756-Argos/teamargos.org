@@ -1,7 +1,9 @@
 .sponsorFormContainer {
-  padding: 2rem;
+  padding: 1rem;
   max-width: 600px;
   margin: 0 auto;
+  background-color: darkslategray;
+  border-radius: 12px;
 }
 
 .sponsorForm {
@@ -13,52 +15,73 @@
 .sponsorForm label {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.8rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: var(--ifm-font-color-base);
 }
 
 .sponsorForm input,
 .sponsorForm select {
-  padding: 0.5rem;
+  padding: 0.75rem;
   font-size: 1rem;
   margin-top: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 3px solid grey;
+  border-radius: 8px;
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
 }
 
 .sponsorForm button {
-  padding: 0.75rem;
+  padding: 0.75rem 1.5rem;
   font-size: 1rem;
-  background-color: #0078d4;
+  background-color: var(--ifm-color-primary);
   color: white;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 4px;
+  transition: background-color 0.3s ease;
   margin-top: 1rem;
 }
 
 .sponsorForm button:hover {
-  background-color: #005a9e;
+  background-color: var(--ifm-color-primary-dark);
 }
 
 .container {
-  display: flex; /* Use flexbox to align items side by side */
-  gap: 2rem; /* Add space between the form and the sponsorship info */
+  display: flex;
+  gap: 2rem;
   padding: 2rem;
+  background-color: var(--ifm-background-color);
+  min-height: 100vh;
 }
 
 .formContainer {
-  flex: 0 0 50%; /* Restrict the form width to 40% */
+  flex: 0 0 40%;
+  background-color: var(--ifm-card-background-color);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .infoContainer {
-  flex: 1; /* Take up the remaining space for the sponsorship info */
-  padding: 1rem;
-  border-radius: 8px;
-  font-size:small;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  background-color: var(--ifm-card-background-color);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: small;
 }
 
-/* Dropdown tier colors */
+h1 {
+  text-align: center;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1.5rem;
+}
+
+h2, h3, h5 {
+  color: var(--ifm-font-color-base);
+}
+
 .tierDropdown option {
   font-weight: bold;
 }
@@ -86,4 +109,20 @@
 .copperTier {
   color: #ee4618;
   background-color: #000;
+}
+
+.sponsorshipInfo ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.sponsorshipInfo ul li {
+  margin-bottom: 0.5rem;
+}
+
+p {
+  text-align: center;
+  color: var(--ifm-color-primary);
+  font-weight: bold;
+  margin-top: 1rem;
 }
