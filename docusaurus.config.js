@@ -140,7 +140,7 @@ const config = {
             position: 'left',
             label: 'Electrical',
           },
-           {
+          {
             type: 'docSidebar',
             sidebarId: 'RobotSidebar',
             position: 'left',
@@ -148,9 +148,15 @@ const config = {
           },
           {
             type: 'docSidebar',
-            sidebarId: 'SponsorshipSidebar',
+            sidebarId: 'SponsorsSidebar',
             position: 'left',
-            label: 'Sponsorship',
+            label: 'Sponsors',
+          },
+          {
+            to: '/SponsorTheTeam',
+            label: 'Sponsor the Team',
+            position: 'left',
+            className: 'flashing-text',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
