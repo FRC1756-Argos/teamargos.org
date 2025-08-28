@@ -58,7 +58,7 @@ flowchart TD
 ## Time to Start Coding
 
 ### Creating a project
-If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../../XRP Docs/03_XRP_project/index.md) If you have, it's time to start coding!
+If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](<../../../XRP Docs/03_XRP_project/index.md>) If you have, it's time to start coding!
 
 ### Create a Drivetrain Subsystem
 
@@ -67,7 +67,7 @@ The first step is to create a subsystem for our drivetrain. See [How to Create a
 
 ### Drivetrain.h Header File
 
-For more information on what header (.h) files are, see [What are Header files](../../../CPP Docs/CPP_software_quick_reference/index.md#what-are-header-files-h).
+For more information on what header (.h) files are, see [What are Header files](<../../../CPP Docs/CPP_software_quick_reference/index.md#what-are-header-files-h>).
 
 Navigate to your `Drivetrain.h` file. Here are the steps you need to follow:
 
@@ -81,7 +81,7 @@ Navigate to your `Drivetrain.h` file. Here are the steps you need to follow:
 
 3. **Add the ArcadeDrive function declaration.**  
    In the `public` section of your class, declare the ArcadeDrive function.  
-   If you need help with C++ functions, check the [C++ function Quick Reference](../../../CPP Docs/CPP_software_quick_reference/index.md#functions).
+   If you need help with C++ functions, check the [C++ function Quick Reference](<../../../CPP Docs/CPP_software_quick_reference/index.md#functions>).
 
 <details>
 <summary>Your Drivetrain.h file should look like this.</summary>
@@ -120,22 +120,30 @@ class Drivetrain : public frc2::SubsystemBase {
 
 ### Drivetrain.cpp Source File
 
-For more information on what source file (.cpp) files are, see [What are source files](../../../CPP Docs/CPP_software_quick_reference/index.md#what-are-source-files-cpp).
+For more information on what source file (.cpp) files are, see [What are source files](<../../../CPP Docs/CPP_software_quick_reference/index.md#what-are-source-files-cpp>).
 
 Navigate to your `Drivetrain.cpp` file. Here are the steps you need to follow:
 
 1. **ArcadeDrive function definition**
-  We will add the `ArcadeDrive` function definition. If you need help with C++ functions, check the [C++ function Quick Reference](../../../CPP Docs/CPP_software_quick_reference/index.md#functions).
+  We will add the `ArcadeDrive` function definition. If you need help with C++ functions, check the [C++ function Quick Reference](<../../../CPP Docs/CPP_software_quick_reference/index.md#functions>).
 
 2. **Adding function body**
   We will now add the function body.  This is where we will do the math to get the left and right motor speeds
   ``` cpp
     // Set the speed of the left and right motors based on the arcade drive inputs
-    double left_motor = speed + turning;
-    double right_motor = speed - turning;
+    double left_motor = speed - turning;
+    double right_motor = speed + turning;
 
     m_left_motor.Set(left_motor);
     m_right_motor.Set(right_motor);
+  ```
+
+3. **Invert the left motor**
+  We need to invert the left motor in the constructor so both motors drive in the same direction. The left and right motors are mounted facing opposite directions on the XRP robot, so we need to invert one of them. We put this in the constructor because it only needs to be set once when the subsystem is created, rather than every time we call the ArcadeDrive function. Add this to the `Drivetrain()` constructor:
+  ``` cpp
+  Drivetrain::Drivetrain(){
+    m_left_motor.SetInverted(true);
+  }
   ```
 
 <details>
@@ -148,15 +156,17 @@ Navigate to your `Drivetrain.cpp` file. Here are the steps you need to follow:
 
 #include "subsystems/Drivetrain.h"
 
-Drivetrain::Drivetrain() = default;
+Drivetrain::Drivetrain(){
+  m_left_motor.SetInverted(true); // Invert the right motor here
+};
 
 // This method will be called once per scheduler run
 void Drivetrain::Periodic() {}
 
 void Drivetrain::ArcadeDrive(double speed, double turning){
     // Set the speed of the left and right motors based on the arcade drive inputs
-    double left_motor = speed + turning;
-    double right_motor = speed - turning;
+    double left_motor = speed - turning;
+    double right_motor = speed + turning;
 
     m_left_motor.Set(left_motor);
     m_right_motor.Set(right_motor);
@@ -168,15 +178,15 @@ void Drivetrain::ArcadeDrive(double speed, double turning){
 
 ### RobotContainer.h Header File
 
-The `RobotContainer.h` file is where you set up your robot's main structure, including subsystems and input devices. For more information on header files, see [What are Header files](../../CPP Docs/CPP_software_quick_reference/index.md#what-are-header-files-h).
+The `RobotContainer.h` file is where you set up your robot's main structure, including subsystems and input devices. For more information on header files, see [What are Header files](<../../CPP Docs/CPP_software_quick_reference/index.md#what-are-header-files-h>).
 
 Navigate to your `RobotContainer.h` file. Here’s what you need to do:
 
 1. **Include the Drivetrain Subsystem Header**  
-   Add an `#include` statement for your `Drivetrain.h` file so you can use your drivetrain subsystem. If you need help with adding includes see [Include Statements (#include)](../../../CPP Docs/CPP_software_quick_reference/index.md#include-statements-include)
+   Add an `#include` statement for your `Drivetrain.h` file so you can use your drivetrain subsystem. If you need help with adding includes see [Include Statements (#include)](<../../../CPP Docs/CPP_software_quick_reference/index.md#include-statements-include>)
 
 2. **Declare the Drivetrain Subsystem**  
-   Add a member variable for your `Drivetrain` subsystem.  If you need help see [member veriable declarations](../../../CPP Docs/CPP_software_quick_reference/index.md#member-variable-declarations)
+   Add a member variable for your `Drivetrain` subsystem.  If you need help see [member veriable declarations](<../../../CPP Docs/CPP_software_quick_reference/index.md#member-variable-declarations>)
 
 3. **Include your xbox controller**  
    Add an include for your xbox controller.   If you need help see [Xbox Controller](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#xbox-controller>)
@@ -184,15 +194,59 @@ Navigate to your `RobotContainer.h` file. Here’s what you need to do:
 4. **Declare the xbox controller.**  
     Add an xbox controller. If you need help see [Xbox Controller](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#xbox-controller>)
 
+5. **Include the RunCommand header**  
+   Add `#include <frc2/command/RunCommand.h>` for creating inline commands.
+
 <details>
 <summary>Your RobotContainer.h file should look like this:</summary>
 
 ```cpp
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+#pragma once
+
+#include <frc2/command/CommandPtr.h>
+#include <frc2/command/button/CommandXboxController.h>
+
+#include "Constants.h"
+#include "subsystems/ExampleSubsystem.h"
+
+#include "subsystems/Drivetrain.h"
+#include <frc2/command/button/CommandXboxController.h>
+#include <frc2/command/RunCommand.h>
+
+/**
+ * This class is where the bulk of the robot should be declared.  Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls).  Instead, the structure of the robot (including subsystems,
+ * commands, and trigger mappings) should be declared here.
+ */
+class RobotContainer {
+ public:
+  RobotContainer();
+
+  frc2::CommandPtr GetAutonomousCommand();
+
+ private:
+  // Replace with CommandPS4Controller or CommandJoystick if needed
+  frc2::CommandXboxController m_driverController{
+      OperatorConstants::kDriverControllerPort};
+
+  // The robot's subsystems are defined here...
+  ExampleSubsystem m_subsystem;
+
+  void ConfigureBindings();
+
+  Drivetrain m_drivetrain;
+  frc2::CommandXboxController m_controller{0};
+
+};
+
 ```
 </details>
-
-
-
 
 ### RobotContainer.cpp Source File
 
@@ -200,16 +254,83 @@ The `RobotContainer.cpp` file is where you define how your robot's main containe
 
 Navigate to your `RobotContainer.cpp` file. Here’s what you need to do:
 
+1. **Set default command**  
+   Set up the drivetrain's default command to continuously run arcade drive with joystick inputs. Add this code to the `RobotContainer()` constructor:
+   ```cpp
+   m_drivetrain.SetDefaultCommand(frc2::RunCommand(
+       [this] {
+         m_drivetrain.ArcadeDrive(m_controller.GetLeftY(), m_controller.GetLeftX());
+       },
+       {&m_drivetrain}));
+   ```
+   This creates a `RunCommand` that calls the `ArcadeDrive` function with the left joystick's Y-axis (forward/backward) and X-axis (turning) values. The command runs continuously as the drivetrain's default behavior.
+
 
 <details>
 <summary>Your RobotContainer.cpp file should look like this:</summary>
 
 ```cpp
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+#include "RobotContainer.h"
+
+#include <frc2/command/button/Trigger.h>
+
+#include "commands/Autos.h"
+#include "commands/ExampleCommand.h"
+
+RobotContainer::RobotContainer() {
+  // Initialize all of your commands and subsystems here
+
+  // Configure the button bindings
+  ConfigureBindings();
+
+  m_drivetrain.SetDefaultCommand(frc2::RunCommand(
+      [this] {
+        m_drivetrain.ArcadeDrive(m_controller.GetLeftY(), m_controller.GetLeftX());
+      },
+      {&m_drivetrain}));
+}
+
+void RobotContainer::ConfigureBindings() {
+  // Configure your trigger bindings here
+
+  // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+  frc2::Trigger([this] {
+    return m_subsystem.ExampleCondition();
+  }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
+
+  // Schedule `ExampleMethodCommand` when the Xbox controller's B button is
+  // pressed, cancelling on release.
+  m_driverController.B().WhileTrue(m_subsystem.ExampleMethodCommand());
+}
+
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+  // An example command will be run in autonomous
+  return autos::ExampleAuto(&m_subsystem);
+}
 
 ```
 </details>
 
 
-
-
 ## Time to test your code
+Now that you've implemented the arcade drive functionality, it's time to test your code!
+
+### Deploy and Test
+
+Great job writing your first XRP code.  it is time to test your code. Go to [XRP Run Code](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>) to test your code
+
+### Testing Checklist
+
+- [ ] Robot moves forward when you push the left joystick forward (up)
+- [ ] Robot moves backward when you pull the left joystick backward (down)
+- [ ] Robot turns right when you push the left joystick to the right
+- [ ] Robot turns left when you push the left joystick to the left
+- [ ] Robot can move forward/backward and turn at the same time
+
+### Troubleshooting
+
+If something isn't working correctly:
