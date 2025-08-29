@@ -1,0 +1,128 @@
+.sponsorFormContainer {
+  padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: darkslategray;
+  border-radius: 12px;
+}
+
+.sponsorForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sponsorForm label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: var(--ifm-font-color-base);
+}
+
+.sponsorForm input,
+.sponsorForm select {
+  padding: 0.75rem;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  border: 3px solid grey;
+  border-radius: 8px;
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+}
+
+.sponsorForm button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: var(--ifm-color-primary);
+  color: black;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.sponsorForm button:hover {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+.container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: var(--ifm-background-color);
+  min-height: 100vh;
+}
+
+.formContainer {
+  flex: 0 0 40%;
+  background-color: var(--ifm-card-background-color);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.infoContainer {
+  flex: 1;
+  background-color: var(--ifm-card-background-color);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: small;
+}
+
+h1 {
+  text-align: center;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1.5rem;
+}
+
+h2, h3, h5 {
+  color: var(--ifm-font-color-base);
+}
+
+.tierDropdown option {
+  font-weight: bold;
+}
+
+.platinumTier {
+  color: #e5e4e2;
+  background-color: #000;
+}
+
+.goldTier {
+  color: #ffd700;
+  background-color: #000;
+}
+
+.silverTier {
+  color: #c0c0c0;
+  background-color: #000;
+}
+
+.bronzeTier {
+  color: #cd7f32;
+  background-color: #000;
+}
+
+.copperTier {
+  color: #ee4618;
+  background-color: #000;
+}
+
+.sponsorshipInfo ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.sponsorshipInfo ul li {
+  margin-bottom: 0.5rem;
+}
+
+p {
+  text-align: center;
+  color: var(--ifm-color-primary);
+  font-weight: bold;
+  margin-top: 1rem;
+}

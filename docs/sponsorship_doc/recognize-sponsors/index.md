@@ -12,62 +12,56 @@ import LCHSLogo from './lchs_logo.png'
 import PWFLogo from './pwf_logo.gif'
 import SergisonMachineLogo from './sergisonmachine_logo.png'
 
-
 Thank you to all of our incredible sponsors for supporting FRC Team 1756 Argos. Your generosity fuels our mission to inspire students through STEM.
 
+If you'd like your logo listed, please <a href="/SponsorTheTeam" target="_self" style={{ color: 'white' }}>click here</a>.
 
+<div style={{
+  backgroundColor: 'rgb(120, 120, 120)',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gap: '20px',
+  alignItems: 'center',
+  justifyItems: 'center',
+  boxShadow: '0 0 30px 15px rgba(120, 120, 120, 0.9)'
+}}>
+  <!-- Caterpillar -->
+  <a href="https://www.caterpillar.com/" target="_blank" rel="noopener noreferrer">
+    <img src={CaterpillarLogo} alt="Caterpillar" style={{ width: '300px' }} />
+  </a>
 
-If you'd like your logo listed, please contact us at 1756argos1756@limestone310.org.
-<!-- Caterpillar -->
-<p>
-	<a href="https://www.caterpillar.com/" target="_blank" rel="noopener noreferrer">
-		<img src={CaterpillarLogo} alt="Caterpillar" width="1500" className="on-dark-boost" />
-	</a>
-	</p>
+  <!-- Argos Mentors, Friends, and Family -->
+  <img src={ArgosMentorLogo} alt="Argos Mentors, Friends, and Family" style={{ width: '300px' }} />
 
-<!-- Argos Mentors, Friends, and Family (fancy text) -->
-<img src={ArgosMentorLogo} alt="Argos Mentors, Friends, and Family" width="800"/>
+  <!-- Boeing -->
+  <a href="https://www.boeing.com" target="_blank" rel="noopener noreferrer">
+    <img src={BoeingLogo} alt="Boeing" style={{ width: '200px' }} />
+  </a>
 
-<!-- Boeing -->
-<p>
-	<a href="https://www.boeing.com" target="_blank" rel="noopener noreferrer">
-		<img src={BoeingLogo} alt="Boeing" width="300" />
-	</a>
-	</p>
+  <!-- Gene Haas -->
+  <a href="https://www.ghaasfoundation.org" target="_blank" rel="noopener noreferrer">
+    <img src={GeneHaasFoundationLogo} alt="Gene Haas Foundation" style={{ width: '200px' }} />
+  </a>
 
-<!-- Gene Hass -->
-<p>
-	<a href="https://www.ghaasfoundation.org" target="_blank" rel="noopener noreferrer">
-		<img src={GeneHaasFoundationLogo} alt="Gene Haas Foundation" width="300" />
-	</a>
-	</p>
+  <!-- LCHS Booster Club -->
+  <a href="https://www.facebook.com/LCHSBoosterClub/" target="_blank" rel="noopener noreferrer">
+    <img src={LCHSBoostersLogo} alt="LCHS Boosters" style={{ width: '200px' }} />
+  </a>
 
-<!-- LCHS Booster Club -->
-<p>
-	<a href="https://www.facebook.com/LCHSBoosterClub/" target="_blank" rel="noopener noreferrer">
-		<img src={LCHSBoostersLogo} alt="LCHS Boosters" width="300" />
-	</a>
-	</p>
+  <!-- Limestone -->
+  <a href="https://www.limestone310.org" target="_blank" rel="noopener noreferrer">
+    <img src={LCHSLogo} alt="Limestone Community High School" style={{ width: '200px' }} />
+  </a>
 
-<!-- Limestone-->
-<p>
-	<a href="https://www.limestone310.org" target="_blank" rel="noopener noreferrer">
-		<img src={LCHSLogo} alt="Limestone Community High School" width="300" />
-	</a>
-	</p>
+  <!-- Playing With Fusion -->
+  <a href="https://www.playingwithfusion.com" target="_blank" rel="noopener noreferrer">
+    <img src={PWFLogo} alt="Playing With Fusion" style={{ width: '200px' }} />
+  </a>
 
-<!-- Playing With Fusion -->
-<p>
-	<a href="https://www.playingwithfusion.com" target="_blank" rel="noopener noreferrer">
-		<img src={PWFLogo} alt="Playing With Fusion" width="300" />
-	</a>
-	</p>
-
-<!-- Sergison-->
-<p>
-	<a href="https://www.sergisonmachine.net" target="_blank" rel="noopener noreferrer">
-		<img src={SergisonMachineLogo} alt="Sergison Machine" width="300" />
-	</a>
-	</p>
+  <!-- Sergison -->
+  <a href="https://www.sergisonmachine.net" target="_blank" rel="noopener noreferrer">
+    <img src={SergisonMachineLogo} alt="Sergison Machine" style={{ width: '200px' }} />
+  </a>
+</div>
 
 
