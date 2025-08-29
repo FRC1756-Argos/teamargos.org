@@ -21,7 +21,7 @@ export default function SponsorTheTeam() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      access_key: '660265ba-10e3-4c70-a956-ad48ae8857c6',
+      access_key: '30522979-edc6-4332-a439-8e80341df0f3',
       name: formData.name,
       sponsor_type: sponsorType,
       organization: sponsorType === 'Organization' ? formData.organization : '',
@@ -51,7 +51,6 @@ export default function SponsorTheTeam() {
         <div className={styles.formContainer}>
           <h1>Sponsor Our Team</h1>
           <form onSubmit={handleSubmit} className={styles.sponsorForm}>
-            <input type="hidden" name="access_key" value="30522979-edc6-4332-a439-8e80341df0f3" />
             <label>
               Sponsor Type:
               <select name="sponsorType" value={sponsorType} onChange={(e) => setSponsorType(e.target.value)}>
