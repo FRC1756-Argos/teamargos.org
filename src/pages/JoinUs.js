@@ -9,6 +9,8 @@ export default function JoinUs() {
     phone: '',
     role: 'Student', // Default role
     gradeLevel: 'Freshman', // Default grade level for students
+    school: '', // School for students
+    currentEmployer: '', // Employer for mentors
     moreInfo: '',
   });
   const [status, setStatus] = useState('');
@@ -27,6 +29,8 @@ export default function JoinUs() {
       phone: formData.phone,
       role: formData.role,
       grade_level: formData.role === 'Student' ? formData.gradeLevel : undefined, // Include grade level only for students
+      school: formData.role === 'Student' ? formData.school : undefined, // Include school only for students
+      current_employer: formData.role === 'Mentor' ? formData.currentEmployer : undefined, // Include employer only for mentors
       more_info: formData.moreInfo,
       subject: 'ARGOS Join Request Submission: ' + formData.name,
     };
@@ -93,18 +97,43 @@ export default function JoinUs() {
               </select>
             </label>
             {formData.role === 'Student' && (
+              <>
+                <label>
+                  Grade Level:
+                  <select
+                    name="gradeLevel"
+                    value={formData.gradeLevel}
+                    onChange={handleChange}
+                  >
+                    <option value="EightGrade">8th Grade</option>
+                    <option value="Freshman">Freshman</option>
+                    <option value="Sophomore">Sophomore</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                  </select>
+                </label>
+                <label>
+                  School:
+                  <input
+                    type="text"
+                    name="school"
+                    value={formData.school}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+              </>
+            )}
+            {formData.role === 'Mentor' && (
               <label>
-                Grade Level:
-                <select
-                  name="gradeLevel"
-                  value={formData.gradeLevel}
+                Current Employer:
+                <input
+                  type="text"
+                  name="currentEmployer"
+                  value={formData.currentEmployer}
                   onChange={handleChange}
-                >
-                  <option value="Freshman">Freshman</option>
-                  <option value="Sophomore">Sophomore</option>
-                  <option value="Junior">Junior</option>
-                  <option value="Senior">Senior</option>
-                </select>
+                  required
+                />
               </label>
             )}
             <label>
