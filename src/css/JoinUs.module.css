@@ -16,7 +16,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.container h1 {
   text-align: center;
   color: var(--ifm-color-primary);
   margin-bottom: 1.5rem;
@@ -62,7 +62,7 @@ h1 {
   background-color: var(--ifm-color-primary-dark);
 }
 
-p {
+.container p {
   text-align: center;
   color: var(--ifm-color-primary);
   font-weight: bold;
