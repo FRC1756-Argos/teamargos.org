@@ -447,6 +447,43 @@ myCar.drive();
 
 ---
 
+## Pointers
+
+Pointers store the **address** of a variable, not the variable itself. Think of it like a house address - it tells you where to find something.
+
+### Basic Syntax
+```cpp
+int number = 42;
+int* ptr = &number;    // ptr stores the address of number
+
+std::cout << ptr;      // Prints the address (e.g., 0x7fff...)
+std::cout << *ptr;     // Prints 42 (goes to address and gets the value)
+```
+
+### Key Operators
+- **`&`** = Get the address of a variable
+- **`*`** = Get the value at an address  
+- **`->`** = Call methods through a pointer
+
+### Common FRC Usage
+```cpp
+// Pass subsystem to command
+DriveCommand(Drivetrain* drivetrain) : m_drivetrain(drivetrain) {}
+
+// Use the subsystem
+void Execute() {
+    m_drivetrain->ArcadeDrive(0.5, 0.0);  // Use -> for pointers
+}
+```
+
+### Quick Rules
+- Use `&variable` to get an address
+- Use `*pointer` to get the value at that address
+- Use `pointer->method()` to call methods
+- Don't use `nullptr` pointers (will crash!)
+
+---
+
 ## Comments
 
 Comments are ignored by the compiler and are used to explain code.
