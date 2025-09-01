@@ -72,13 +72,13 @@
   font-size: small;
 }
 
-h1 {
+.container h1 {
   text-align: center;
   color: var(--ifm-color-primary);
   margin-bottom: 1.5rem;
 }
 
-h2, h3, h5 {
+.container h2, .container h3, .container h5 {
   color: var(--ifm-font-color-base);
 }
 
@@ -120,7 +120,7 @@ h2, h3, h5 {
   margin-bottom: 0.5rem;
 }
 
-p {
+.container p {
   text-align: center;
   color: var(--ifm-color-primary);
   font-weight: bold;
