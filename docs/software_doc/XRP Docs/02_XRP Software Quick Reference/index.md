@@ -245,3 +245,49 @@ sidebar_position: 2
  *   **User Feedback**: Blink LED to indicate sensor readings or robot actions
  *   **Button Control**: Use the USER button to start/stop actions, toggle modes, or reset systems
  *   **Debugging**: Flash LED patterns to indicate different program states during development
+---
+
+## XRP Rangefinder
+
+ The XRP has an onboard rangefinder (distance sensor) that can measure the distance to objects. This is useful for obstacle avoidance or precise positioning.
+
+ For more details, see the [WPILib XRPRangefinder Class Reference](https://github.wpilib.org/allwpilib/docs/release/cpp/classfrc_1_1_x_r_p_rangefinder.html).
+
+ To use the rangefinder, you need to include the `XRPRangefinder` and `units` header files:
+
+ ```cpp
+ #include <frc/xrp/XRPRangefinder.h>
+ #include <units/length.h>
+ #include <iostream>
+ ```
+
+ **Constructor**
+
+ You can construct an `XRPRangefinder` object without any parameters.
+
+ ```cpp
+ // Create an object for the rangefinder
+ frc::XRPRangefinder m_rangefinder;
+ ```
+
+ **Common Methods**
+
+ *   `GetDistance()`: Returns the measured distance as a `units::meter_t`.
+
+ **Usage Example**
+
+ This example shows how to read the distance from the rangefinder and print it.
+
+ ```cpp
+ // Get the distance to the nearest object
+ units::meter_t distance = m_rangefinder.GetDistance();
+
+ // Print the distance to the console
+ std::cout << "Distance: " << distance.value() << " meters" << std::endl;
+ ```
+
+ **Common Use Cases**
+
+ *   **Obstacle Avoidance**: Stop or turn the robot if an object is too close
+ *   **Precise Positioning**: Measure distance to walls or targets for alignment
+ *   **Sensor Fusion**: Combine with other sensors for better navigation
