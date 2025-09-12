@@ -152,17 +152,18 @@ const config = {
             position: 'left',
             label: 'Sponsors',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
           {
             to: '/SponsorTheTeam',
-            label: 'Sponsor the Team',
+            label: 'Sponsor Us',
             position: 'left',
-            className: 'flashing-text',
+            className: 'special',
           },
+          {to: '/blog', label: 'Blog', position: 'left'},
           {
             to: '/JoinUs',
             label: 'Join Us',
             position: 'left',
+            className: 'special',
           },
           {
             href: 'https://github.com/FRC1756-Argos/teamargos.org',
