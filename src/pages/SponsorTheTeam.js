@@ -91,6 +91,7 @@ export default function SponsorTheTeam() {
                 {sponsorType === 'Individual' && (
                   <option value="Copper" className={styles.copperTier}>Copper</option>
                 )}
+                <option value="Other" className={styles.platinumTier}>Other</option>
               </select>
             </label>
             <button type="submit">Submit</button>
