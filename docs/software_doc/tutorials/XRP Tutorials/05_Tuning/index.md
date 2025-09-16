@@ -174,7 +174,11 @@ else {
 </details>
 
 ## Time to Tune!
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
+
  it is time to test your code.  Go to [XRP Run Code](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>) to test your code.
+
 
 Now that you've replaced the magic numbers with constants, it's time to test and tune your robot.
 
@@ -187,4 +191,22 @@ Now that you've replaced the magic numbers with constants, it's time to test and
 2. **Re-Test:**
    - Save your changes and redeploy the code.
    - Test the robot again to see if the adjustments improved its behavior.
+
+---
+
+## Challenge: Dial In Your Drive 🚀
+
+Push your tuning further. Pick a few of these mini‑challenges and record what you learn (values tried, driver feedback, final choice, and why):
+
+- Build a quick table of (kMoveSpeed, kTurnSpeed) trials (e.g., 0.75/0.50 → 0.60/0.40 → 0.50/0.35) and note which feels most controllable.
+- Define separate “precision” values you would use if a slow mode were added later (just choose numbers and justify them).
+- Identify the lowest kTurnSpeed that still produces a smooth 90° pivot without stalling or wobbling.
+
+### Tips
+- Change one constant at a time; isolate its effect.
+- Favor consistency and controllability over raw speed early on.
+
+When you finish, summarize: “We chose kMoveSpeed = X, kTurnSpeed = Y because …”. That habit builds disciplined iteration. 🔧
+
+---
 

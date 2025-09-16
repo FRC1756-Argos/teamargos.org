@@ -412,7 +412,11 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 
 
 ## Time to test your code
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 Great job writing your first XRP code.  it is time to test your code. Go to [XRP Run Code](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>) to test your code
+
+
 
 If everything is working correctly, you can now drive your XRP robot using the buttons
 
@@ -424,3 +428,21 @@ You've built a working button drive, but you might notice the robot moves or tur
 In the next tutorial, we'll learn how to "tune" these values by replacing them with named variables, making our code much cleaner and easier to adjust.
 
 ➡️ **Continue to [Tuning with Variables and Namespaces](../05_Tuning/index.md)**
+
+---
+
+## Challenge: Level Up Your Button Drive 🚀
+
+Ready to go beyond the basics? Try one (or a few) of these mini‑challenges to make button drive cleaner and more driver friendly:
+
+- Tune your speed constants (try values like 1.0 → 0.8 → 0.6) until the robot is easier to drive; write down what you chose and why.
+- Add a slow/precision mode (hold a bumper to scale all speeds lower).
+- (Stretch) Add a reverse orientation toggle so “forward” can flip when driving from the opposite side.
+
+### Tips
+- Make one change at a time—test after each.
+- Keep notes on what felt better and why; it helps future tuning.
+
+When you finish a challenge, briefly explain your reasoning. That habit builds strong control system thinking. 🔧
+
+---

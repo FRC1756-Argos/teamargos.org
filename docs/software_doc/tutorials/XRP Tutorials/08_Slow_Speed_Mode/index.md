@@ -574,6 +574,8 @@ So this line says: "While the right trigger is pulled more than halfway, run the
 
 Congratulations! You've implemented a slow speed mode system. Now let's test it!
 
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 ### Testing Steps:
 
 1. **Build your code** - Make sure there are no compilation errors
@@ -664,5 +666,21 @@ Now that you understand trigger-based commands and subsystem modifications, you 
 - Learn about autonomous commands and command groups
 
 Excellent work! You're becoming proficient with command-based programming and building practical robot features. 🤖
+
+---
+
+## Challenge: Master Your Speed Modes 🚀
+
+Ready to push your slow speed mode further? Try one or more of these mini‑challenges:
+
+- Add a “precision mode” (even slower, e.g., 25% speed) on a different button or trigger.
+- Make the slow speed scale value a named constant in `Constants.h` and reference it everywhere.
+- Add a dashboard printout or controller rumble when slow mode is active.
+
+### Tips
+- Change one thing at a time and test.
+- Ask drivers for feedback on which mode feels best.
+- Keep your constants organized for easy tuning.
+
 
 ---

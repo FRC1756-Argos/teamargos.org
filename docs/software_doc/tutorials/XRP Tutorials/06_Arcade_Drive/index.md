@@ -319,6 +319,8 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
 ## Time to test your code
 Now that you've implemented the arcade drive functionality, it's time to test your code!
 
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 ### Deploy and Test
 
 Great job writing your first XRP code.  it is time to test your code. Go to [XRP Run Code](../../../WPILib%20VSCode%20Docs/04_Simulate%20Robot%20Code/index.md) to test your code
@@ -331,6 +333,21 @@ Great job writing your first XRP code.  it is time to test your code. Go to [XRP
 - [ ] Robot turns left when you push the left joystick to the left
 - [ ] Robot can move forward/backward and turn at the same time
 
-### Troubleshooting
 
-If something isn't working correctly:
+
+---
+
+## Challenge: Refine Your Arcade Drive 🚀
+
+Ready to polish the feel of arcade drive? Pick a few of these mini‑challenges:
+
+- Add overall scaling constants in `Constants.h` (e.g., kDriveScale, kTurnScale) and multiply raw joystick values before combining; tune until it feels natural.
+- Add input deadband (ignore tiny joystick values) to reduce drift.
+- Prevent motor outputs from exceeding [-1, 1] after combining forward and turn.
+
+### Tips
+- Change one thing at a time; test immediately.
+- Start conservative (lower speeds) then build up.
+- Keep notes: which adjustment made driving smoother?
+
+---

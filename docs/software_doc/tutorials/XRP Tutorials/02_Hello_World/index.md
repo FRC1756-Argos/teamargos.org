@@ -99,6 +99,8 @@ std::cout << "Hello, World!\n";
 ## Running your code
 Now that you've written and saved your code, the next step is to run it and see your message appear!
 
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 For detailed instructions, on how to run your code please follow the guide on [how to simulate your robot code](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>)
 
 ---
@@ -139,6 +141,18 @@ You've just written and tested your very first C++ program! This is a huge miles
 This is just the beginning of your adventure into the world of programming and robotics. Keep practicing, experimenting, and building on what you've learned here. The skills you develop will open up endless possibilities for creating amazing projects.
 
 Great job, and welcome to the world of coding!
+
+---
+
+## Challenge: Make It Your Own 🚀
+
+Before you move on, try customizing your program. Pick one or more of these mini‑challenges:
+
+- Change the message to something unique (team name, mascot, or a fun quote).
+- Print two (or more) lines by using multiple `std::cout` statements.
+- Add a blank line between messages using an extra `\n`.
+
+When you’re happy with your custom version, save it and run again to verify the output. Nice work pushing beyond the basics!
 
 ---
 

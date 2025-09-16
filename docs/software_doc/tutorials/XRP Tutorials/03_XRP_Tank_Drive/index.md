@@ -459,6 +459,28 @@ void Drivetrain::Periodic() {}
  </details>
 
 ## Time to test your code
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 Great job writing your first XRP code.  it is time to test your code.  Go to [XRP Run Code](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>) to test your code.
 
+
+
 If everything is working correctly, you can now drive your XRP robot using the left and right joysticks.
+
+---
+
+## Challenge: Level Up Your Tank Drive 🚀
+
+Ready to go beyond the basics? Try one (or many) of these mini‑challenges to improve control, readability, and driver experience.
+
+- Add a constant speed or turning scale (ex: 60% power) so the robot is easier to control
+- Add a small deadband (ignore tiny joystick values like ±0.1) so the robot doesn’t creep.
+- Print the left and right joystick values every 25 loops to the console for debugging.
+
+### Tips
+- Make only one change at a time—test after each.
+- Keep your code tidy this will help you better understand your code
+
+When you’ve completed a challenge, describe what you improved and why. That thinking habit is how you become a great controls programmer. 🔧
+
+---

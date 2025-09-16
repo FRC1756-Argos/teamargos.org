@@ -283,6 +283,8 @@ The key difference from `OnTrue()` is that `WhileTrue()` keeps the command runni
 
 Great job! You've created your first command to control the XRP LED. Now it's time to test it.
 
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 ### Testing Steps:
 
 1. **Build your code** - Make sure there are no compilation errors
@@ -334,5 +336,22 @@ Now that you understand the basics of commands, you can:
 - Build more complex behaviors by combining multiple commands
 
 Great work, and welcome to the world of robot programming! 🤖
+
+---
+
+## Challenge: Extend Your LED Command 🚀
+
+Ready to go further? Try one or more of these mini‑challenges:
+
+- Change the command to use a different button (try B or X instead of A).
+- Make a new command that blinks the LED while held (on/off every half second).
+- Add a second command to turn the LED off with a different button, regardless of its current state.
+- Create a “toggle” command: each press of the button flips the LED on or off (not just while held).
+
+### Tips
+- Change one thing at a time and test.
+- If something doesn’t work, add printouts to see what’s happening.
+- Think about how you’d organize more commands as your robot grows.
+
 
 ---
