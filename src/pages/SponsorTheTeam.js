@@ -9,7 +9,6 @@ export default function SponsorTheTeam() {
     name: '',
     organization: '',
     email: '',
-    phone: '',
     sponsorshipTier: 'Gold',
   });
 
@@ -26,7 +25,6 @@ export default function SponsorTheTeam() {
       sponsor_type: sponsorType,
       organization: sponsorType === 'Organization' ? formData.organization : '',
       email: formData.email,
-      phone: formData.phone,
       sponsorship_tier: formData.sponsorshipTier,
       subject: 'ARGOS Sponsorship Submission: ' + formData.name,
     };
@@ -71,10 +69,6 @@ export default function SponsorTheTeam() {
             <label>
               Email:
               <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-            </label>
-            <label>
-              Phone:
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
             </label>
             <label>
               Desired Sponsorship Tier:
