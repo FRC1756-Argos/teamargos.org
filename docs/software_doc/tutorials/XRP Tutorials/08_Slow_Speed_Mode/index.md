@@ -14,7 +14,6 @@ Building on the arcade drive tutorial, you'll now add a **slow speed mode** feat
 
 We'll implement this using a **command** to handle the slow speed functionality, giving you more practice with command-based programming while adding a practical feature to your robot.
 
-![Xbox Controller with Trigger Highlighted](xbox_trigger.png)
 
 This tutorial builds directly on the [Arcade Drive Tutorial](../06_Arcade_Drive/index.md). Make sure you've completed that tutorial first!
 
