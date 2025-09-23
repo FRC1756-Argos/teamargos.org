@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 ---
-# XRP tank drive  
+# XRP Tank Drive  
 
 ## Overview
 
@@ -28,7 +28,7 @@ Let's start with listing out the tasks we need to perform:
 * Read right joystick from controller
 
 ### Flow Chart
- > [flow chart](../../../CPP Docs/CPP_software_quick_reference/index.md#flow-charts) is a diagram that shows the steps in a process. Each step is represented by a different symbol and contains a short description of the process step. The flow chart symbols are linked together with arrows showing the process flow direction. It's a great way to plan your code before you start writing.
+ > [flow chart](../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts) is a diagram that shows the steps in a process. Each step is represented by a different symbol and contains a short description of the process step. The flow chart symbols are linked together with arrows showing the process flow direction. It's a great way to plan your code before you start writing.
 
 Now that we understand the overall idea of the code, let's create a flowchart to outline what our code needs to do.
 Programmers use flow charts a lot to visualize a plan for implementing code. Attempt to create your own flowchart before reviewing the provided example.
@@ -73,10 +73,10 @@ While simple, it's important to keep the tasks at hand straight. I will walk you
 ## Time to Start Coding
 
 ### Creating a project
-If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../../XRP Docs/03_XRP_project/index.md) If you have, it's time to start coding!
+If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../../XRP%20Docs/03_XRP_project/index.md) If you have, it's time to start coding!
 
 ### Create a Drivetrain Subsystem
-The first step is to create a subsystem for our drivetrain. See [How to Create a Subsystem](<../../../WPILib VSCode Docs/03_Create_Subsystem_or_Command/index.md#creating-a-subsystem>) for instructions on how to do this. You should name your subsystem `Drivetrain`.
+The first step is to create a subsystem for our drivetrain. See [How to Create a Subsystem](<../../../WPILib%20VSCode%20Docs/03_Create_Subsystem_or_Command/index.md#creating-a-subsystem>) for instructions on how to do this. You should name your subsystem `Drivetrain`.
 
 ###  Drivetrain.h header File
 
@@ -91,7 +91,9 @@ When you use the #include directive (e.g., #include `<iostream>`) at the top of 
 
 This helps organize your code, makes it reusable, and allows different parts of your program to know about and use the same functions and data structures without having to redefine them everywhere.
 
-1. We need to tell the software we want to use the XRP robot motors. To do this we will need to include the header that declares the motor objects, see [Controlling a Motor](../WPILib VSCode Docs/tutorial_XRP_WPILib.md#controlling-a-motor) for more details on controlling XRP robot motor.
+1. We need to tell the software we want to use the XRP robot motors. To do this we will need to include the header that declares the motor objects, see [XRP Quick Reference Guide](<../../../XRP Docs/02_XRP Software Quick Reference/index.md#xrp-motor>) for more details on working with motors.
+
+
     1. We will need to add the following include to the top of the `Drivetrain.h` file
     ```cpp
     #include <frc/xrp/XRPMotor.h>
@@ -105,7 +107,7 @@ This helps organize your code, makes it reusable, and allows different parts of 
        // This creates an object for the right motor on channel 1
        frc::XRPMotor m_right_motor{1};
      ```
-3. Finally, we need to create a way to tell the drivetrain how to move. We'll do this by creating a [function](../../../CPP Docs/CPP_software_quick_reference/index.md#functions). A function is just a named set of instructions. We'll name our function `TankDrive`. Our `TankDrive` function needs to know how fast each motor should go, so we'll give it two inputs: `leftSpeed` and `rightSpeed`. We need to make this function `public`, which just means that other parts of the robot's code (like the code for the joystick) are allowed to use it. In the header (`.h`) file, we just announce that this function exists. This i...
+3. Finally, we need to create a way to tell the drivetrain how to move. We'll do this by creating a [function](../../../CPP%20Docs/CPP_software_quick_reference/index.md#functions). A function is just a named set of instructions. We'll name our function `TankDrive`. Our `TankDrive` function needs to know how fast each motor should go, so we'll give it two inputs: `leftSpeed` and `rightSpeed`. We need to make this function `public`, which just means that other parts of the robot's code (like the code for the joystick) are allowed to use it. In the header (`.h`) file, we just announce that this function exists. This i...
     a. Add the function declaration to the `public` section of `Drivetrain.h`:
      ```cpp
      public:
@@ -257,7 +259,10 @@ void Drivetrain::Periodic() {}
      #include <frc2/command/RunCommand.h>
      ```
 
- 2.  Next, we need to create the actual `Drivetrain` and `XboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [Xbox Controller section in the WPILib tutorial](../WPILib VSCode Docs/tutorial_XRP_WPILib.md#xbox-controller).
+ 2.  Next, we need to create the actual `Drivetrain` and `XboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [WPILib quick refernce guide](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#xbox-controller>).
+
+
+
 
      ```cpp
      private:
@@ -461,7 +466,7 @@ void Drivetrain::Periodic() {}
 ## Time to test your code
 Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
 
-Great job writing your first XRP code.  it is time to test your code.  Go to [XRP Run Code](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>) to test your code.
+Great job writing your first XRP code.  it is time to test your code.  Go to [XRP Run Code](<../../../WPILib%20VSCode%20Docs/04_Simulate%20Robot%20Code/index.md>) to test your code.
 
 
 

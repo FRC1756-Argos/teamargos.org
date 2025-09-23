@@ -222,7 +222,7 @@ void Drivetrain::SetSpeedScale(double scale) {
 
 Now let's create a simple command that sets the speed scale when triggered.
 
-See [How to Create a Command](<../../../WPILib VSCode Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `SlowSpeedCommand`.
+See [How to Create a Command](<../../../WPILib%20VSCode%20Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `SlowSpeedCommand`.
 
 #### SlowSpeedCommand.h Header File
 
@@ -257,7 +257,7 @@ So this line says: "Create a variable that stores the **address** of a Drivetrai
 
 It's like having a piece of paper with your friend's house address written on it!
 
-📚 **For more information, check out the [C++ Quick Reference - Pointers section](<../../../CPP Docs/CPP_software_quick_reference/index.md#pointers>)**
+📚 **For more information, check out the [C++ Quick Reference - Pointers section](<../../../CPP%20Docs/CPP_software_quick_reference/index.md#pointers>)**
 :::
 
 <details>
@@ -579,7 +579,7 @@ Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../
 ### Testing Steps:
 
 1. **Build your code** - Make sure there are no compilation errors
-2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>)
+2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib%20VSCode%20Docs/04_Simulate%20Robot%20Code/index.md>)
 3. **Test the functionality**:
    - Connect an Xbox controller to your computer
    - Start the robot code and enable it

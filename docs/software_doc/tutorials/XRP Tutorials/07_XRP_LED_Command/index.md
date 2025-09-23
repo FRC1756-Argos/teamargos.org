@@ -26,7 +26,7 @@ Commands are useful because they:
 
 In this tutorial, we'll create a command called `LEDOnCommand` that turns the LED on and keeps it on while the button is pressed.
 
-for more information on command see [Command Quick Reference](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#command>)
+for more information on command see [Command Quick Reference](<../../../WPILib%20VSCode%20Docs/02_WPILib%20Software%20Quick%20Reference/index.md#command>)
 
 ---
 
@@ -41,7 +41,7 @@ Before writing code, let's plan what we need to do:
 
 ### Flow Chart
 
-If you need a reminder on how flow charts work, see [Flow Charts Quick Reference](<../../../CPP Docs/CPP_software_quick_reference/index.md#flow-charts>)
+If you need a reminder on how flow charts work, see [Flow Charts Quick Reference](<../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts>)
 
 <details>
 <summary>Try to create the flow chart before you look at it.</summary>
@@ -80,7 +80,7 @@ If you haven't already created an XRP project, you'll need to do that now. See [
 
 ### Create the LED On Command
 
-We need to create a command that turns the LED on and keeps it on while running. See [How to Create a Command](<../../../WPILib VSCode Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `LEDOnCommand`.
+We need to create a command that turns the LED on and keeps it on while running. See [How to Create a Command](<../../../WPILib%20VSCode%20Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `LEDOnCommand`.
 
 ### LEDOnCommand.h Header File
 
@@ -288,7 +288,7 @@ Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../
 ### Testing Steps:
 
 1. **Build your code** - Make sure there are no compilation errors
-2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>)
+2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib%20VSCode%20Docs/04_Simulate%20Robot%20Code/index.md>)
 3. **Test the functionality**:
    - Connect an Xbox controller to your computer
    - Start the robot code
