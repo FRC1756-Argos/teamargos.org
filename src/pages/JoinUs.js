@@ -6,7 +6,6 @@ export default function JoinUs() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     role: 'Student', // Default role
     gradeLevel: 'Freshman', // Default grade level for students
     school: '', // School for students
@@ -26,7 +25,6 @@ export default function JoinUs() {
       access_key: '30522979-edc6-4332-a439-8e80341df0f3', // Same access key
       name: formData.name,
       email: formData.email,
-      phone: formData.phone,
       role: formData.role,
       grade_level: formData.role === 'Student' ? formData.gradeLevel : undefined, // Include grade level only for students
       school: formData.role === 'Student' ? formData.school : undefined, // Include school only for students
@@ -71,16 +69,6 @@ export default function JoinUs() {
                 type="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              Phone:
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
                 onChange={handleChange}
                 required
               />
