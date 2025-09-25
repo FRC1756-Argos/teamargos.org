@@ -10,7 +10,7 @@ import RobotSignalLight from './rsl-allenbradley.webp'
 import VividRadio from './Vivid_Radio.png'
 import WiringDiagram from './2025_Wiring_diagram.png'
 
-# 2025 Electronics Overview
+# 2025 Electronics Control System 
 ## Overview
 This document provides an overview of the essential electronic components that make up an FRC robot's control system. These components work together to provide power distribution, control, and communication for your robot.
 
