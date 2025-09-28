@@ -1,0 +1,350 @@
+.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem 4rem;
+  color: var(--ifm-font-base-color);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+}
+
+.header h1 {
+  margin: 0 0 0.5rem;
+}
+
+.header p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ifm-color-secondary-darkest);
+}
+
+.resetButton {
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--ifm-color-primary), var(--ifm-color-primary-dark));
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resetButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.summaryCard {
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  margin-bottom: 2rem;
+}
+
+.summaryCard h2 {
+  margin-top: 0;
+}
+
+.summaryGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ifm-color-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.summaryValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.sectionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionCard {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+}
+
+.durationLabel {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--ifm-color-secondary);
+  gap: 0.3rem;
+}
+
+.durationLabel input {
+  width: 100%;
+  min-width: 80px;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: inherit;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  vertical-align: top;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 20%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 18%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 15%;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 24%;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 13%;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  width: 8%;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  width: 2%;
+}
+
+.table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-secondary);
+  text-align: left;
+}
+
+.table input[type="text"],
+.table input[type="number"] {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: inherit;
+  text-align: right;
+}
+
+.table input[disabled] {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-secondary-darkest);
+  cursor: not-allowed;
+}
+
+.modeSelect {
+  width: 100%;
+  padding: 0.45rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: inherit;
+}
+
+.controlStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cycleFields {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cycleFields input[type="number"] {
+  min-width: 0;
+}
+
+.fieldLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-secondary);
+}
+
+.fieldLabelText {
+  display: flex;
+  align-items: flex-end;
+  min-height: 2.2em;
+  line-height: 1.25;
+}
+
+.cycleFields .fieldLabel {
+  flex: 1;
+}
+
+.helperText {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-secondary-darkest);
+}
+
+.subtotalValue {
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: right;
+}
+
+.table td:nth-child(5),
+.table td:nth-child(6) {
+  text-align: right;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: var(--ifm-color-danger);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sectionFooter {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.addButton {
+  background: none;
+  border: 1px dashed var(--ifm-color-emphasis-400);
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  color: var(--ifm-color-primary);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.addButton:hover {
+  background: rgba(88, 166, 255, 0.08);
+  border-color: var(--ifm-color-primary);
+}
+
+.sectionTotals {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sectionTotalsLabel {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-secondary);
+}
+
+.sectionTotalsValue {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .header {
+    align-items: stretch;
+  }
+
+  .resetButton {
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sectionTotals {
+    justify-content: flex-start;
+  }
+
+  .table {
+    table-layout: auto;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.4rem 0.35rem;
+  }
+
+  .cycleFields {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .fieldLabelText {
+    min-height: unset;
+  }
+}
