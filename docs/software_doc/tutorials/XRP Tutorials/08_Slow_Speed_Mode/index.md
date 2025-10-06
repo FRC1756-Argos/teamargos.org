@@ -457,7 +457,7 @@ class RobotContainer {
   Drivetrain m_drivetrain;
 
   // Controllers
-  frc2::CommandXboxController m_controller{0};
+  frc2::CommandXboxController m_driverController{0};
 };
 ```
 </details>
@@ -474,7 +474,7 @@ void RobotContainer::ConfigureBindings() {
   
   // Bind slow speed mode to the right trigger
   // WhileTrue means the command runs while the trigger is pressed down
-  m_controller.RightTrigger(0.5).WhileTrue(
+  m_driverController.RightTrigger(0.5).WhileTrue(
     SlowSpeedCommand(&m_drivetrain).ToPtr()  // Much simpler - no controller needed!
   );
 }
@@ -492,8 +492,8 @@ RobotContainer::RobotContainer() {
     frc2::RunCommand(
       [this] {
         m_drivetrain.ArcadeDrive(
-          -m_controller.GetLeftY(),   // Forward/backward
-          m_controller.GetRightX()    // Turning
+          -m_driverController.GetLeftY(),   // Forward/backward
+          m_driverController.GetRightX()    // Turning
         );
       },
       {&m_drivetrain}
@@ -522,8 +522,8 @@ RobotContainer::RobotContainer() {
     frc2::RunCommand(
       [this] {
         m_drivetrain.ArcadeDrive(
-          -m_controller.GetLeftY(),   // Forward/backward
-          m_controller.GetRightX()    // Turning
+          -m_driverController.GetLeftY(),   // Forward/backward
+          m_driverController.GetRightX()    // Turning
         );
       },
       {&m_drivetrain}
@@ -536,7 +536,7 @@ void RobotContainer::ConfigureBindings() {
   
   // Bind slow speed mode to the right trigger
   // WhileTrue means the command runs while the trigger is pressed down
-  m_controller.RightTrigger(0.5).WhileTrue(
+  m_driverController.RightTrigger(0.5).WhileTrue(
     SlowSpeedCommand(&m_drivetrain).ToPtr()  // Much simpler!
   );
 }
@@ -554,12 +554,12 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 Let's break down this line of code:
 
 ```cpp
-m_controller.RightTrigger(0.5).WhileTrue(
+m_driverController.RightTrigger(0.5).WhileTrue(
   SlowSpeedCommand(&m_drivetrain).ToPtr()
 );
 ```
 
-- `m_controller.RightTrigger(0.5)` - Gets the right trigger and sets a threshold of 0.5 (meaning the trigger needs to be pulled halfway before it's considered "pressed")
+- `m_driverController.RightTrigger(0.5)` - Gets the right trigger and sets a threshold of 0.5 (meaning the trigger needs to be pulled halfway before it's considered "pressed")
 - `.WhileTrue(...)` - Runs the command while the trigger is above the threshold. When released below 0.5, the command ends
 - `SlowSpeedCommand(&m_drivetrain)` - Creates a new instance of our slow speed command, passing a pointer to the drivetrain
 - `.ToPtr()` - Converts the command to a pointer that the scheduler can use

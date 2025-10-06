@@ -141,7 +141,7 @@ class RobotContainer {
   RobotContainer();
  private:
   Drivetrain m_drivetrain; // Subsystem member variable
-  frc::XboxController m_controller{0}; // Input device member variable
+  frc::XboxController m_driverController{0}; // Input device member variable
 };
 ```
 

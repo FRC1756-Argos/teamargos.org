@@ -240,7 +240,7 @@ Now we need to add our command to the robot container so we can use it.
 
    // In the RobotContainer class (private section) create the controller on USB port 0
    private:
-     frc2::CommandXboxController m_controller{0};
+     frc2::CommandXboxController m_driverController{0};
    ```
 
 ### Update RobotContainer.cpp
@@ -256,7 +256,7 @@ Finally, we need to bind our command to a controller button so we can trigger it
      // Bind the LED command to the A button
      // WhileTrue means the command runs while the button is held down
      // When the button is released, the command will end (and turn off the LED)
-      m_controller.A().WhileTrue(LEDOnCommand().ToPtr());
+      m_driverController.A().WhileTrue(LEDOnCommand().ToPtr());
    }
    ```
 
@@ -266,10 +266,10 @@ Finally, we need to bind our command to a controller button so we can trigger it
 Let's break down this line of code:
 
 ```cpp
-  m_controller.A().WhileTrue(LEDOnCommand().ToPtr());
+  m_driverController.A().WhileTrue(LEDOnCommand().ToPtr());
 ```
 
-- `m_controller.A()` - Gets the A button from our Xbox controller.
+- `m_driverController.A()` - Gets the A button from our Xbox controller.
 - `.WhileTrue(...)` - Runs the command while the button is held down. When the button is released, the command ends.
 - `LEDOnCommand().ToPtr()` - Creates a new instance of `LEDOnCommand` and converts it to a command pointer that the scheduler can use.
 

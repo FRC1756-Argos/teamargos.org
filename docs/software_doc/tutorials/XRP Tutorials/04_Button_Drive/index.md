@@ -256,7 +256,7 @@ We will now need to open `RobotContainer.h`
 
      ```cpp
      #include "subsystems/Drivetrain.h"
-     #include <frc/XboxController.h>
+     #include <frc2/command/button/CommandXboxController.h>
      #include <frc2/command/RunCommand.h>
      ```
 2.  Next, we need to create the actual `Drivetrain` and `XboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [Xbox Controller section in the WPILib tutorial](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#xbox-controller>)
@@ -267,7 +267,7 @@ We will now need to open `RobotContainer.h`
        Drivetrain m_drivetrain;
 
        // Create an instance of the Xbox Controller on USB port 0
-       frc::XboxController m_controller{0};
+       frc::XboxController m_driverController{0};
      ```
 
 <details>
@@ -281,13 +281,12 @@ We will now need to open `RobotContainer.h`
   #pragma once
 
   #include <frc2/command/CommandPtr.h>
-  #include <frc2/command/button/CommandXboxController.h>
 
   #include "Constants.h"
   #include "subsystems/ExampleSubsystem.h"
 
   #include "subsystems/Drivetrain.h"
-  #include <frc/XboxController.h>
+  #include <frc2/command/button/CommandXboxController.h>
   #include <frc2/command/RunCommand.h>
 
   /**
@@ -304,9 +303,6 @@ We will now need to open `RobotContainer.h`
     frc2::CommandPtr GetAutonomousCommand();
 
   private:
-    // Replace with CommandPS4Controller or CommandJoystick if needed
-    frc2::CommandXboxController m_driverController{
-        OperatorConstants::kDriverControllerPort};
 
     // The robot's subsystems are defined here...
     ExampleSubsystem m_subsystem;
@@ -315,7 +311,7 @@ We will now need to open `RobotContainer.h`
     Drivetrain m_drivetrain;
 
     // Create an instance of the Xbox Controller on USB port 0
-    frc::XboxController m_controller{0};
+    frc2::CommandXboxController m_driverController{0};
 
     void ConfigureBindings();
   };
@@ -338,10 +334,10 @@ The `RobotContainer.cpp`  is the file that brings the plan from the header file 
        m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_controller.GetYButton();
-              bool backward = m_controller.GetAButton();
-              bool left = m_controller.GetXButton();
-              bool right = m_controller.GetBButton();
+              bool forward = m_driverController.GetYButton();
+              bool backward = m_driverController.GetAButton();
+              bool left = m_driverController.GetXButton();
+              bool right = m_driverController.GetBButton();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
@@ -378,10 +374,10 @@ void RobotContainer::ConfigureBindings() {
  m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_controller.GetYButton();
-              bool backward = m_controller.GetAButton();
-              bool left = m_controller.GetXButton();
-              bool right = m_controller.GetBButton();
+              bool forward = m_driverController.GetYButton();
+              bool backward = m_driverController.GetAButton();
+              bool left = m_driverController.GetXButton();
+              bool right = m_driverController.GetBButton();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
