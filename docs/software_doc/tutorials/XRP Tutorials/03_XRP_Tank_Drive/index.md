@@ -28,7 +28,7 @@ Let's start with listing out the tasks we need to perform:
 * Read right joystick from controller
 
 ### Flow Chart
- > [flow chart](../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts) is a diagram that shows the steps in a process. Each step is represented by a different symbol and contains a short description of the process step. The flow chart symbols are linked together with arrows showing the process flow direction. It's a great way to plan your code before you start writing.
+ > A [flow chart](../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts) is a diagram that shows the steps in a process. Each step is represented by a different symbol and contains a short description of the process step. The flow chart symbols are linked together with arrows showing the process flow direction. It's a great way to plan your code before you start writing.
 
 Now that we understand the overall idea of the code, let's create a flowchart to outline what our code needs to do.
 Programmers use flow charts a lot to visualize a plan for implementing code. Attempt to create your own flowchart before reviewing the provided example.
