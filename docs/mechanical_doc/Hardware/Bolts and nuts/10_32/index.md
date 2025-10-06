@@ -6,7 +6,10 @@ import washer from './10-32_washer.png'
 # 10-32 Quick Reference Guide 
 
 ## Size Chart
-  ![size chart](size_chart.png)
+
+| Screw | O.D. | Tap | Tap Size | Close Fit | Clost Fit Size | Free Fit | Free Fit Size|
+|-------|------|-----|---|-----------|---|----------|---|
+| 10-32 | 0.1900 | 21 | 0.1590 | 9 | 0.1960 | 7 (13/64) | 0.2010 |
 
 ---
 
