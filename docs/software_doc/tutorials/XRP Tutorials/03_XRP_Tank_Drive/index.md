@@ -28,7 +28,7 @@ Let's start with listing out the tasks we need to perform:
 * Read right joystick from controller
 
 ### Flow Chart
- > [flow chart](../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts) is a diagram that shows the steps in a process. Each step is represented by a different symbol and contains a short description of the process step. The flow chart symbols are linked together with arrows showing the process flow direction. It's a great way to plan your code before you start writing.
+ > A [flow chart](../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts) is a diagram that shows the steps in a process. Each step is represented by a different symbol and contains a short description of the process step. The flow chart symbols are linked together with arrows showing the process flow direction. It's a great way to plan your code before you start writing.
 
 Now that we understand the overall idea of the code, let's create a flowchart to outline what our code needs to do.
 Programmers use flow charts a lot to visualize a plan for implementing code. Attempt to create your own flowchart before reviewing the provided example.
@@ -254,22 +254,19 @@ void Drivetrain::Periodic() {}
  1.  **Know about all the parts:** It holds onto our `Drivetrain` subsystem and our joystick.
  2.  **Connect them:** It listens to the joystick (the ears) and tells the `Drivetrain` (the legs) what to do.
 
- The `RobotContainer.h` header file is the *plan* for the brain. It's where we declare all the parts the brain needs to know about, like our `Drivetrain`, our `XboxController`, and the `RunCommand` we'll use to connect them. We're essentially drawing a blueprint of the robot's nervous system.
+ The `RobotContainer.h` header file is the *plan* for the brain. It's where we declare all the parts the brain needs to know about, like our `Drivetrain`, our `CommandXboxController`, and the `RunCommand` we'll use to connect them. We're essentially drawing a blueprint of the robot's nervous system.
 
  Now let's add our parts to the plan.
 
- 1.  First, we need to tell our `RobotContainer` (the brain) where to find the blueprints for our `Drivetrain`, our `XboxController`, and the `RunCommand` we'll use to connect them. We do this by including their header files at the top of `RobotContainer.h`. Including a header is like giving the brain the instruction manual for a specific part or tool before it can use it.
+ 1.  First, we need to tell our `RobotContainer` (the brain) where to find the blueprints for our `Drivetrain`, our `CommandXboxController`, and the `RunCommand` we'll use to connect them. We do this by including their header files at the top of `RobotContainer.h`. Including a header is like giving the brain the instruction manual for a specific part or tool before it can use it.
 
      ```cpp
      #include "subsystems/Drivetrain.h"
-     #include <frc/XboxController.h>
+     #include <frc2/command/button/CommandXboxController.h>
      #include <frc2/command/RunCommand.h>
      ```
 
- 2.  Next, we need to create the actual `Drivetrain` and `XboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [WPILib quick refernce guide](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#xbox-controller>).
-
-
-
+ 2.  Next, we need to create the actual `Drivetrain` and `CommandXboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [Xbox Controller section in the WPILib tutorial](../WPILib VSCode Docs/tutorial_XRP_WPILib.md#xbox-controller).
 
      ```cpp
      private:
@@ -277,7 +274,7 @@ void Drivetrain::Periodic() {}
        Drivetrain m_drivetrain;
 
        // Create an instance of the Xbox Controller on USB port 0
-       frc::XboxController m_controller{0};
+       frc2::CommandXboxController m_driverController{0};
      ```
 
  <details>
@@ -291,13 +288,13 @@ void Drivetrain::Periodic() {}
  #pragma once
  
  #include <frc2/command/CommandPtr.h>
- #include <frc2/command/button/CommandXboxController.h>
+ 
  
  #include "Constants.h"
  #include "subsystems/ExampleSubsystem.h"
  
  #include "subsystems/Drivetrain.h"
- #include <frc/XboxController.h>
+ #include <frc2/command/button/CommandXboxController.h>
  #include <frc2/command/RunCommand.h>
  
  /**
@@ -314,18 +311,14 @@ void Drivetrain::Periodic() {}
    frc2::CommandPtr GetAutonomousCommand();
  
   private:
-   // Replace with CommandPS4Controller or CommandJoystick if needed
-   frc2::CommandXboxController m_driverController{
-       OperatorConstants::kDriverControllerPort};
- 
    // The robot's subsystems are defined here...
    ExampleSubsystem m_subsystem;
  
    // Create an instance of our Drivetrain subsystem
      Drivetrain m_drivetrain;
- 
+
    // Create an instance of the Xbox Controller on USB port 0
-     frc::XboxController m_controller{0};
+     frc2::CommandXboxController m_driverController{0};
  
    void ConfigureBindings();
  };
@@ -359,8 +352,8 @@ void Drivetrain::Periodic() {}
            [this] {
              // Drive with tank style
              m_drivetrain.TankDrive(
-                 -m_controller.GetLeftY(),
-                 -m_controller.GetRightY());
+                 -m_driverController.GetLeftY(),
+                 -m_driverController.GetRightY());
            },
            {&m_drivetrain}));
      ```
@@ -446,8 +439,8 @@ void Drivetrain::Periodic() {}
        [this] {
          // Drive with tank style
          m_drivetrain.TankDrive(
-             -m_controller.GetLeftY(),
-             -m_controller.GetRightY());
+             -m_driverController.GetLeftY(),
+             -m_driverController.GetRightY());
        },
        {&m_drivetrain}));
        

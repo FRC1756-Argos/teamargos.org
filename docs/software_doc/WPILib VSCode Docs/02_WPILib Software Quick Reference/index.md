@@ -21,7 +21,7 @@ sidebar_position: 2
 
  ```cpp
  // Create a controller object on port 0
- frc2::CommandXboxController m_controller{0};
+ frc2::CommandXboxController m_driverController{0};
  ```
 
  **Button Mappings (Trigger-Based)**
@@ -57,26 +57,26 @@ sidebar_position: 2
  **Example 1: Binding Commands to Buttons**
  ```cpp
  // Bind a command to the A button (runs when pressed)
- m_controller.A().OnTrue(SomeCommand());
+ m_driverController.A().OnTrue(SomeCommand());
 
  // Bind a command to run while B button is held
- m_controller.B().WhileTrue(SomeOtherCommand());
+ m_driverController.B().WhileTrue(SomeOtherCommand());
 
  // Use trigger with custom threshold
- m_controller.LeftTrigger(0.7).OnTrue(TriggerCommand());
+ m_driverController.LeftTrigger(0.7).OnTrue(TriggerCommand());
  ```
 
  **Example 2: Using Joystick Values**
  ```cpp
  // Get the Y-axis value from the left joystick (-1.0 to 1.0).
  // Note: back is positive in CommandXboxController
- double left_y_position = m_controller.GetLeftY();
+ double left_y_position = m_driverController.GetLeftY();
 
  // Set the motor speed using the joystick value
  m_left_motor.Set(left_y_position);
 
  // Get X-axis for turning (right is positive)
- double turn_value = m_controller.GetRightX();
+ double turn_value = m_driverController.GetRightX();
  ```
 
  **Accessing the Underlying XboxController**
@@ -85,7 +85,7 @@ sidebar_position: 2
 
  ```cpp
  // Access the underlying frc::XboxController
- bool a_button_pressed = m_controller.GetHID().GetAButton();
+ bool a_button_pressed = m_driverController.GetHID().GetAButton();
  ```
 
 ---
@@ -241,10 +241,10 @@ ________________________________________________________________________________
  This example shows how to read the Y-axis of the left joystick and print its value to the console. This is useful for seeing sensor or controller values live.
 
  ```cpp
- // This code assumes an `m_controller` object has already been created.
+ // This code assumes an `m_driverController` object has already been created.
 
  // Get the Y-axis value from the left joystick (-1.0 to 1.0).
- double left_y_position = m_controller.GetLeftY();
+ double left_y_position = m_driverController.GetLeftY();
 
  // Print the value to the console
  std::cout << "Left Joystick Y: " << left_y_position << std::endl;
@@ -281,11 +281,11 @@ ________________________________________________________________________________
  This example shows how to send the gyro angle and a button state to the SmartDashboard.
 
  ```cpp
- // This code assumes m_gyro and m_controller objects have been created.
+ // This code assumes m_gyro and m_driverController objects have been created.
 
  // Get values from sensors and controllers
  units::degree_t angle = m_gyro.GetAngle();
- bool a_button_pressed = m_controller.GetAButton();
+ bool a_button_pressed = m_driverController.GetAButton();
 
  // Send the values to the SmartDashboard with descriptive keys
  frc::SmartDashboard::PutNumber("Gyro Angle (deg)", angle.value());

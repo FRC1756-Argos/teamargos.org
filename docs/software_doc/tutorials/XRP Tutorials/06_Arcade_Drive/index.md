@@ -215,7 +215,6 @@ Navigate to your `RobotContainer.h` file. Here’s what you need to do:
 #pragma once
 
 #include <frc2/command/CommandPtr.h>
-#include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
 #include "subsystems/ExampleSubsystem.h"
@@ -248,7 +247,7 @@ class RobotContainer {
   void ConfigureBindings();
 
   Drivetrain m_drivetrain;
-  frc2::CommandXboxController m_controller{0};
+  frc2::CommandXboxController m_driverController{0};
 
 };
 
@@ -266,7 +265,7 @@ Navigate to your `RobotContainer.cpp` file. Here’s what you need to do:
    ```cpp
    m_drivetrain.SetDefaultCommand(frc2::RunCommand(
        [this] {
-         m_drivetrain.ArcadeDrive(m_controller.GetLeftY(), m_controller.GetLeftX());
+         m_drivetrain.ArcadeDrive(m_driverController.GetLeftY(), m_driverController.GetLeftX());
        },
        {&m_drivetrain}));
    ```
@@ -296,7 +295,7 @@ RobotContainer::RobotContainer() {
 
   m_drivetrain.SetDefaultCommand(frc2::RunCommand(
       [this] {
-        m_drivetrain.ArcadeDrive(m_controller.GetLeftY(), m_controller.GetLeftX());
+        m_drivetrain.ArcadeDrive(m_driverController.GetLeftY(), m_driverController.GetLeftX());
       },
       {&m_drivetrain}));
 }
