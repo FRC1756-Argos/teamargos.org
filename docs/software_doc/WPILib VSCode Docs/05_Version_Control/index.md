@@ -229,51 +229,6 @@ Imagine you have a super cool LEGO robot design on your desk. You've been workin
 4. **Choose "Push"** - If it asks, select "Push" to upload your commits
 5. **Wait for success** - VS Code will show a progress message, then "Successfully pushed" when done
 
-**That's it!** Your code is now on GitHub and your team can see it. They'll need to "pull" your changes to get them on their computers (we'll cover that next).
-
----
-
-## Pulling Changes
-
-### What is Pulling?
-
-**Pulling** is like downloading the latest version of your robot code from the cloud to make sure you have everyone's changes!
-
-When your teammates push their work to GitHub, you need to pull those changes to your computer so you can see and build on their work.
-
-#### The Shared Document Analogy 📄
-
-Imagine you're working on a Google Doc with your team. Everyone is adding their ideas and improvements.
-
-**Without pulling:** You're working on an old version - you might miss important changes or accidentally overwrite someone's work 😱
-
-**With pulling:** You download the latest version first! You get all the new features, bug fixes, and improvements from your team 😎
-
-#### Why Pull Changes?
-
-- **Get team updates** - See what your teammates have been working on
-- **Stay current** - Make sure you have the latest working code
-- **Avoid conflicts** - Pulling regularly prevents big merge problems
-- **Collaborate better** - Build on each other's work instead of working separately
-
-#### When to Pull
-
-- **Before starting work** - Get the latest code when you begin
-- **When you know others pushed** - After team meetings or when you see notifications
-- **Before pushing your changes** - Make sure you're working with the latest version
-
-**Remember:** Pull early and often to keep your local code in sync with the team!
-
-### Step-by-Step Pulling in VS Code
-
-1. **Open Source Control** - Click the branch icon in the left sidebar (or press `Ctrl+Shift+G`)
-2. **Look for the sync button** - The circular arrow icon (🔄) at the bottom of the panel
-3. **Click "Pull"** - If it shows both push and pull options, choose "Pull"
-4. **Wait for completion** - VS Code will download and merge the changes
-5. **Check for conflicts** - If there are conflicts, VS Code will show them - ask a mentor for help!
-
-**That's it!** You now have the latest code from your team. If you made local changes that conflict with what you pulled, you might need to merge them (we'll cover that next).
-
 ---
 
 ## Merging Branches (Advanced Topic)
