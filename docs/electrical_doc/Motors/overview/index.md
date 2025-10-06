@@ -12,7 +12,29 @@ sidebar_position: 7
 
 ## Types of Electric Motors
 
+### Brushless Motors (The Newer Type)
+
+**Team Argos Usage:**
+At Team Argos, we primarily use brushless motors for our robot systems due to their superior efficiency, longevity, and performance characteristics. Our standard approach is to utilize brushless motors like the Falcon 500 and Kraken series for most applications.
+
+**Think of it like:**
+- The switching of electricity is done electronically, with smart parts, instead of physically rubbing.
+
+**Good parts:**
+- Last much, much longer because there's no rubbing to wear things out. More efficient (use less power to do the same work). Often more powerful and smoother.
+
+**Not-so-good parts:**
+- Cost a bit more upfront because they need those smart electronic parts.
+
+**FRC legal motors:**
+- Falcon, Kraken 60x, Kraken 44x, Neo
+
+
+
 ### Brushed Motors (The Older Type)
+
+**Team Argos Usage:**
+We typically only use brushed motors on prototypes because they are easier to work with.
 
 **Think of it like:**
 - Something inside physically "switches" the electricity as it spins. Like little contacts rubbing.
@@ -26,21 +48,7 @@ sidebar_position: 7
 **FRC legal motors:**
 - CIM, Mini CIM, Bag, 775 pro, Venom
 
----
 
-### Brushless Motors (The Newer Type)
-
-**Think of it like:**
-- The switching of electricity is done electronically, with smart parts, instead of physically rubbing.
-
-**Good parts:**
-- Last much, much longer because there's no rubbing to wear things out. More efficient (use less power to do the same work). Often more powerful and smoother.
-
-**Not-so-good parts:**
-- Cost a bit more upfront because they need those smart electronic parts.
-
-**FRC legal motors:**
-- Falcon, Kraken 60x, Kraken 44x, Neo
 
 ---
 

@@ -23,10 +23,9 @@ const config = {
         hashed: true,
         language: ["en"],
         indexDocs: true,
-        indexBlog: true,
+        indexBlog: false,
         indexPages: true,
         docsRouteBasePath: '/docs',
-        blogRouteBasePath: '/blog',
         searchResultLimits: 8,
         searchResultContextMaxLength: 50,
         explicitSearchResultPath: true,
@@ -74,21 +73,7 @@ const config = {
           // editUrl:
           //   'https://github.com/FRC1756-Argos/teamargos.org/blob/main',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          // editUrl:
-          //   'https://github.com/FRC1756-Argos/teamargos.org/blob/main',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -158,7 +143,6 @@ const config = {
             position: 'left',
             className: 'special',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
           {
             to: '/JoinUs',
             label: 'Join Us',
@@ -205,15 +189,7 @@ const config = {
               },
             ],
           },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
-            ],
-          },
+
         ],
         copyright: `Built with Docusaurus.`,
       },

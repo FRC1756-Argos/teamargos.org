@@ -13,7 +13,7 @@ import CANWiringExample from './CAN_Wiring_Example.png'
 **Always refer to the official FRC Game Manual for complete and current wiring requirements before wiring your robot.** This webpage is for reference only and does not replace the official rules and requirements found in the game manual. Robot wiring must comply with all current FRC rules to pass inspection.
 :::
 
-Proper wiring is essential for a safe and reliable robot. FRC has specific requirements for wire types, sizes, and installation practices to ensure robot safety and performance.
+Proper wiring is essential for a safe and reliable robot. FRC has specific requirements for wire types, sizes, and installation practices to ensure robot safety and performance.  
 
 ## Power Wiring
 
@@ -28,8 +28,7 @@ Power wires carry current to motors, lights, and other high-power devices. The w
 - **6 AWG**: Main battery connections, 120A breaker connections
 - **10 AWG**: High-current circuits (30A-40A breakers), motor controllers for drive motors
 - **12 AWG**: Medium-current circuits (20A-30A breakers), motor controllers for mechanisms
-- **14 AWG**: Low-current circuits (10A-20A breakers), small motors and actuators
-- **16-18 AWG**: Very low-current circuits (≤10A), sensors, lights, small solenoids
+- **18 AWG**: Very low-current circuits (≤10A), sensors, lights, small solenoids
 
 <img src={WireSize} width="400"/>
 
