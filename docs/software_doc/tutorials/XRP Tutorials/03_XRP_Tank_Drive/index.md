@@ -266,7 +266,7 @@ void Drivetrain::Periodic() {}
      #include <frc2/command/RunCommand.h>
      ```
 
- 2.  Next, we need to create the actual `Drivetrain` and `CommandXboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [Xbox Controller section in the WPILib tutorial](../WPILib VSCode Docs/tutorial_XRP_WPILib.md#xbox-controller).
+ 2.  Next, we need to create the actual `Drivetrain` and `CommandXboxController` objects inside our `RobotContainer`. Think of this as giving the brain its own set of legs and ears to use. We'll declare these in the `private` section to keep our code organized. For more details on the controller, see the [WPILib quick refernce guide](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#xbox-controller>).
 
      ```cpp
      private:

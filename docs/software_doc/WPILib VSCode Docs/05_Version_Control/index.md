@@ -138,7 +138,7 @@ When your experiment works, you can **merge** it back into main, combining the b
 
 ## Committing
 
-### What is a Committe?
+### What is a Commit?
 
 Once you've made changes to your robot code, you need to **save** them to Git. This is called **committing**. Think of it like saving your game progress - it creates a checkpoint you can always return to.
 
