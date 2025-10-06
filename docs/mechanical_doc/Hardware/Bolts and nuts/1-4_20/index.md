@@ -5,7 +5,10 @@ sidebar_position: 5
 # 1/4-20 Quick Reference Guide 
 
 ## Size Chart
-  ![1/4-20 size chart](size_chart.png)
+
+| Screw | O.D. | Tap | Tap Size | Close Fit | Close Fit Size | Free Fit | Free Fit Size |
+|-------|------|-----|---|-----------|---|----------|---|
+| 1/4-20 | 0.2500 | 7 | 0.2010 | F | 0.2570 | H (17/64) | 0.2660 |
 
 ---
 
