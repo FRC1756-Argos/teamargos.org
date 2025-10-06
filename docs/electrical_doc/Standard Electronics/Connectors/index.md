@@ -24,6 +24,7 @@ Whenever connecting wires, make sure to do the pull test to assure the wires are
 
 **Power Connections (High Current):**
 - Use Anderson Powerpoles for removable connections
+- Wago for sensor power (18 awg)
 - Use ring terminals for permanent bolt connections
 - Always match connector rating to circuit requirements
 
@@ -60,6 +61,19 @@ Ferrules are small metal sleeves that are crimped onto the end of stranded wire 
 - Any push connector
 
 ---
+### WAGO Connectors
+
+WAGO connectors are lever-actuated wire connectors that provide secure, toolless connections for electrical wiring. 
+
+<img src={WagoConnectorImage} width="400"/>
+
+**WAGO Connector Tutorial**
+<iframe width="560" height="315" src="https://www.youtube.com/embed/d6VeZthlA8k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+**Applications:**
+- Quick wire splicing
+
+---
 
 ### Ring Terminals
 
@@ -86,20 +100,6 @@ Molex SL connectors are commonly used for CAN bus connections and other low-curr
 - CAN bus connections between devices
 - Sensor signal connections
 - Low-current control connections
-
----
-
-### WAGO Connectors
-
-WAGO connectors are lever-actuated wire connectors that provide secure, toolless connections for electrical wiring. 
-
-<img src={WagoConnectorImage} width="400"/>
-
-**WAGO Connector Tutorial**
-<iframe width="560" height="315" src="https://www.youtube.com/embed/d6VeZthlA8k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-**Applications:**
-- Quick wire splicing
 
 ---
 

@@ -26,7 +26,7 @@ Commands are useful because they:
 
 In this tutorial, we'll create a command called `LEDOnCommand` that turns the LED on and keeps it on while the button is pressed.
 
-for more information on command see [Command Quick Reference](<../../../WPILib VSCode Docs/02_WPILib Software Quick Reference/index.md#command>)
+for more information on command see [Command Quick Reference](<../../../WPILib%20VSCode%20Docs/02_WPILib%20Software%20Quick%20Reference/index.md#command>)
 
 ---
 
@@ -41,7 +41,7 @@ Before writing code, let's plan what we need to do:
 
 ### Flow Chart
 
-If you need a reminder on how flow charts work, see [Flow Charts Quick Reference](<../../../CPP Docs/CPP_software_quick_reference/index.md#flow-charts>)
+If you need a reminder on how flow charts work, see [Flow Charts Quick Reference](<../../../CPP%20Docs/CPP_software_quick_reference/index.md#flow-charts>)
 
 <details>
 <summary>Try to create the flow chart before you look at it.</summary>
@@ -75,12 +75,19 @@ flowchart TD
 
 ## Time to Start Coding
 
-### Creating a project
-If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../../XRP%20Docs/03_XRP_project/index.md). If you have, it's time to start coding!
+## Clone Repository
+
+Before we start coding, you need to get the robot code on your computer. This is called **cloning** a repository.
+
+**Use this repository URL:** `https://github.com/FRC1756-Argos/XRP_Tutorial.git`
+
+For detailed instructions on how to clone the repository, please follow the guide for [cloning a repository](<../../../WPILib VSCode Docs/05_Version_Control/index.md#cloning-a-repository>).
+
+Once your repository is cloned, return to this tutorial to write your first lines of C++ code.
 
 ### Create the LED On Command
 
-We need to create a command that turns the LED on and keeps it on while running. See [How to Create a Command](<../../../WPILib VSCode Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `LEDOnCommand`.
+We need to create a command that turns the LED on and keeps it on while running. See [How to Create a Command](<../../../WPILib%20VSCode%20Docs/03_Create_Subsystem_or_Command/index.md#creating-a-command>) for instructions. You should name your command `LEDOnCommand`.
 
 ### LEDOnCommand.h Header File
 
@@ -283,10 +290,12 @@ The key difference from `OnTrue()` is that `WhileTrue()` keeps the command runni
 
 Great job! You've created your first command to control the XRP LED. Now it's time to test it.
 
+Need help connecting to the XRP robot? See: [Connecting to the XRP Robot](../../../XRP%20Docs/04_Connecting_to_XRP/index.md)
+
 ### Testing Steps:
 
 1. **Build your code** - Make sure there are no compilation errors
-2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib VSCode Docs/04_Simulate Robot Code/index.md>)
+2. **Deploy to simulator** - Follow the [XRP Simulation Guide](<../../../WPILib%20VSCode%20Docs/04_Simulate%20Robot%20Code/index.md>)
 3. **Test the functionality**:
    - Connect an Xbox controller to your computer
    - Start the robot code
@@ -334,5 +343,22 @@ Now that you understand the basics of commands, you can:
 - Build more complex behaviors by combining multiple commands
 
 Great work, and welcome to the world of robot programming! 🤖
+
+---
+
+## Challenge: Extend Your LED Command 🚀
+
+Ready to go further? Try one or more of these mini‑challenges:
+
+- Change the command to use a different button (try B or X instead of A).
+- Make a new command that blinks the LED while held (on/off every half second).
+- Add a second command to turn the LED off with a different button, regardless of its current state.
+- Create a “toggle” command: each press of the button flips the LED on or off (not just while held).
+
+### Tips
+- Change one thing at a time and test.
+- If something doesn’t work, add printouts to see what’s happening.
+- Think about how you’d organize more commands as your robot grows.
+
 
 ---
