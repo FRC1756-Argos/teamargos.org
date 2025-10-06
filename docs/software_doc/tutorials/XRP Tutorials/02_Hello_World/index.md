@@ -23,12 +23,15 @@ Let's get started!
 
 ---
 
-## Creating a project
-The first step in writing our "Hello, World!" program is to create a new project. This project will contain all the necessary files and configurations for our application.
+## Clone Repository
 
-For detailed instructions on how to create a new project, please follow the guide for [creating an XRP project](../../../XRP%20Docs/03_XRP_project/index.md).
+Before we start coding, you need to get the robot code on your computer. This is called **cloning** a repository.
 
-Once your project is created, return to this tutorial to write your first lines of C++ code.
+**Use this repository URL:** `https://github.com/FRC1756-Argos/XRP_Tutorial.git`
+
+For detailed instructions on how to clone the repository, please follow the guide for [cloning a repository](<../../../WPILib VSCode Docs/05_Version_Control/index.md#cloning-a-repository>).
+
+Once your repository is cloned, return to this tutorial to write your first lines of C++ code.
 
 ---
 

@@ -72,8 +72,15 @@ While simple, it's important to keep the tasks at hand straight. I will walk you
 
 ## Time to Start Coding
 
-### Creating a project
-If you haven't already created an XRP project, you'll need to do that now. See [How to Create an XRP Project](../../../XRP%20Docs/03_XRP_project/index.md) If you have, it's time to start coding!
+## Clone Repository
+
+Before we start coding, you need to get the robot code on your computer. This is called **cloning** a repository.
+
+**Use this repository URL:** `https://github.com/FRC1756-Argos/XRP_Tutorial.git`
+
+For detailed instructions on how to clone the repository, please follow the guide for [cloning a repository](<../../../WPILib VSCode Docs/05_Version_Control/index.md#cloning-a-repository>).
+
+Once your repository is cloned, return to this tutorial to write your first lines of C++ code.
 
 ### Create a Drivetrain Subsystem
 The first step is to create a subsystem for our drivetrain. See [How to Create a Subsystem](<../../../WPILib%20VSCode%20Docs/03_Create_Subsystem_or_Command/index.md#creating-a-subsystem>) for instructions on how to do this. You should name your subsystem `Drivetrain`.
