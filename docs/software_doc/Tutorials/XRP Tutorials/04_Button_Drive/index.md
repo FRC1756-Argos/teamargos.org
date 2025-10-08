@@ -274,11 +274,11 @@ We will now need to open `RobotContainer.h`
        Drivetrain m_drivetrain;
 
        // Create an instance of the Xbox Controller on USB port 0
-       frc::XboxController m_driverController{0};
+       frc2::CommandXboxController m_driverController{0};
      ```
 
 <details>
-<summary>Your Drivetrain.h file should look like this.</summary>
+<summary>Your RobotContainer.h file should look like this.</summary>
 
 ```cpp
   // Copyright (c) FIRST and other WPILib contributors.
@@ -353,7 +353,7 @@ The `RobotContainer.cpp`  is the file that brings the plan from the header file 
      ```
 
 <details>
-<summary>Your Drivetrain.cpp file should look like this.</summary>     
+<summary>Your RobotContainer.cpp file should look like this.</summary>     
 
 ```cpp
   // Copyright (c) FIRST and other WPILib contributors.
