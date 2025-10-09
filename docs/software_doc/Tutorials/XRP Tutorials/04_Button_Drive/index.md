@@ -438,7 +438,7 @@ In the next tutorial, we'll learn how to "tune" these values by replacing them w
 
 Ready to go beyond the basics? Try one (or a few) of these mini‑challenges to make button drive cleaner and more driver friendly:
 
-- Tune your speed constants (try values like 1.0 → 0.8 → 0.6) until the robot is easier to drive; write down what you chose and why.
+- Tune your speed values (try values like 1.0 → 0.8 → 0.6) until the robot is easier to drive; write down what you chose and why.
 - Add a slow/precision mode (hold a bumper to scale all speeds lower).
 - (Stretch) Add a reverse orientation toggle so “forward” can flip when driving from the opposite side.
 
