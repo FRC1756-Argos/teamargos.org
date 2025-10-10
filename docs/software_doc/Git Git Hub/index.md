@@ -54,17 +54,27 @@ Your Computer (Git)  ←→  GitHub (Online Storage)
 ### Repository (Repo)
 A repository is like a special folder that contains your project and its complete history. It's where all your robot code lives.
 
+[Learn more about repositories →](./01_Version_Control/index.md#repositories)
+
 ### Commit
 A commit is like a checkpoint in a video game. It saves the current state of your work so you can always come back to it.
+
+[Learn more about committing →](./01_Version_Control/index.md#committing)
 
 ### Push
 Pushing uploads your local changes to GitHub so your team can see them.
 
+[Learn more about pushing changes →](./01_Version_Control/index.md#pushing-changes)
+
 ### Pull
 Pulling downloads changes from GitHub to your computer so you have the latest code.
 
+[Learn more about cloning and pulling →](./01_Version_Control/index.md#cloning-a-repository)
+
 ### Branch
 A branch is like a parallel version of your code where you can experiment without affecting the main code.
+
+[Learn more about branches →](./01_Version_Control/index.md#branches)
 
 ---
 
