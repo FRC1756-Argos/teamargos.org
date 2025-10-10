@@ -69,7 +69,7 @@ Pushing uploads your local changes to GitHub so your team can see them.
 ### Pull
 Pulling downloads changes from GitHub to your computer so you have the latest code.
 
-[Learn more about cloning and pulling →](./01_Version_Control/index.md#cloning-a-repository)
+[Learn more about pulling changes →](./01_Version_Control/index.md#pulling-changes)
 
 ### Branch
 A branch is like a parallel version of your code where you can experiment without affecting the main code.
