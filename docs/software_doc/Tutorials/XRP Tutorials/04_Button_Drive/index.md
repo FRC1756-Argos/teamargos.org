@@ -353,6 +353,16 @@ The `RobotContainer.cpp`  is the file that brings the plan from the header file 
      ```
 
 <details>
+<summary>Why do we use m_driverController.GetHID().GetYButton() instead of just m_driverController.Y()?</summary>
+
+We use `m_driverController.GetHID().GetYButton()` instead of just `m_driverController.Y()` because `CommandXboxController` provides two ways to work with buttons:
+- **Direct button methods** (like `.Y()`, `.A()`, etc.) return special `Trigger` objects used for binding commands to button events (like running a command when a button is pressed or released).
+- **GetHID() button methods** (like `.GetHID().GetYButton()`) return simple `bool` values (true/false) that tell us if the button is currently pressed right now.
+
+Since our `ButtonDrive` function needs simple true/false values to decide how to move, we use `GetHID()` to get the raw button state.
+</details>
+
+<details>
 <summary>Your RobotContainer.cpp file should look like this.</summary>     
 
 ```cpp
