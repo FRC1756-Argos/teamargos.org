@@ -297,3 +297,196 @@ Git doesn't know which one to choose! This creates a **merge conflict** that nee
 6. **Push the merged code** - Share the combined version with the team
 
 **Your role:** Keep your branches focused on one feature, commit often, and communicate with your team about what you're working on. This makes merging much easier for everyone!
+
+---
+
+## GitHub Issues
+
+### What is an Issue?
+
+A **GitHub Issue** is like a digital to-do card for your robot project. It's a way to track work that needs to be done, bugs that need fixing, or features that need building.
+
+Think of it like this:
+- **Without issues:** Team members shout across the room about what needs doing, tasks get forgotten, and nobody knows who's working on what 😱
+- **With issues:** Everything is organized in one place! You can see what needs to be done, who's working on it, and track progress 😎
+
+#### What's in an Issue?
+
+Each issue contains:
+- **Title** - A short description of the task (like "Add elevator controls" or "Fix autonomous routine")
+- **Description** - Details about what needs to be done
+- **Assignees** - Who is working on this task
+- **Labels** - Tags like "bug", "enhancement", or "documentation" to categorize the issue
+- **Status** - Where the issue is in the workflow (Ready, In Progress, In Review, Done)
+- **Comments** - Discussion about the task and progress updates
+
+#### Why Use Issues?
+
+- **Stay organized** - Know exactly what needs to be done
+- **Track progress** - See what's been completed and what's left
+- **Collaborate** - Discuss tasks and ask questions in one place
+- **Link to code** - Connect your work directly to the code changes (Pull Requests)
+- **Remember history** - Look back at why decisions were made
+
+---
+
+### How to View an Issue
+
+You can view issues in several ways:
+
+#### On GitHub Website
+
+1. **Go to your team's repository** - Navigate to `https://github.com/FRC1756-Argos/your-repo-name`
+2. **Click the "Issues" tab** - It's near the top of the page, next to "Code"
+3. **Browse the list** - You'll see all open issues with their titles, labels, and assignees
+4. **Click an issue** - Opens the full issue with description, comments, and details
+
+#### In the Project Board
+
+Your team uses a project board to organize issues by status:
+
+1. **Go to the project board** - Usually linked from the repository or at `https://github.com/orgs/FRC1756-Argos/projects/`
+2. **See columns** - Issues are organized in columns like "Ready", "In Progress", "In Review", and "Done"
+3. **Click any card** - Opens the full issue
+
+**Tip:** The project board gives you a visual overview of all work happening on the team!
+
+---
+
+### The Argos Workflow for Issues
+
+Here's the step-by-step process that Team Argos follows when working on an issue:
+
+#### Step 1: Find and Assign an Issue
+1. **Browse the "Ready" column** in the project board
+2. **Pick an issue** that matches your skills and interests
+3. **Click the issue** to open it
+4. **Assign yourself** - Look for "Assignees" on the right side and click to add yourself
+
+#### Step 2: Move to "In Progress"
+1. **Drag the issue card** from "Ready" to "In Progress" on the project board
+2. This tells the team you're actively working on it
+
+#### Step 3: Create a Branch from the Issue
+1. **Open the issue** on GitHub
+2. **Look on the right sidebar** for "Development"
+3. **Click "Create a branch"** (see detailed instructions below)
+4. **Choose your branch name** - GitHub suggests a name based on the issue title
+5. **Select "Checkout locally"** - This creates the branch and shows you the commands to run
+
+#### Step 4: Checkout the Branch Locally
+1. **Copy the commands** from GitHub (looks like `git fetch origin` and `git checkout branch-name`)
+2. **Open a terminal** in VS Code (Terminal → New Terminal)
+3. **Paste and run the commands** - This switches you to the new branch
+
+#### Step 5: Make Changes and Test
+1. **Write your code** - Make the changes needed to complete the issue
+2. **Test your changes** - Make sure everything works correctly
+3. **Test again** - Seriously, test it thoroughly!
+
+#### Step 6: Commit and Push Changes
+1. **Commit your changes** - Save your work with a clear commit message (see [Committing section](#committing))
+2. **Push to your feature branch** - Upload your commits to GitHub (see [Pushing section](#pushing-changes))
+
+#### Step 7: Create a Pull Request
+1. **Go to your repository on GitHub** - You'll see a yellow banner suggesting to create a Pull Request
+2. **Click "Compare & pull request"**
+3. **Write a descriptive title and description** - Explain what you changed and why
+4. **Link the PR to the issue** - In the description, type "Closes #" followed by the issue number (like "Closes #42")
+   - You can also use the "Development" section on the right sidebar to link the issue
+5. **Request reviewers** - Add mentors or teammates to review your code
+6. **Click "Create pull request"**
+
+#### Step 8: Move to "In Review"
+1. **Go back to the project board**
+2. **Drag the issue** from "In Progress" to "In Review"
+3. This signals to mentors that your work is ready for review
+
+#### Step 9: Mentor Review
+1. **Wait for mentor feedback** - They'll review your code and suggest changes
+2. **Make requested changes** - If they ask for improvements, make those changes
+3. **Push updates** - Commit and push any changes to the same branch
+4. **Repeat** - The mentor may request more changes until everything is perfect
+
+#### Step 10: Merge and Done!
+1. **Mentor merges the PR** - Once approved, a mentor will merge your code into main
+2. **Issue automatically closes** - Because you linked the PR, the issue closes automatically
+3. **Issue moves to "Done"** - The project board updates to show completion
+4. **Celebrate!** 🎉 - You've successfully completed an issue following the full workflow!
+
+---
+
+### Creating a Branch from an Issue
+
+GitHub makes it super easy to create a branch directly from an issue. This automatically links your branch to the issue!
+
+#### Step-by-Step: Create Branch Button
+
+1. **Open the issue** you want to work on
+2. **Look at the right sidebar** - Find the "Development" section
+3. **Click "Create a branch"** - A dialog will appear
+4. **Review the branch name** - GitHub suggests a name based on the issue title
+   - You can edit it if you want a different name
+   - Good names are short but descriptive like `42-add-elevator-controls`
+5. **Choose where to create the branch**:
+   - **"Checkout locally"** (recommended for VS Code users) - Shows commands to run in your terminal
+   - **"Open with GitHub Desktop"** - If you use GitHub Desktop app
+6. **Click "Create branch"**
+
+#### After Creating the Branch
+
+If you chose **"Checkout locally"**, GitHub shows you commands like:
+
+```bash
+git fetch origin
+git checkout 42-add-elevator-controls
+```
+
+**To use these commands:**
+1. **Open VS Code**
+2. **Open a terminal** (Terminal → New Terminal)
+3. **Copy and paste the commands** from GitHub
+4. **Press Enter** - You're now on your new feature branch!
+
+**Verify you're on the right branch:**
+- Look at the bottom-left corner of VS Code
+- You should see your new branch name instead of "main"
+
+#### Why Use the Create Branch Button?
+
+Using GitHub's create branch button has several advantages:
+- **Automatic linking** - The branch is automatically linked to the issue
+- **Consistent naming** - GitHub suggests good branch names following conventions
+- **Easy to track** - Team members can see which branch is associated with which issue
+- **Cleaner workflow** - Everything stays connected from issue to branch to pull request
+
+**Remember:** Always create your branch from the issue to keep everything organized!
+
+---
+
+### Tips for Working with Issues
+
+#### For Students
+
+- **Pick one issue at a time** - Focus on completing one task before starting another
+- **Ask questions** - Use issue comments if you're stuck or need clarification
+- **Update progress** - Add comments to the issue when you hit milestones or blockers
+- **Link your PR** - Always connect your pull request to the issue you're working on
+
+#### Best Practices
+
+- **Read the full issue** - Make sure you understand what's being asked before starting
+- **Check for dependencies** - Some issues might depend on others being completed first
+- **Test thoroughly** - Don't create a PR until you've tested your changes
+- **Write clear commit messages** - Future you (and your team) will thank you
+- **Communicate** - If you can't finish an issue, let the team know so someone else can help
+
+#### Common Mistakes to Avoid
+
+- ❌ **Don't** assign yourself to multiple issues at once
+- ❌ **Don't** forget to move the issue through the workflow columns
+- ❌ **Don't** create a branch without linking it to an issue
+- ❌ **Don't** push untested code
+- ❌ **Don't** forget to link your PR to the issue
+
+**Remember:** The issue workflow is designed to help the team stay organized and productive. Following it makes everyone's life easier!
