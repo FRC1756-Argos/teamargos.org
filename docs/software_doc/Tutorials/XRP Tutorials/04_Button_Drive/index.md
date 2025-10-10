@@ -341,16 +341,26 @@ The `RobotContainer.cpp`  is the file that brings the plan from the header file 
        m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_driverController.GetYButton();
-              bool backward = m_driverController.GetAButton();
-              bool left = m_driverController.GetXButton();
-              bool right = m_driverController.GetBButton();
+              bool forward = m_driverController.GetHID().GetYButton();
+              bool backward = m_driverController.GetHID().GetAButton();
+              bool left = m_driverController.GetHID().GetXButton();
+              bool right = m_driverController.GetHID().GetBButton();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
            {&m_drivetrain}));
 
      ```
+
+<details>
+<summary>Why do we use m_driverController.GetHID().GetYButton() instead of just m_driverController.Y()?</summary>
+
+We use `m_driverController.GetHID().GetYButton()` instead of just `m_driverController.Y()` because `CommandXboxController` provides two ways to work with buttons:
+- **Direct button methods** (like `.Y()`, `.A()`, etc.) return special `Trigger` objects used for binding commands to button events (like running a command when a button is pressed or released).
+- **GetHID() button methods** (like `.GetHID().GetYButton()`) return simple `bool` values (true/false) that tell us if the button is currently pressed right now.
+
+Since our `ButtonDrive` function needs simple true/false values to decide how to move, we use `GetHID()` to get the raw button state.
+</details>
 
 <details>
 <summary>Your RobotContainer.cpp file should look like this.</summary>     
@@ -381,10 +391,10 @@ void RobotContainer::ConfigureBindings() {
  m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_driverController.GetYButton();
-              bool backward = m_driverController.GetAButton();
-              bool left = m_driverController.GetXButton();
-              bool right = m_driverController.GetBButton();
+              bool forward = m_driverController.GetHID().GetYButton();
+              bool backward = m_driverController.GetHID().GetAButton();
+              bool left = m_driverController.GetHID().GetXButton();
+              bool right = m_driverController.GetHID().GetBButton();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
@@ -438,7 +448,7 @@ In the next tutorial, we'll learn how to "tune" these values by replacing them w
 
 Ready to go beyond the basics? Try one (or a few) of these mini‑challenges to make button drive cleaner and more driver friendly:
 
-- Tune your speed constants (try values like 1.0 → 0.8 → 0.6) until the robot is easier to drive; write down what you chose and why.
+- Tune your speed values (try values like 1.0 → 0.8 → 0.6) until the robot is easier to drive; write down what you chose and why.
 - Add a slow/precision mode (hold a bumper to scale all speeds lower).
 - (Stretch) Add a reverse orientation toggle so “forward” can flip when driving from the opposite side.
 
