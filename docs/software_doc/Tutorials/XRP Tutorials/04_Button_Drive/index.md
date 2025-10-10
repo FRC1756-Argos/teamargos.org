@@ -341,10 +341,10 @@ The `RobotContainer.cpp`  is the file that brings the plan from the header file 
        m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_driverController.GetYButton();
-              bool backward = m_driverController.GetAButton();
-              bool left = m_driverController.GetXButton();
-              bool right = m_driverController.GetBButton();
+              bool forward = m_driverController.GetHID().GetYButton();
+              bool backward = m_driverController.GetHID().GetAButton();
+              bool left = m_driverController.GetHID().GetXButton();
+              bool right = m_driverController.GetHID().GetBButton();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
@@ -381,10 +381,10 @@ void RobotContainer::ConfigureBindings() {
  m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_driverController.GetYButton();
-              bool backward = m_driverController.GetAButton();
-              bool left = m_driverController.GetXButton();
-              bool right = m_driverController.GetBButton();
+              bool forward = m_driverController.GetHID().GetYButton();
+              bool backward = m_driverController.GetHID().GetAButton();
+              bool left = m_driverController.GetHID().GetXButton();
+              bool right = m_driverController.GetHID().GetBButton();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
