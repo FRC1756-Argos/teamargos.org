@@ -78,7 +78,7 @@ Before we start coding, you need to get the robot code on your computer. This is
 
 **Use this repository URL:** `https://github.com/FRC1756-Argos/XRP_Tutorial.git`
 
-For detailed instructions on how to clone the repository, please follow the guide for [cloning a repository](<../../../WPILib VSCode Docs/05_Version_Control/index.md#cloning-a-repository>).
+For detailed instructions on how to clone the repository, please follow the guide for [cloning a repository](<../../../Git Git Hub/01_Version_Control/index.md#cloning-a-repository>).
 
 Once your repository is cloned, return to this tutorial to write your first lines of C++ code.
 
