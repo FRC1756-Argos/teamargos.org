@@ -76,8 +76,8 @@ A branch is like a parallel version of your code where you can experiment withou
 
 [Learn more about branches →](./01_Version_Control/index.md#branches)
 
----
+### Issues
+An issue is like a task card that describes something that needs to be done on your robot project. Issues help your team organize work, track progress, and communicate about what needs to be built.
 
-## Getting Started
+[Learn more about issues →](./02_GitHub_Issues/index.md)
 
-To learn more about how to use Git and GitHub for your robot code, check out the [Version Control](./01_Version_Control/index.md) guide which walks through the practical steps of using these tools in VS Code.

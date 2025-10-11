@@ -98,7 +98,39 @@ When your experiment works, you can **merge** it back into main, combining the b
 
 **When to create a branch:** Before you start working on a new feature or experiment.
 
-#### Step-by-Step in VS Code:
+**Important for Team Argos:** When working on an issue, you should always create your branch directly from the issue on GitHub. This automatically links your branch to the issue and helps everyone track your progress.
+
+#### Method 1: Create Branch from an Issue (Recommended for Argos)
+
+When you've assigned yourself to an issue and are ready to start working:
+
+1. **Open the Issue on GitHub**
+   - Go to the issue you've been assigned
+   - Make sure you're viewing the issue page
+
+2. **Find the Development Section**
+   - Look on the right sidebar for **"Development"**
+   - Click **"Create a branch"**
+
+3. **Configure the Branch**
+   - GitHub suggests a branch name based on the issue (e.g., `42-fix-left-motor`)
+   - Keep the suggested name
+   - Select **"Checkout locally"** for the change branch type
+   - Click **"Create branch"**
+
+4. **Checkout the Branch in VS Code**
+   - Open VS Code with your repository
+   - Click the **Source Control** icon (or press `Ctrl+Shift+G`)
+   - Click the **"..."** menu and select **"Pull"** to fetch the new branch
+   - Click the branch name at the bottom-left of VS Code
+   - Select your new branch from the list
+
+**Why this method?** Creating a branch from the issue automatically links them together, making it easy to track which code changes relate to which tasks.
+
+#### Method 2: Create Branch Manually in VS Code
+
+If you're not working on a specific issue and just want to experiment:
+
 1. **Open Source Control** - Click the branch icon in the left sidebar (or press `Ctrl+Shift+G`)
 2. **Click the branch name** - At the bottom of VS Code, you'll see the current branch (usually "main")
 3. **Choose "Create new branch"** - Click the branch name, then select "Create new branch from..."
