@@ -1,25 +1,8 @@
 ---
-sidebar_position: 5
+sidebar_position: 2
 ---
 
-# Version Control
-
-## Overview
-
-**Version control** is like having a super-powered "undo" button for your entire robot project.
-
-Imagine you're working on a school essay:
-- Without version control: You save different versions like "essay_v1.doc", "essay_v2.doc", "essay_final.doc" and get confused about which is the latest 😱
-- With version control: You save your work whenever you want, and you can go back to any previous version instantly 😎
-
-For robotics teams, version control lets you:
-- **Save progress** - Like checkpoints in a video game, you can save your work at any point
-- **Go back in time** - Made a mistake? No problem! Go back to when it was working
-- **See what changed** - Know exactly what you changed and when
-
-We use **Git** (the tool that tracks changes) and **GitHub** (the website where we store our code) to keep our robot code organized and safe. Our code is stored in a **repository**, which acts as a central place for all our files and their history.
-
----
+# Git Quick Reference
 
 ## Repositories
 
@@ -228,6 +211,54 @@ Imagine you have a super cool LEGO robot design on your desk. You've been workin
 3. **Click the sync button** - Look for the circular arrow icon (🔄) at the bottom of the Source Control panel
 4. **Choose "Push"** - If it asks, select "Push" to upload your commits
 5. **Wait for success** - VS Code will show a progress message, then "Successfully pushed" when done
+
+---
+
+## Pulling Changes
+
+### What is Pulling?
+
+**Pulling** is like downloading the latest version of your robot code from the cloud so you have what your teammates have been working on!
+
+Remember how pushing uploads your commits to GitHub? Pulling does the opposite - it downloads commits from GitHub to your computer.
+
+#### The Shared Document Analogy 📥
+
+Imagine you and your friends are working on a group project using a shared document:
+
+**Without pulling:** You keep working on your old version while your friends make improvements. You miss out on their changes and your work gets out of sync 😢
+
+**With pulling:** You download the latest version with everyone's changes! Now you're working with the most up-to-date code and can build on what others have done 😎
+
+#### Why Pull Changes?
+
+- **Stay up-to-date** - Get the latest code your team has written
+- **Avoid conflicts** - Working with old code causes problems when you try to push
+- **See improvements** - Benefit from bug fixes and features your team added
+- **Collaborate better** - Build on top of your teammates' work
+
+#### When to Pull
+
+- **Before you start working** - Always pull before making changes
+- **Before you push** - Make sure you have the latest code before sharing yours
+- **When teammates tell you** - If someone says "I just pushed an important fix"
+- **Regularly throughout the day** - Stay synchronized with your team
+
+**Remember:** Pull early and often to avoid merge conflicts and stay in sync with your team!
+
+### Step-by-Step Pulling in VS Code
+
+1. **Open Source Control** - Click the branch icon in the left sidebar (or press `Ctrl+Shift+G`)
+2. **Click the sync button** - Look for the circular arrow icon (🔄) at the bottom of the Source Control panel
+3. **Choose "Pull"** - If it asks, select "Pull" to download the latest commits
+4. **Wait for success** - VS Code will show a progress message, then display any new changes
+5. **Review the changes** - Check what your teammates changed before continuing your work
+
+:::tip
+
+**Pro Tip:** If you see conflicts after pulling, don't panic! Ask a mentor for help resolving them. Conflicts happen when you and a teammate changed the same part of a file.
+
+:::
 
 ---
 
