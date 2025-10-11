@@ -2,24 +2,7 @@
 sidebar_position: 2
 ---
 
-# Version Control
-
-## Overview
-
-**Version control** is like having a super-powered "undo" button for your entire robot project.
-
-Imagine you're working on a school essay:
-- Without version control: You save different versions like "essay_v1.doc", "essay_v2.doc", "essay_final.doc" and get confused about which is the latest 😱
-- With version control: You save your work whenever you want, and you can go back to any previous version instantly 😎
-
-For robotics teams, version control lets you:
-- **Save progress** - Like checkpoints in a video game, you can save your work at any point
-- **Go back in time** - Made a mistake? No problem! Go back to when it was working
-- **See what changed** - Know exactly what you changed and when
-
-We use **Git** (the tool that tracks changes) and **GitHub** (the website where we store our code) to keep our robot code organized and safe. Our code is stored in a **repository**, which acts as a central place for all our files and their history.
-
----
+# Git Quick Reference
 
 ## Repositories
 
