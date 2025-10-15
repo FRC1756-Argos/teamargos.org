@@ -85,7 +85,7 @@ sidebar_position: 2
 
  ```cpp
  // Access the underlying frc::XboxController
- bool a_button_pressed = m_driverController.GetHID().GetAButton();
+ bool a_button_pressed = m_driverController.A().Get();
  ```
 
 ---
