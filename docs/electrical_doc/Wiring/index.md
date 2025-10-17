@@ -1,9 +1,9 @@
 ---
 sidebar_position: 2
 ---
-import WireSize from './Wire_Size.png'
-import CANTwistedPair from './CAN_Twised_Pair.png'
-import CANWiringExample from './CAN_Wiring_Example.png'
+import WireSize from './Wiring _Overview/Wire_Size.png'
+import CANTwistedPair from './Wiring _Overview/CAN_Twised_Pair.png'
+import CANWiringExample from './Wiring _Overview/CAN_Wiring_Example.png'
 
 # Wires Overview
 

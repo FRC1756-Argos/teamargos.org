@@ -64,9 +64,9 @@ There are typically two main ways motor controllers work:
 - The controller is built right into the motor
 - Examples: Falcon 500, Kraken motors
 
-![alt text](Intergrated_Motor.png)
+![alt text](./overview/Intergrated_Motor.png)
 
 **Non-Integrated (External) Controllers:**
 - The controller is a separate unit connected by wires
 - Examples: Talon SRX, Spark MAX, Victor SPX
-![alt text](non_integrated.png)
+![alt text](./overview/non_integrated.png)
