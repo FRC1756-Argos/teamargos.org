@@ -1,11 +1,11 @@
 ---
-title: Strategic Design Guide
+title: Points Per Second
 sidebar_position: 1
 ---
 
 import MatchScoringCalculator from '@site/src/components/MatchScoringCalculator';
 
-# Strategic Design Guide
+# Points Per Second
 
 ## Points Per Second
 
