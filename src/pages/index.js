@@ -27,8 +27,8 @@ function HomepageHeader() {
   const [containerSize, setContainerSize] = useState({width: 0, height: 0});
 
   // YouTube IDs for each Release Video referenced on the robots page
-  // 2024, 2020, 2019, 2015
-  const releaseVideoIds = ['_mAsaiEyiTg', 'ISnO6BCw4w4', 'pBY8D94sVfs', 'YMa69eiFIXc'];
+  // 2024, 2020, 2019, 2015, 2018
+  const releaseVideoIds = ['_mAsaiEyiTg', 'ISnO6BCw4w4', 'pBY8D94sVfs', 'YMa69eiFIXc', 'f6JYvJ3Lln4'];
   const primaryId = releaseVideoIds[0];
   const playlistParam = releaseVideoIds.join(',');
   const videoSrc = `https://www.youtube.com/embed/${primaryId}?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=${playlistParam}&modestbranding=1&rel=0&fs=0`;
