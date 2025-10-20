@@ -35,11 +35,9 @@ Centering is the process of moving a game element into the correct orientation w
 
 ### Funnel 
 
-## Sorting
-
 ### Spindex
 
-### 
+### Conveyor Belt 
 
-## Holding
+## Agitator
 
