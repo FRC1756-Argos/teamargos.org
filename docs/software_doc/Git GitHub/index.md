@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Git / Git Hub Overview
+# Git / GitHub Overview
 
 ## What is Git?
 
