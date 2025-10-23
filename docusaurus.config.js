@@ -133,6 +133,12 @@ const config = {
           },
           {
             type: 'docSidebar',
+            sidebarId: 'SafetySidebar',
+            position: 'left',
+            label: 'Safety',
+          },
+          {
+            type: 'docSidebar',
             sidebarId: 'SponsorsSidebar',
             position: 'left',
             label: 'Sponsors',
