@@ -98,6 +98,7 @@ The following table summarizes all potential points a **TEAM** can earn by scori
 The following rules govern the control of **SCRAP** and general **ROBOT** behavior during the match:
 * A **ROBOT** can control up to **2 SCRAP** at any time.
 * If a **ROBOT** scores more than **2 SCRAP** in a single scoring cycle, any additional scored **SCRAP** beyond the first two will be **removed** and not counted for points at the completion of the match.
+* A **ROBOT** may not attempt to attach to or move a **STASH**
 * **ROBOTS** must not intentionally eject **SCRAP** from the **FIELD**.
 * **ROBOTS** must stay within the boundary of the **FIELD** at all times.
 * **ROBOTS** may not attempt to contact the opposing **TEAM's ROBOT**.
