@@ -2,17 +2,17 @@
 import scrap from './scrap.png'
 import elevatedStash from './elevated_stash.png'
 import communalStash from './communal_stash.png'
-import field from './stash_clash_field_layout.png'
+import field from './stash_dash_field_layout.png'
 
 # Game Manual
 
 ## 1. Overview
 
-The 2025 Argobot Challenge: Stash Clash is played by opposing **TEAMS** on a rectangular **FIELD**. The primary objective is for **ROBOTS** to score **SCRAP** (5-inch diameter whiffle balls) into designated scoring locations (**STASHES**) to earn points. **SCRAP** color determines credit for points and the bonus in the central **COMMUNAL STASH**. Bonus points are also available for a successful end-game **PEDESTAL STASH**.
+The 2025 Argobot Challenge: Stash Dash is played by opposing **TEAMS** on a rectangular **FIELD**. The primary objective is for **ROBOTS** to score **SCRAP** (5-inch diameter whiffle balls) into designated scoring locations (**STASHES**) to earn points. **SCRAP** color determines credit for points and the bonus in the central **COMMUNAL STASH**. Bonus points are also available for a successful end-game **PEDESTAL STASH**.
 
 ## 2. Game Pieces
 
-The only game piece used in Stash Clash is the **SCRAP** ball, which comes in two colors (Red and Blue).
+The only game piece used in Stash Dash is the **SCRAP** ball, which comes in two colors (Red and Blue).
 
 | Game Piece | Description |
 | --- | --- |
@@ -39,7 +39,7 @@ There are three types of scoring locations (**STASHES**), each offering a differ
 
 ## 4. Field Layout and Dimensions
 
-The **STASH CLASH FIELD** is a rectangle measuring **24 feet long** by **16 feet wide**. All scoring elements are placed symmetrically across the field.
+The **STASH DASH FIELD** is a rectangle measuring **24 feet long** by **16 feet wide**. All scoring elements are placed symmetrically across the field.
 
 | Component | Dimensions and Location |
 | --- | --- |
