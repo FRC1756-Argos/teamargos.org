@@ -4,7 +4,7 @@ import elevatedStash from './elevated_stash.png'
 import communalStash from './communal_stash.png'
 import field from './stash_clash_field_layout.png'
 
-# 2025 Argobot Challenge: Stash Clash Game Manual
+# Game Manual
 
 ## 1. Overview
 
