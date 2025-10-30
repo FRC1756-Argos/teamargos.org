@@ -53,3 +53,19 @@ A: There is no dedicated driver station location. Drivers can stand anywhere on 
 Q: If we add a laser pointer to our **ROBOT** an inch or two off the ground would be consider safe?
 
 A: Generally speaking, laser pointers are not allowed on FRC **ROBOTS**. If you have a question about a specific component feel free to bring it in and we will let you know if you can use it.
+
+---
+
+## Day 2 Q&A Questions
+
+---
+
+Q: What surface is the playing field?
+
+A: The playing field will be made of carpet.
+
+---
+
+Q: Is there a required starting configuration?
+
+A: There are no additional starting configuration rules outside of the stated ROBOT CONSTRUCTION RULES.
