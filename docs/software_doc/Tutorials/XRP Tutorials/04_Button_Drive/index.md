@@ -341,10 +341,10 @@ The `RobotContainer.cpp`  is the file that brings the plan from the header file 
        m_drivetrain.SetDefaultCommand(frc2::RunCommand(
            [this] {
              // Define the buttons
-              bool forward = m_driverController.GetHID().GetYButton();
-              bool backward = m_driverController.GetHID().GetAButton();
-              bool left = m_driverController.GetHID().GetXButton();
-              bool right = m_driverController.GetHID().GetBButton();
+              bool forward = m_driverController.Y().Get();
+              bool backward = m_driverController.A().Get();
+              bool left = m_driverController.X().Get();
+              bool right = m_driverController.B().Get();
              // Drive with tank style
               m_drivetrain.ButtonDrive(forward, backward, left, right);
            },
