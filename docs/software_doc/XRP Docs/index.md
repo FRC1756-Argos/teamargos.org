@@ -1,6 +1,9 @@
 ---
 sidebar_position: 1
 ---
+
+import VSCommunity2022 from './01_Overview/VS_Comminity_2022.png';
+
 # XRP Overview
 
 ## What is the XRP Robot?
@@ -39,7 +42,35 @@ Click the video link below for instructions on assembling your XRP robot
 
 [![XRP Introduction Video](https://img.youtube.com/vi/JQyKhzlMSms/hqdefault.jpg)](https://www.youtube.com/watch?v=JQyKhzlMSms&list=PLV6srU7KoAx4enIaCHo3Aiddv8gy4Sghd&index=1)
 
-## XRP WPIlib setup
+## XRP Computer Setup
+
+:::warning Important
+
+This should be done already on the Argos laptop. If you are having issues please contact a mentor.
+
+:::
+
+If you want to use the XRP robot on your own computer, you'll need to set it up. Follow the instructions on [WPILib Setup](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html).
+
+:::important
+
+Since we write our software in C++, make sure you follow the [Additional C++ Installation for Simulation](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html#additional-c-installation-for-simulation).
+
+When installing Visual Studio, select the Community 2022 version (shown below), not 2026.
+
+<img src={VSCommunity2022} width="800"/>
+
+:::
+
+
+## Imaging XRP Robot
+
+:::warning Important
+
+This should be done by a mentor and should already be done on your robot.
+
+:::
+
 For instructions on how to setup the XRP robot for WPILib software, see [WPILib Imaging](https://docs.wpilib.org/en/stable/docs/xrp-robot/hardware-and-imaging.html) or the video below
 [![XRP 01: Introduction and Software Setup](https://img.youtube.com/vi/Nlk52QdoasE/hqdefault.jpg)](https://www.youtube.com/watch?v=Nlk52QdoasE&list=PLV6srU7KoAx4enIaCHo3Aiddv8gy4Sghd&index=5)
 
