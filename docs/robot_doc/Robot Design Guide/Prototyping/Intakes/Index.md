@@ -164,3 +164,7 @@ An intake is a mechanism on your FRC robot designed to collect and control game 
 - Game pieces may bounce or move unpredictably since there's no active pulling mechanism
 
 ---
+
+## Additional Resources
+
+- **[Intake by Game Piece](https://www.projectb.net.au/resources/robot-mechanisms/#IT)** - This resource goes over different game pieces and how they have been picked up, including videos of them in action. It's a great reference for seeing real-world examples of intake concepts.
