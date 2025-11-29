@@ -11,7 +11,11 @@ import Argos_2018_Robot from './argos_2018.jpg'
 import Argos_2017_Robot from './Argos_2017.png'
 import Argos_2016_Robot from './2016_robot.jpg'
 import Argos_2014_Robot from './2014_robot.jpg'
+import Handout_2025 from '@site/static/files/2025_Judge_Handout.pdf'
 import Handout_2024 from '@site/static/files/2024_Judge_Handout_v2.pdf'
+import Handout_2023 from '@site/static/files/2023_Judge_Handout.pdf'
+import Handout_2022 from '@site/static/files/2022_Judge_Handout.pdf'
+import Handout_2020 from '@site/static/files/2020_Judge_Handout.pdf'
 
 
 
@@ -31,7 +35,7 @@ import Handout_2024 from '@site/static/files/2024_Judge_Handout_v2.pdf'
 
 ## 2025 - REEFSCAPE
 
-[Match Archive](https://www.thebluealliance.com/team/1756/2025) | [Game Animation](https://www.youtube.com/watch?v=YWbxcjlY9JY) | [CAD](https://a360.co/3BZzQtr) | [Handout](/files/2025_Judge_Handout.pdf)
+[Match Archive](https://www.thebluealliance.com/team/1756/2025) | [Game Animation](https://www.youtube.com/watch?v=YWbxcjlY9JY) | [CAD](https://a360.co/3BZzQtr) | <a href={Handout_2025} target="_blank" rel="noopener noreferrer">Handout</a>
 <img src={Argos_2025_Robot} width="400"/>
 - **Central Illinois Regional** - Regional Winners, Industrial Design Award sponsored by General Motors
 - **Central Missouri Regional** - Regional Winners, Excellence in Engineering Award
@@ -48,7 +52,7 @@ import Handout_2024 from '@site/static/files/2024_Judge_Handout_v2.pdf'
 
 ## 2023 - CHARGED UP
 
-[Match Archive](https://www.thebluealliance.com/team/1756/2023) | [Game Animation](https://www.youtube.com/watch?v=0zpflsYc4PA) | [CAD](https://a360.co/3kLeGqb)  | [Handout](/files/2023_Judge_Handout.pdf)
+[Match Archive](https://www.thebluealliance.com/team/1756/2023) | [Game Animation](https://www.youtube.com/watch?v=0zpflsYc4PA) | [CAD](https://a360.co/3kLeGqb)  | <a href={Handout_2023} target="_blank" rel="noopener noreferrer">Handout</a>
 <img src={Argos_2023_Robot} width="400"/> 
 - **Central Illinois Regional** - Regional Winners, Quality Award
 - **St. Louis Regional** - Regional Finalists, Creativity Award sponsored by Rockwell Automation
@@ -56,7 +60,7 @@ import Handout_2024 from '@site/static/files/2024_Judge_Handout_v2.pdf'
 
 ## 2022 - RAPID REACT
 
-[Match Archive](https://www.thebluealliance.com/team/1756/2022) | [Game Animation](https://www.youtube.com/watch?v=LgniEjI9cCM) | [CAD](https://a360.co/3CwK4yw) | [Handout](/files/2022_Judge_Handout.pdf)
+[Match Archive](https://www.thebluealliance.com/team/1756/2022) | [Game Animation](https://www.youtube.com/watch?v=LgniEjI9cCM) | [CAD](https://a360.co/3CwK4yw) | <a href={Handout_2022} target="_blank" rel="noopener noreferrer">Handout</a>
 <img src={Argos_2022_Robot} width="400"/>
 - **St. Louis Regional** - Regional Winners, Excellence in Engineering Award
 - **Central Illinois Regional** - Regional Winners, Industrial Design Award sponsored by General Motors
@@ -71,7 +75,7 @@ import Handout_2024 from '@site/static/files/2024_Judge_Handout_v2.pdf'
 
 ## 2020 - INFINITE RECHARGE
 
-[Match Archive](https://www.thebluealliance.com/team/1756/2020) | [Game Animation](https://www.youtube.com/watch?v=gmiYWTmFRVE) | [CAD](https://a360.co/3XeY4Vp) | [Release Video](https://www.youtube.com/watch?v=ISnO6BCw4w4) | [Handout](/files/2020_Judge_Handout.pdf)
+[Match Archive](https://www.thebluealliance.com/team/1756/2020) | [Game Animation](https://www.youtube.com/watch?v=gmiYWTmFRVE) | [CAD](https://a360.co/3XeY4Vp) | [Release Video](https://www.youtube.com/watch?v=ISnO6BCw4w4) | <a href={Handout_2020} target="_blank" rel="noopener noreferrer">Handout</a>
 <img src={Argos_2020_Robot} width="400"/>
 - **Midwest Regional** - Autonomous Award sponsored by Ford
 - **Central Illinois Regional** - (Cancelled due to COVID-19)
