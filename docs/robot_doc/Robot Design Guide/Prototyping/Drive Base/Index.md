@@ -116,5 +116,11 @@ Swerve drive has 4 independent wheel modules. Each module can rotate 360 degrees
 - Our strategy often relies on precise, fast positioning
 - We have the resources and expertise to maintain swerve systems
 
+---
+
+## Additional Resources
+
+- **[Drive Train ](https://www.projectb.net.au/resources/robot-mechanisms/#DT)** - This resource goes over different drivetrains and how they have been used, including videos of them in action. It's a great reference for seeing real-world examples of drive train concepts.
+
 
 
