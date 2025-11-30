@@ -40,4 +40,11 @@ Prototyping is the process of building simplified versions of mechanisms to test
 **Think of prototypes as experiments** - you're testing hypotheses about how mechanisms will perform. Some experiments succeed, others fail, but all experiments teach you something valuable.
 
 ---
+## Argos Method of Prototyping
+
+For a detailed overview of Argos' standard prototyping approach, tooling, and common hardware, see the mechanical guide:
+
+[Argos Method of Prototyping](../../../mechanical_doc/Prototyping)
+
+This reference covers the 80/20 extrusion system, fasteners, gussets, and typical bracketry we use to build fast, adjustable prototypes.
 

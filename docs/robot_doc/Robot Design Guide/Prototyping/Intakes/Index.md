@@ -66,6 +66,8 @@ An intake is a mechanism on your FRC robot designed to collect and control game 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/YMa69eiFIXc?mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oRwvQ2D_B-c?start=53" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 **Pros:**
 - Grabs vertical walls well
 - Easy to prototype and adjust
