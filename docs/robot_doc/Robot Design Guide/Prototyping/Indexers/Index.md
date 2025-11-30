@@ -92,6 +92,8 @@ A Spindex is a storage and funneling system that spins and holds game pieces in 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/9TeZc5jDEdE?start=44" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ewTCvLp5EUo?start=10" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ---
 
 ### Conveyor Belt
@@ -104,7 +106,9 @@ Conveyors can be double-sided (belts on top and bottom or both sides) to provide
 **Sensor Requirement:**
 One common issue is that you need to have **sensors** to properly index the game elements. You need to know where each piece is so you can stop the belt to store them without jamming, or speed it up to close gaps.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ISnO6BCw4w4?start=8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe> 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ISnO6BCw4w4?start=8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/O1K_qSjmpQc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ---
 
