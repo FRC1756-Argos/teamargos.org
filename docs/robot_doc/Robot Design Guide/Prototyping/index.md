@@ -26,25 +26,32 @@ The goal of prototyping is to **learn quickly** and **fail fast**. It's better t
 
 ---
 
-## What is Prototyping?
+## Step 1: Inspiration
 
-Prototyping is the process of building simplified versions of mechanisms to test their functionality, performance, and reliability. A prototype doesn't need to be beautiful or competition-ready - it just needs to answer specific questions about whether a design approach will work.
+Start by exploring what's possible. Review common mechanism types and see how other teams have solved similar challenges.
 
-**Good prototypes:**
-- Are built quickly (hours to a few days, not weeks)
-- Test a specific concept or mechanism
-- Can be modified and tested repeatedly
-- Generate measurable data
-- Are cheap and use available materials
+[Common Mechanisms](./Common%20Mechanisms) – Reference pages for drive bases, intakes, indexers, lifts, shooters, and climbers
 
-**Think of prototypes as experiments** - you're testing hypotheses about how mechanisms will perform. Some experiments succeed, others fail, but all experiments teach you something valuable.
+Use these examples to spark ideas, but remember to adapt them to your specific game and strategy. Focus on prototyping your highest-priority capabilities from Phase 1.
 
 ---
-## Argos Method of Prototyping
 
-For a detailed overview of Argos' standard prototyping approach, tooling, and common hardware, see the mechanical guide:
+## Step 2: Build
+[Argos Method of Prototyping](../../../mechanical_doc/Prototyping) - Build quick, rough prototypes using the Argos standard approach:
 
-[Argos Method of Prototyping](../../../mechanical_doc/Prototyping)
+---
 
-This reference covers the 80/20 extrusion system, fasteners, gussets, and typical bracketry we use to build fast, adjustable prototypes.
+## Step 3: Test
+[Testing Best Practices](./Testing) Validate your prototype under realistic conditions to get accurate data.
 
+---
+
+## Step 4: Document
+
+[Documentation Guide](./Documentation) - Capture what you learned so it can inform the final robot design.
+
+---
+
+## Moving Forward
+
+Once you have tested and documented prototypes, you're ready for **Phase 3: Execution** – building the actual competition robot based on your validated designs.
