@@ -7,7 +7,7 @@ The Argos Design Process is an approach to understanding the game, analyzing sco
 ### Phases:
 
 [Phase 1: Planning](Planning/Index.md) - Understanding the game, analyzing strategies, and prioritizing robot capabilities  
-**Phase 2: Prototyping** - Testing mechanisms and validating design decisions  
+[Phase 2: Prototyping](Prototyping/index.md) - Testing mechanisms and validating design decisions  
 **Phase 3: Execution** - Building, integrating, and refining the robot  
 **Phase 4: Competition** - Competing, adapting, and improving
 
