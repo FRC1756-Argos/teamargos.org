@@ -41,15 +41,15 @@ Robot architecture is the high-level organization of your robot's subsystems and
 Based on your "Must Have" priorities from Step 4, identify the major subsystems your robot will need.
 
 ### Common FRC Subsystems:
-[Swerve](<../../Prototyping/Drive Base/Index.md#swerve-drive>)
+[Swerve](<../../Prototyping/Common Mechanisms/Drive Base/Index.md#swerve-drive>)
 **Drivetrain**
 - The foundation of every robot
-- [Swerve](<../../Prototyping/Drive Base/Index.md#swerve-drive>), [West Coast Drive](<../../Prototyping/Drive Base/Index.md#west-coast-drive-wcd--tank-drive>), [Mecanum](<../../Prototyping/Drive Base/Index.md#mecanum-drive>), etc.
+- [Swerve](<../../Prototyping/Common Mechanisms/Drive Base/Index.md#swerve-drive>), [West Coast Drive](<../../Prototyping/Common Mechanisms/Drive Base/Index.md#west-coast-drive-wcd--tank-drive>), [Mecanum](<../../Prototyping/Common Mechanisms/Drive Base/Index.md#mecanum-drive>), etc.
 - Always consider drivetrain height and frame perimeter
 
 **Game Piece Manipulation**
-- [Intake](../../Prototyping/Intakes/Index.md) - Acquires game pieces from the field
-- [Indexer](../../Prototyping/Indexers/Index.md) - Stores and positions game pieces inside the robot
+- [Intake](<../../Prototyping/Common Mechanisms/Intakes/Index.md>) - Acquires game pieces from the field
+- [Indexer](<../../Prototyping/Common Mechanisms/Indexers/Index.md>) - Stores and positions game pieces inside the robot
 - **Shooter/Scorer** - Scores game pieces into goals
 - **Linear Extensions** - Raise the game pieces
 
