@@ -45,32 +45,7 @@ Confirmation bias is when you mostly notice results that support your idea and i
 - "You just have to do it this specific way" (translation: it's fragile)
 - "It'll be fine once we..." (translation: it doesn't work yet)
 
----
-
-## Document Actual Performance
-
-Having a picture, video, or short write‑up of your prototype goes a long way. It not only documents how it works, but also informs others what worked and what did not—so they can build on successes and avoid repeating failures.
-
-**Be honest:**
-- Record actual success rate
-- Log failures and causes
-- Note conditions that changed results
-- Measure real cycle time (not best attempts)
-
-**Failed tests are valuable:**
-- Show what doesn’t work
-- Prevent wasted time
-- Guide design improvements
-- Only failures if you learn nothing
-
-#### What to Record
-**Observations:**
-- What worked well
-- What didn't work
-- What surprised you
-- What needs improvement
-
----
+--- 
 
 ## Moving Forward
 
