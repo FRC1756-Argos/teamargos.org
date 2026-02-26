@@ -11,6 +11,7 @@ import LCHSBoostersLogo from './lchsboosters_logo.png'
 import LCHSLogo from './lchs_logo.png'
 import PWFLogo from './pwf_logo.gif'
 import SergisonMachineLogo from './sergisonmachine_logo.png'
+import PringleLogo from './Pringle_Robotics_Logo.png'
 
 Thank you to all of our incredible sponsors for supporting FRC Team 1756 Argos. Your generosity fuels our mission to inspire students through STEM.
 
@@ -33,9 +34,9 @@ If you'd like your logo listed, please <a href="/SponsorTheTeam" target="_self" 
   <!-- Argos Mentors, Friends, and Family -->
   <img src={ArgosMentorLogo} alt="Argos Mentors, Friends, and Family" style={{ width: '300px' }} />
 
-  <!-- Boeing -->
-  <a href="https://www.boeing.com" target="_blank" rel="noopener noreferrer">
-    <img src={BoeingLogo} alt="Boeing" style={{ width: '200px' }} />
+  <!-- Pringle Robotics -->
+  <a href="https://pringlerobotics.ai" target="_blank" rel="noopener noreferrer">
+    <img src={PringleLogo} alt="Boeing" style={{ width: '200px' }} />
   </a>
 
   <!-- Gene Haas -->
