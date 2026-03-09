@@ -34,7 +34,7 @@ If you'd like your logo listed, please <a href="/SponsorTheTeam" target="_self" 
 
   <!-- Pringle Robotics -->
   <a href="https://pringlerobotics.ai" target="_blank" rel="noopener noreferrer">
-    <img src={PringleLogo} alt="Boeing" style={{ width: '200px' }} />
+    <img src={PringleLogo} alt="Pringle Robotics" style={{ width: '200px' }} />
   </a>
 
   <!-- Argos Mentors, Friends, and Family -->
