@@ -12,6 +12,7 @@ import LCHSLogo from './lchs_logo.png'
 import PWFLogo from './pwf_logo.gif'
 import SergisonMachineLogo from './sergisonmachine_logo.png'
 import PringleLogo from './Pringle_Robotics_Logo.png'
+import StateFarmLogo from './statefarm_logo.png'
 
 Thank you to all of our incredible sponsors for supporting FRC Team 1756 Argos. Your generosity fuels our mission to inspire students through STEM.
 
@@ -31,12 +32,17 @@ If you'd like your logo listed, please <a href="/SponsorTheTeam" target="_self" 
     <img src={CaterpillarLogo} alt="Caterpillar" style={{ width: '300px' }} />
   </a>
 
-  <!-- Argos Mentors, Friends, and Family -->
-  <img src={ArgosMentorLogo} alt="Argos Mentors, Friends, and Family" style={{ width: '300px' }} />
-
   <!-- Pringle Robotics -->
   <a href="https://pringlerobotics.ai" target="_blank" rel="noopener noreferrer">
     <img src={PringleLogo} alt="Boeing" style={{ width: '200px' }} />
+  </a>
+
+  <!-- Argos Mentors, Friends, and Family -->
+  <img src={ArgosMentorLogo} alt="Argos Mentors, Friends, and Family" style={{ width: '300px' }} />
+
+  <!-- State Farm -->
+  <a href="https://www.statefarm.com/" target="_blank" rel="noopener noreferrer">
+    <img src={StateFarmLogo} alt="State Farm" style={{ width: '200px' }} />
   </a>
 
   <!-- Gene Haas -->
