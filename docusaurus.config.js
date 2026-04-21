@@ -12,8 +12,11 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'Argos - FIRST Robotics Team 1756',
   favicon: 'img/favicon.png',
-  markdown : {
-    mermaid: true
+  markdown: {
+    mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
   },
   themes: ['@docusaurus/theme-mermaid'],
   plugins: [
@@ -51,7 +54,6 @@ const config = {
   projectName: 'teamargos.org', // Usually your repo name.
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
