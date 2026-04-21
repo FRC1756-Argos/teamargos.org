@@ -27,45 +27,45 @@ If you'd like your logo listed, please <a href="/SponsorTheTeam" target="_self" 
   justifyItems: 'center',
   boxShadow: '0 0 30px 15px rgba(120, 120, 120, 0.9)'
 }}>
-  <!-- Caterpillar -->
+  {/* Caterpillar */}
   <a href="https://www.caterpillar.com/" target="_blank" rel="noopener noreferrer">
     <img src={CaterpillarLogo} alt="Caterpillar" style={{ width: '300px' }} />
   </a>
 
-  <!-- Pringle Robotics -->
+  {/* Pringle Robotics */}
   <a href="https://pringlerobotics.ai" target="_blank" rel="noopener noreferrer">
     <img src={PringleLogo} alt="Pringle Robotics" style={{ width: '200px' }} />
   </a>
 
-  <!-- Argos Mentors, Friends, and Family -->
+  {/* Argos Mentors, Friends, and Family */}
   <img src={ArgosMentorLogo} alt="Argos Mentors, Friends, and Family" style={{ width: '300px' }} />
 
-  <!-- State Farm -->
+  {/* State Farm */}
   <a href="https://www.statefarm.com/" target="_blank" rel="noopener noreferrer">
     <img src={StateFarmLogo} alt="State Farm" style={{ width: '200px' }} />
   </a>
 
-  <!-- Gene Haas -->
+  {/* Gene Haas */}
   <a href="https://www.ghaasfoundation.org" target="_blank" rel="noopener noreferrer">
     <img src={GeneHaasFoundationLogo} alt="Gene Haas Foundation" style={{ width: '200px' }} />
   </a>
 
-  <!-- LCHS Booster Club -->
+  {/* LCHS Booster Club */}
   <a href="https://www.facebook.com/LCHSBoosterClub/" target="_blank" rel="noopener noreferrer">
     <img src={LCHSBoostersLogo} alt="LCHS Boosters" style={{ width: '200px' }} />
   </a>
 
-  <!-- Limestone -->
+  {/* Limestone */}
   <a href="https://www.limestone310.org" target="_blank" rel="noopener noreferrer">
     <img src={LCHSLogo} alt="Limestone Community High School" style={{ width: '200px' }} />
   </a>
 
-  <!-- Playing With Fusion -->
+  {/* Playing With Fusion */}
   <a href="https://www.playingwithfusion.com" target="_blank" rel="noopener noreferrer">
     <img src={PWFLogo} alt="Playing With Fusion" style={{ width: '200px' }} />
   </a>
 
-  <!-- Sergison -->
+  {/* Sergison */}
   <a href="https://www.sergisonmachine.net" target="_blank" rel="noopener noreferrer">
     <img src={SergisonMachineLogo} alt="Sergison Machine" style={{ width: '200px' }} />
   </a>
