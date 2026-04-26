@@ -1,6 +1,7 @@
 ---
 sidebar_position: 1
 ---
+import Argos_2026_Robot from './2026_robot.png'
 import Argos_2025_Robot from './Argos_2025.jpeg'
 import Argos_2024_Robot from './Argos_2024.jpeg'
 import Argos_2023_Robot from './Argos_2023.png'
@@ -32,6 +33,14 @@ import Handout_2020 from '@site/static/files/2020_Judge_Handout.pdf'
 - **GitHub**: [frc1756-argos](https://github.com/frc1756-argos)
 - **Match Archive**: [Team 1756](https://www.thebluealliance.com/team/1756/history)
 
+
+## 2026 - REBUILT
+
+[Match Archive](https://www.thebluealliance.com/team/1756/2026) | [Game Animation](https://www.youtube.com/watch?v=_fybREErgyM) | [CAD](https://a360.co/4c8kxxw)
+<img src={Argos_2026_Robot} width="400"/>
+- **Central Illinois Regional** - Regional Finalists, Quality Award
+- **Miami Valley Regional** - Competed
+- **Galileo Division** - 
 
 ## 2025 - REEFSCAPE
 
