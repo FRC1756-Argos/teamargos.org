@@ -17,6 +17,7 @@ import Robot2022 from '@site/docs/robot_doc/Argos_Robots/Argos_2022.jpeg';
 import Robot2023 from '@site/docs/robot_doc/Argos_Robots/Argos_2023.png';
 import Robot2024 from '@site/docs/robot_doc/Argos_Robots/Argos_2024.jpeg';
 import Robot2025 from '@site/docs/robot_doc/Argos_Robots/Argos_2025.jpeg';
+import Robot2026 from '@site/docs/robot_doc/Argos_Robots/2026_robot.png';
 
 import ArgosLogo from '@site/static/img/favicon.png';
 
@@ -93,6 +94,7 @@ export default function Home() {
       .replace(/\s+/g, '-');
   };
   const robots = [
+    {year: 2026, game: 'REBUILT', img: Robot2026},
     {year: 2025, game: 'REEFSCAPE', img: Robot2025},
     {year: 2024, game: 'CRESCENDO', img: Robot2024},
     {year: 2023, game: 'CHARGED UP', img: Robot2023},
