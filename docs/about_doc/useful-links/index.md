@@ -12,6 +12,7 @@ Welcome to the Argos Useful Links page! This page holds all the useful links for
 - **[GitHub Organization](https://github.com/FRC1756-Argos)** - All our code repositories
 - **[Argos on The Blue Alliance](https://www.thebluealliance.com/team/1756)** - Our team page with match history and stats
 - **[2026 General Issue List ](https://github.com/orgs/FRC1756-Argos/projects/10)** - 2026 Pre season issues list
+- **[Scouting Dashboard](https://teamargos.org/scouting-dashboard)** - Live scouting data dashboard
 
 
 ## FRC & Robotics Resources
