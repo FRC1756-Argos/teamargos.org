@@ -21,6 +21,9 @@ This section provides reference material and examples for common FRC mechanisms 
 - **[Project B Mechanism Database](https://www.projectb.net.au/resources/robot-mechanisms/)** - Mechanisms organized by game piece type with real robot examples and videos
 - **[FRC Design](https://www.frcdesign.org/mechanism-examples/)** - Comprehensive mechanism examples with design guidance
 - **[The Blue Alliance](https://www.thebluealliance.com/)** - Match videos and robot photos to study mechanisms in action
+- **[CAD Collection](https://cadcollection.spectrum3847.org/#browse)** - FRC CAD models
 - **[YouTube](https://www.youtube.com/)** - Search for specific FRC mechanism tutorials and robot reveals
+
+
 
 
