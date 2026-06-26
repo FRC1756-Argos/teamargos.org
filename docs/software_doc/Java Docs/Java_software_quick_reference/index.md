@@ -169,6 +169,57 @@ String name = "Argos";
 
 ---
 
+## Print Statements
+
+Print statements let you send text to the **command line** (also called the terminal or
+console). This is one of the most useful debugging tools — you can print values to see what
+your program is actually doing while it runs. In WPILib, output appears in the **Driver
+Station log** and the **VS Code terminal**.
+
+There are three print methods you'll use:
+- `System.out.println()` — prints text and then moves to the next line.
+- `System.out.print()` — prints text and stays on the same line.
+- `System.out.printf()` — prints with precise formatting using placeholders.
+
+You can combine text and variable values using the `+` operator (called **string
+concatenation**):
+
+**Example:**
+```java
+int speed = 75;
+String name = "Argos";
+boolean isPressed = true;
+
+System.out.println("Hello, World!");               // prints: Hello, World!
+System.out.println(speed);                         // prints: 75
+System.out.println("Robot name: " + name);         // prints: Robot name: Argos
+System.out.println("Button pressed: " + isPressed); // prints: Button pressed: true
+```
+
+`printf` uses **placeholders** in a format string, then fills them in with the values you
+list after the comma. Use `%n` for a new line at the end:
+
+| Placeholder | Meaning           | Example output |
+|-------------|-------------------|----------------|
+| `%d`        | Whole number      | `42`           |
+| `%.2f`      | Decimal, 2 places | `3.14`         |
+| `%s`        | Text (String)     | `Argos`        |
+| `%b`        | Boolean           | `true`         |
+| `%n`        | New line          |                |
+
+```java
+double temperature = 98.6;
+
+System.out.printf("Robot: %s%n", name);                  // prints: Robot: Argos
+System.out.printf("Speed: %d%%%n", speed);               // prints: Speed: 75%
+System.out.printf("Temp: %.1f degrees%n", temperature);  // prints: Temp: 98.6 degrees
+```
+
+**Tip:** `%%` prints a literal `%` sign — the `%` character is reserved for placeholders,
+so you need two of them to print one.
+
+---
+
 ## Methods
 
 A **method** is a reusable block of code that performs a specific task. You can think of a
