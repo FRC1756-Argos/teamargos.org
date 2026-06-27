@@ -2,6 +2,8 @@
 sidebar_position: 2
 ---
 
+import HelloWorldQuiz from './HelloWorldQuiz';
+
 # Hello World
 
 Your first Java program will print a message to the console. That's it — simple on purpose.
@@ -98,6 +100,14 @@ Print statements are extremely helpful for debugging. They let you see exactly w
 
 - **Nothing printed?** Make sure you saved `Robot.java` before running.
 - **Build errors?** Read the error in the terminal and fix the typo in your code.
+
+---
+
+## Knowledge Check
+
+Test what you just learned before moving on to the challenge.
+
+<HelloWorldQuiz />
 
 ---
 
