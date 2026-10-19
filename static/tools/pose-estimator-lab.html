@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><!-- the site defaults to dark (docusaurus.config.js colorMode) -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Argos interactive tool, served from static/tools/ and embedded by src/pages/software-tools/. -->
+<style>body { margin: 0; } [hidden] { display: none !important; }</style>
+<title>Pose Estimator Lab</title>
+<script>
+  // Match teamargos.org's light/dark mode. Embedded in a site page: copy the parent page's data-theme and follow it
+  // live when the visitor toggles. Opened on its own: use the theme Docusaurus saved in localStorage "theme".
+  (function () {
+    const embedded = window.parent !== window;
+    if (embedded) document.documentElement.classList.add("embedded");
+    function syncTheme() {
+      let t = null;
+      try { if (embedded) t = window.parent.document.documentElement.getAttribute("data-theme"); } catch (e) {}
+      if (!t) { try { t = localStorage.getItem("theme"); } catch (e) {} }
+      if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+    }
+    syncTheme();
+    try {
+      if (embedded) new MutationObserver(syncTheme).observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    } catch (e) {}
+  })();
+</script>
+<style>
+/* Styled to match teamargos.org (Docusaurus / Infima): Argos gold, Infima neutrals, system fonts, 0.4rem radius.
+   Layout: sticky control column, then a tall field (blue wall at the bottom, like the driver station view) beside readouts and graphs. */
+:root {
+  --bg: #ffffff; --panel: #f5f6f7; --field: #ffffff; --ink: #1c1e21; --muted: #606770; --line: #dadde1; --grid: #ebedf0;
+  --brand: #ffc800; --on-brand: #000000; --accent: #404040; --link: #404040;
+  --carpet: #e4e7ea; --carpet-line: #c9ced4; --blue: #2563c9; --red: #d4282e;
+  --truth: #1c1e21; --odom: #8a6d00; --fused: #00873a; --reject: #d4282e; --tag: #404040; --tag-seen: #c98f00;
+  --cam0: #168f9e; --cam1: #c0408a; --cam2: #7a4fc4;
+  --radius: 0.4rem;
+  --f-body: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+  --f-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1d; --panel: #242526; --field: #1b1b1d; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950; --grid: #303236;
+    --accent: #ffc800; --link: #ffc800;
+    --carpet: #2b2d30; --carpet-line: #3d4045; --blue: #5c9dff; --red: #fa5a5f;
+    --truth: #e3e3e3; --odom: #ffc800; --fused: #3ecf6e; --reject: #fa5a5f; --tag: #9aa0a8; --tag-seen: #ffc800;
+    --cam0: #4cc9d6; --cam1: #e874b4; --cam2: #b38cf2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1d; --panel: #242526; --field: #1b1b1d; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950; --grid: #303236;
+  --accent: #ffc800; --link: #ffc800;
+  --carpet: #2b2d30; --carpet-line: #3d4045; --blue: #5c9dff; --red: #fa5a5f;
+  --truth: #e3e3e3; --odom: #ffc800; --fused: #3ecf6e; --reject: #fa5a5f; --tag: #9aa0a8; --tag-seen: #ffc800;
+  --cam0: #4cc9d6; --cam1: #e874b4; --cam2: #b38cf2;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.65; }
+.wrap { max-width: 1600px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 48px; display: grid; gap: 16px; }
+@media (max-width: 520px) { .wrap { padding-inline: 16px; } }
+
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.eyebrow { display: inline-block; margin: 0; padding: 2px 12px; border-radius: 99px; background: var(--grid); color: var(--link); font-size: 12.8px; font-weight: 500; }
+h1 { font-weight: 700; font-size: clamp(32px, 4vw, 48px); line-height: 1.2; margin: 10px 0 8px; text-wrap: balance; }
+.lede { margin: 0; max-width: 68ch; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.foot { padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); text-align: center; }
+.embedded .foot { display: none; } /* the site page already has a footer */
+
+button { font: inherit; font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 12px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible, canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); border-color: var(--brand); font-weight: 700; }
+
+.app { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.side, .info { display: grid; gap: 12px; min-width: 0; align-content: start; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
+.side { order: 2; }
+@media (min-width: 1000px) {
+  .app { grid-template-columns: 310px minmax(0, 1fr); }
+  .side { order: 0; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+  .side .panel { padding: 12px 14px; }
+  .main { grid-template-columns: auto minmax(0, 1fr); }
+}
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: calc(var(--radius) * 2); padding: 14px 16px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.panel h2 { font-weight: 600; font-size: 20px; line-height: 1.2; margin: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+.hint { font-size: 13px; color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+
+canvas { display: block; max-width: 100%; }
+/* Field is portrait: 8.07 m wide, 16.54 m tall, plus a small margin */
+#field { width: 100%; aspect-ratio: 0.5 / 1; cursor: pointer; }
+@media (min-width: 1000px) { #field { width: auto; height: min(80vh, 920px); } }
+#err-plot { width: 100%; aspect-ratio: 16 / 5; max-height: 28vh; }
+
+.legend { display: flex; gap: 4px 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.sw { display: inline-block; width: 18px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+.sw.dash { border-top-style: dashed; }
+.sw.truth { border-color: var(--truth); } .sw.odom { border-color: var(--odom); } .sw.fused { border-color: var(--fused); }
+.ring { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--muted); vertical-align: middle; margin-right: 6px; }
+.xmark { color: var(--reject); font-weight: 700; margin-right: 6px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: middle; margin-right: 6px; }
+
+.readout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+.readout div { display: flex; flex-direction: column; min-width: 0; }
+.readout span, th { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.readout b { font-family: var(--f-mono); font-weight: 500; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+td { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+td:first-child { font-family: var(--f-body); font-weight: 600; }
+td.off { color: var(--muted); font-family: var(--f-body); font-weight: 400; }
+
+.row { display: grid; grid-template-columns: minmax(0, 1fr) 72px; gap: 2px 10px; align-items: center; }
+.row label { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.k { font-weight: 600; }
+.u { font-size: 12px; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
+.val { font-family: var(--f-mono); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Keyboard diagram: lights up the keys being held */
+.keys { display: grid; grid-template-columns: repeat(3, 36px); gap: 4px; justify-content: start; }
+.keys kbd { display: grid; place-items: center; height: 32px; border: 1px solid var(--line); border-bottom-width: 3px; border-radius: var(--radius); background: var(--field); font-family: var(--f-mono); font-size: 13px; font-weight: 600; color: var(--ink); }
+.keys kbd.on { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.drive-help { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.cam-btn { display: inline-flex; align-items: center; gap: 6px; }
+.cam-btn .dot { margin: 0; }
+.rows { display: grid; gap: 12px; }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }
+.check input { margin-top: 5px; accent-color: var(--accent); }
+code { font-family: var(--f-mono); font-size: 0.9em; }
+td.ok { color: var(--fused); } td.bad { color: var(--reject); }
+/* Filter results: one bar per outcome */
+.results { display: grid; grid-template-columns: minmax(0, max-content) minmax(60px, 1fr) 40px; gap: 6px 10px; align-items: center; font-size: 14px; }
+.results .bar { height: 10px; border-radius: 2px; background: var(--grid); position: relative; overflow: hidden; }
+.results .bar i { position: absolute; inset: 0 auto 0 0; background: var(--reject); }
+.results .bar.ok i { background: var(--fused); }
+.results .n { font-family: var(--f-mono); text-align: right; font-variant-numeric: tabular-nums; }
+h3.sub { font-size: 14px; font-weight: 600; margin: 4px 0 0; }
+.breakdown { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 10px; font-size: 13px; align-items: baseline; }
+.breakdown b { font-family: var(--f-mono); font-weight: 600; font-variant-numeric: tabular-nums; }
+.breakdown span.parts { font-family: var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 0; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+.seg button { border: 0; border-radius: 0; }
+.field-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; }
+.tag-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.tag-modes button { font-size: 13px; padding: 5px 8px; }
+
+/* Compact camera table so all five columns fit beside the field */
+#cam-table td, .cam-tbl th { padding: 5px 8px 5px 0; font-size: 13px; }
+
+/* Walkthrough band: instructions on the left, a fixed-width action column on the right so live status never reflows the page */
+.walk { border-color: var(--brand); border-top-width: 4px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px 28px; }
+.wt-main { display: grid; gap: 8px; min-width: 0; align-content: start; }
+.wt-side { display: grid; gap: 10px; align-content: start; justify-items: start; }
+.wt-body { display: grid; gap: 8px; max-width: 82ch; min-height: 6em; }
+.wt-body p, .wt-body ul { margin: 0; }
+.wt-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.wt-steps li { font-family: var(--f-mono); font-size: 12px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.wt-steps li.done { color: var(--ink); }
+.wt-steps li.now { background: var(--brand); border-color: var(--brand); color: var(--on-brand); font-weight: 700; }
+.walk h3 { font-size: 19px; font-weight: 600; line-height: 1.2; margin: 0; }
+.wt-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+.status { display: block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 500; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.status.good { color: var(--fused); border-color: var(--fused); }
+@media (min-width: 1000px) { .walk { grid-template-columns: minmax(0, 1fr) 300px; } .wt-side { justify-items: stretch; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Software · Localization</p>
+      <h1>Pose Estimator Lab</h1>
+      <p class="lede">Drive a swerve robot around the 2026 REBUILT field. Wheel odometry slowly loses track of where the robot really is, while three Limelights read AprilTags and a Kalman filter blends the two. New here? Press <b>Walkthrough</b>.</p>
+    </div>
+    <div class="toolbar">
+      <button id="wt-toggle" aria-pressed="false">Walkthrough</button>
+      <button id="pause" aria-pressed="false">Pause</button>
+      <button id="reset">Reset</button>
+    </div>
+  </header>
+
+  <section class="panel walk" id="walk" hidden>
+    <div class="wt-main">
+      <div class="panel-head"><h2>Walkthrough</h2><ol class="wt-steps" id="wt-steps"></ol></div>
+      <h3 id="wt-title"></h3>
+      <div class="wt-body" id="wt-body"></div>
+    </div>
+    <div class="wt-side">
+      <button id="wt-action"></button>
+      <span class="status" id="wt-status" style="visibility:hidden">&nbsp;</span>
+      <div class="wt-nav"><button id="wt-back">Back</button><button id="wt-next">Next step</button><button id="wt-exit">Exit</button></div>
+    </div>
+  </section>
+
+  <div class="app">
+    <aside class="side" aria-label="Controls">
+      <div class="panel">
+        <h2>Driving</h2>
+        <div class="drive-help">
+          <div class="keys" aria-hidden="true">
+            <kbd data-key="q">Q</kbd><kbd data-key="w">W</kbd><kbd data-key="e">E</kbd>
+            <kbd data-key="a">A</kbd><kbd data-key="s">S</kbd><kbd data-key="d">D</kbd>
+          </div>
+          <p class="note"><b>W A S D</b> move the robot field-relative, as seen from the blue driver station at the bottom. <b>Q</b> and <b>E</b> turn it.</p>
+        </div>
+        <div class="row">
+          <label for="max-speed"><span class="k">Top speed</span><span class="u">m/s</span></label>
+          <input type="range" id="max-speed" min="1" max="5" step="0.1" value="4">
+          <span class="val" id="max-speed-val">4.0</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Odometry</h2>
+        <div class="row">
+          <label for="drift"><span class="k">Wheel drift</span><span class="u">% of distance</span></label>
+          <input type="range" id="drift" min="0" max="10" step="0.5" value="3">
+          <span class="val" id="drift-val">3.0</span>
+        </div>
+        <p class="note">Worn treads, carpet seams and wheel scrub make each wheel's distance a little wrong. Those errors add up the farther you drive. Pushing into the hub, a trench wall or the guardrail makes it worse, because the wheels keep turning while the robot doesn't move.</p>
+        <div class="row">
+          <label for="bump-slip"><span class="k">Slip on the bumps</span><span class="u">% of distance</span></label>
+          <input type="range" id="bump-slip" min="0" max="40" step="1" value="15">
+          <span class="val" id="bump-slip-val">15</span>
+        </div>
+        <p class="note">On a bump, the wheels roll along a 16° slope, so they count about 4% more distance than the robot covers across the floor. They also skid as the robot tips over the peak.</p>
+        <div class="btns">
+          <button id="shove">Get shoved by a robot</button>
+          <button id="reset-odom">Reset odometry to true pose</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Cameras</h2>
+        <div class="btns" id="cam-toggles"></div>
+        <div class="row">
+          <label for="pose-err"><span class="k">Pose estimate error</span><span class="u">× a typical Limelight</span></label>
+          <input type="range" id="pose-err" min="0" max="3" step="0.1" value="1">
+          <span class="val" id="pose-err-val">×1.0</span>
+        </div>
+        <p class="note">How far each reading lands from the truth. It grows with tag distance, with how sharply the camera sees the tag, and with motion blur from driving or spinning during the camera's exposure.</p>
+        <div class="field-row">
+          <span class="k">Alliance</span>
+          <div class="seg" role="group" aria-label="Alliance">
+            <button id="al-blue" aria-pressed="true">Blue</button>
+            <button id="al-red" aria-pressed="false">Red</button>
+          </div>
+        </div>
+        <span class="k">Tags the Limelights use</span>
+        <div class="tag-modes" id="tag-modes"></div>
+        <p class="note">The 2026 robot's <code>TagFilterMode</code> options. The Limelights ignore every tag outside the list, and those tags are grayed out on the field.</p>
+        <p class="note">Three Limelight 4s sit about 8" off the floor, facing left, right and rear, pitched up 23°. Each sees 82° side to side and 56° up and down. Because they tilt up, a tag that is too close or too low drops out of view. The hub and trench walls block the view of anything behind them.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Vision filter</h2>
+        <p class="note">Every reading must pass these checks, in this order, before it reaches the Kalman filter. The defaults are the 2026 robot's values from <code>constants/vision.h</code>.</p>
+        <div class="btns" id="filter-presets"></div>
+        <div class="rows" id="gate-rows"></div>
+        <label class="check" for="gate-bump"><input type="checkbox" id="gate-bump"><span>Reject readings while on a bump<br><span class="note">Not in the 2026 code. The robot is tilted, so the pose is off.</span></span></label>
+      </div>
+
+      <div class="panel">
+        <h2>Kalman filter</h2>
+        <div class="rows" id="kf-rows"></div>
+        <label class="check" for="kf-speed"><input type="checkbox" id="kf-speed"><span>Trust vision less while moving<br><span class="note">Not in the 2026 code. Adds 25% to σ for every m/s of speed, as an alternative to a hard speed cutoff.</span></span></label>
+        <p class="note">Each accepted reading pulls the estimate a fraction <b>q ÷ (q + σ)</b> of the way toward it. That's the WPILib pose estimator's gain. A close multi-tag reading (σ 0.15 m) pulls 40% of the way. A far single-tag reading (σ 5 m) pulls 2%.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Field</h2>
+          <span class="hint">Blue driver station view</span>
+        </div>
+        <canvas id="field" tabindex="0" aria-label="Top-down 2026 field with the blue wall at the bottom. Click, then drive with W A S D and turn with Q and E."></canvas>
+        <div class="legend">
+          <span><i class="sw truth"></i>True robot</span>
+          <span><i class="sw dash odom"></i>Odometry</span>
+          <span><i class="sw fused"></i>Fused estimate</span>
+          <span id="lg-cams"></span>
+          <span><i class="ring"></i>Accepted, circle = σ</span>
+          <span><b class="xmark">×</b>Rejected</span>
+        </div>
+      </section>
+
+      <div class="info">
+        <section class="panel">
+          <h2>Where the robot is</h2>
+          <div class="readout">
+            <div><span>True pose</span><b id="ro-true">–</b></div>
+            <div><span>Odometry pose</span><b id="ro-odom">–</b></div>
+            <div><span>Fused pose</span><b id="ro-fused">–</b></div>
+            <div><span>Odometry error</span><b id="ro-err">–</b></div>
+            <div><span>Fused error</span><b id="ro-ferr">–</b></div>
+            <div><span>Distance driven</span><b id="ro-dist">–</b></div>
+            <div><span>Speed</span><b id="ro-speed">–</b></div>
+            <div><span>Surface</span><b id="ro-surface">–</b></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>What each camera sees</h2><span class="hint">Values hold for 250 ms, like the robot's telemetry</span></div>
+          <div class="table-wrap">
+            <table class="cam-tbl">
+              <thead><tr><th>Camera</th><th>Tags</th><th>Dist</th><th>Area</th><th>Result</th></tr></thead>
+              <tbody id="cam-table"></tbody>
+            </table>
+          </div>
+          <p class="note">Tag area is the share of the image a tag covers. A tag 3 m away covers about 0.16%.</p>
+          <h3 class="sub">Why each reading is off</h3>
+          <div class="breakdown" id="err-breakdown"></div>
+          <p class="note">Expected error (1σ) = distance error × viewing-angle factor + motion blur + bump tilt. The robot never sees this number. It only knows tag area, which is why the 2026 tables can't tell a sharp or blurry reading from a clean one.</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Filter results</h2><span class="hint">Last 2 seconds of readings</span></div>
+          <div class="results" id="results"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Position error vs time</h2>
+            <div class="legend"><span><i class="sw odom"></i>Odometry only</span><span><i class="sw fused"></i>Fused estimate</span></div>
+          </div>
+          <canvas id="err-plot"></canvas>
+        </section>
+      </div>
+    </main>
+  </div>
+  <footer class="foot">Argos · FIRST Robotics Team 1756</footer>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const DEG = Math.PI / 180;
+
+  // ---------- Field (WPILib blue-origin coordinates, meters) ----------
+  // From Scripts/FieldCal/2026-rebuilt-welded.json in the 2026-Robot repo: [id, x, y, z, facing°]
+  const FIELD = { L: 16.541, W: 8.069 };
+  const TAGS = [
+    [1, 11.878, 7.425, 0.889, 180], [2, 11.915, 4.638, 1.124, 90], [3, 11.312, 4.39, 1.124, 180], [4, 11.312, 4.035, 1.124, 180],
+    [5, 11.915, 3.431, 1.124, -90], [6, 11.878, 0.644, 0.889, 180], [7, 11.953, 0.644, 0.889, 0], [8, 12.271, 3.431, 1.124, -90],
+    [9, 12.519, 3.679, 1.124, 0], [10, 12.519, 4.035, 1.124, 0], [11, 12.271, 4.638, 1.124, 90], [12, 11.953, 7.425, 0.889, 0],
+    [13, 16.533, 7.403, 0.552, 180], [14, 16.533, 6.972, 0.552, 180], [15, 16.533, 4.324, 0.552, 180], [16, 16.533, 3.892, 0.552, 180],
+    [17, 4.663, 0.644, 0.889, 0], [18, 4.626, 3.431, 1.124, -90], [19, 5.229, 3.679, 1.124, 0], [20, 5.229, 4.035, 1.124, 0],
+    [21, 4.626, 4.638, 1.124, 90], [22, 4.663, 7.425, 0.889, 0], [23, 4.588, 7.425, 0.889, 180], [24, 4.27, 4.638, 1.124, 90],
+    [25, 4.022, 4.39, 1.124, 180], [26, 4.022, 4.035, 1.124, 180], [27, 4.27, 3.431, 1.124, -90], [28, 4.588, 0.644, 0.889, 180],
+    [29, 0.008, 0.666, 0.552, 0], [30, 0.008, 1.098, 0.552, 0], [31, 0.008, 3.746, 0.552, 0], [32, 0.008, 4.178, 0.552, 0],
+  ].map(([id, x, y, z, yaw]) => ({ id, x, y, z, yaw: yaw * DEG }));
+
+  // Field structures, from docs/HowItWorks/control_theory_3d/src/constants.rs (inches), centered on the hub tags.
+  // Each hub sits in a line of: guardrail | trench opening | trench wall | bump | HUB | bump | trench wall | trench opening | guardrail
+  const IN = 0.0254;
+  const HUB_Y = 4.0345, HUB_HALF = (47 * IN) / 2;
+  const BUMP_D = 44.4 * IN, BUMP_W = 72 * IN, BUMP_H = 6.513 * IN;
+  const BUMP_ANGLE = Math.atan(BUMP_H / (BUMP_D / 2));          // ~16°, each bump is a peaked ramp along x
+  const TRENCH_D = 47 * IN, TRENCH_OPEN = 50.34 * IN;            // robots drive under the bar through the opening
+  const rect = (x0, x1, y0, y1, extra) => ({ x0, x1, y0, y1, ...extra });
+  const HUBS = [], BUMPS = [], TRENCH_WALLS = [], TRENCH_OPENINGS = [];
+  for (const [cx, side] of [[4.6255, "blue"], [FIELD.L - 4.6255, "red"]]) {
+    HUBS.push(rect(cx - HUB_HALF, cx + HUB_HALF, HUB_Y - HUB_HALF, HUB_Y + HUB_HALF, { side }));
+    const bx0 = cx - BUMP_D / 2, bx1 = cx + BUMP_D / 2, tx0 = cx - TRENCH_D / 2, tx1 = cx + TRENCH_D / 2;
+    BUMPS.push(rect(bx0, bx1, HUB_Y + HUB_HALF, HUB_Y + HUB_HALF + BUMP_W, { side }), rect(bx0, bx1, HUB_Y - HUB_HALF - BUMP_W, HUB_Y - HUB_HALF, { side }));
+    TRENCH_WALLS.push(rect(tx0, tx1, HUB_Y + HUB_HALF + BUMP_W, FIELD.W - TRENCH_OPEN), rect(tx0, tx1, TRENCH_OPEN, HUB_Y - HUB_HALF - BUMP_W));
+    TRENCH_OPENINGS.push(rect(tx0, tx1, FIELD.W - TRENCH_OPEN, FIELD.W), rect(tx0, tx1, 0, TRENCH_OPEN));
+  }
+  // Everything the robot can't drive through: hubs, trench walls, and the field perimeter
+  const SOLIDS = [
+    ...HUBS, ...TRENCH_WALLS,
+    rect(-5, 0, -5, FIELD.W + 5), rect(FIELD.L, FIELD.L + 5, -5, FIELD.W + 5),
+    rect(-5, FIELD.L + 5, -5, 0), rect(-5, FIELD.L + 5, FIELD.W, FIELD.W + 5),
+  ];
+  const inRect = (r, x, y) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1;
+
+  // Structures taller than every tag (hub 72", trench wall 40"), so they block a camera's view in any direction
+  const OCCLUDERS = [...HUBS, ...TRENCH_WALLS];
+
+  // Does the segment (x0,y0)→(x1,y1) pass through rectangle r, shrunk by `pad` on every side?
+  // The pad keeps a tag mounted on a hub face from blocking its own sight line. (Liang–Barsky clipping.)
+  function segHitsRect(x0, y0, x1, y1, r, pad) {
+    const dx = x1 - x0, dy = y1 - y0;
+    let t0 = 0, t1 = 1;
+    for (const [p, q] of [[-dx, x0 - (r.x0 + pad)], [dx, r.x1 - pad - x0], [-dy, y0 - (r.y0 + pad)], [dy, r.y1 - pad - y0]]) {
+      if (p === 0) { if (q < 0) return false; continue; }
+      const t = q / p;
+      if (p < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+      else { if (t < t0) return false; if (t < t1) t1 = t; }
+    }
+    return true;
+  }
+
+  // ---------- Robot ----------
+  // Camera mounts from constants/vision.h, converted to WPILib robot frame (+x forward, +y left, meters)
+  const ROBOT = { size: 0.86, maxAccel: 8, maxOmega: 270 * DEG, maxAlpha: 900 * DEG };
+  const CAMS = [
+    { name: "Left", x: 0.089, y: 0.309, h: 0.202, yaw: 90 * DEG },
+    { name: "Right", x: 0.089, y: -0.309, h: 0.202, yaw: -90 * DEG },
+    { name: "Rear", x: -0.308, y: 0.254, h: 0.2475, yaw: 180 * DEG },
+  ];
+  // Limelight 4: 1280×800, 82° × 56.2° field of view. Cameras pitched up 23.1°.
+  const LL = { hfov: 82 * DEG, vfov: 56.2 * DEG, pitch: 23.1 * DEG, resX: 1280, fps: 30, minPx: 15 };
+  const TAG_SIZE = 0.1651; // 6.5" AprilTag
+  const IMG_K = 4 * Math.tan(LL.hfov / 2) * Math.tan(LL.vfov / 2); // image area per m² of distance²
+
+  // Tag groups from constants/field_points.h, and the filter modes from Vision::ApplyTagFilterForMode
+  const TAG_GROUPS = {
+    blue: { hub: [18, 19, 20, 21, 24, 25, 26, 27], trench: [17, 28, 22, 23], outpost: [29, 30], tower: [31, 32] },
+    red: { hub: [2, 3, 4, 5, 8, 9, 10, 11], trench: [1, 6, 7, 12], outpost: [13, 14], tower: [15, 16] },
+  };
+  const TAG_MODES = {
+    all: { label: "All tags", ids: () => null },
+    ourHub: { label: "Our hub", ids: () => TAG_GROUPS[opts.alliance].hub },
+    bothHubs: { label: "Both hubs", ids: () => [...TAG_GROUPS.blue.hub, ...TAG_GROUPS.red.hub] },
+    noTrench: { label: "No trench", ids: () => ["blue", "red"].flatMap((a) => [...TAG_GROUPS[a].hub, ...TAG_GROUPS[a].outpost, ...TAG_GROUPS[a].tower]) },
+  };
+  // A null list means every tag is allowed
+  const tagAllowed = (id) => { const ids = TAG_MODES[opts.tagMode].ids(); return !ids || ids.includes(id); };
+
+  const opts = { maxSpeed: 4, drift: 0.03, bumpSlip: 0.15, camOn: [true, true, true], alliance: "blue", tagMode: "all", poseErr: 1 };
+  // Counters the walkthrough uses to check each step; reset when a step starts
+  const wt = { tooFast: 0, jumps: 0, minSigma: Infinity, maxSigma: 0 };
+  const WALL_SPIN = 0.4; // while pinned against something, wheels still turn at 40% of what was commanded
+  const keys = { w: false, a: false, s: false, d: false, q: false, e: false };
+  const HIST_LEN = 30, READING_SHOW = 1.5, READING_KEEP = 2, HOLD = 0.25;
+
+  // ---------- Vision filter and Kalman settings ----------
+  // Gate sliders, in the order the 2026 code checks them (Vision::IsEstimateRejected, then the jump check).
+  // `off` is the slider value that disables a gate.
+  const GATES = [
+    { key: "maxArea", label: "Max tag area", unit: "% of image", min: 1, max: 10, step: 0.5, off: 10, fmt: (v) => v.toFixed(1) },
+    { key: "maxLatency", label: "Max latency", unit: "ms", min: 40, max: 200, step: 5, off: 200, fmt: (v) => v.toFixed(0) },
+    { key: "maxSpeed", label: "Max robot speed", unit: "m/s", min: 0.5, max: 6, step: 0.1, off: 6, fmt: (v) => v.toFixed(1) },
+    { key: "maxSpin", label: "Max spin rate", unit: "°/s", min: 45, max: 900, step: 15, off: 900, fmt: (v) => v.toFixed(0) },
+    { key: "minArea", label: "Min tag area", unit: "% of image", min: 0, max: 0.3, step: 0.01, off: 0, fmt: (v) => v.toFixed(2) },
+    { key: "maxJump", label: "Max jump from estimate", unit: "m", min: 0.5, max: 10, step: 0.5, off: 10, fmt: (v) => v.toFixed(1) },
+  ];
+  const PRESETS = {
+    "Argos 2026": { maxArea: 8, maxLatency: 100, maxSpeed: 5.5, maxSpin: 720, minArea: 0.04, maxJump: 10, gateBump: false, q: 0.1, trust: 1, speedTrust: false },
+    "Strict": { maxArea: 8, maxLatency: 80, maxSpeed: 2, maxSpin: 180, minArea: 0.08, maxJump: 1.5, gateBump: true, q: 0.1, trust: 1, speedTrust: false },
+    "Accept everything": { maxArea: 10, maxLatency: 200, maxSpeed: 6, maxSpin: 900, minArea: 0, maxJump: 10, gateBump: false, q: 0.1, trust: 0.25, speedTrust: false },
+  };
+  const KF = [
+    { key: "q", label: "Odometry σ (q)", unit: "m, CTRE default 0.1", min: 0.02, max: 1, step: 0.01, fmt: (v) => v.toFixed(2) },
+    { key: "trust", label: "Vision σ multiplier", unit: "× the 2026 tables", min: 0.25, max: 4, step: 0.25, fmt: (v) => "×" + v.toFixed(2) },
+  ];
+  const filt = { ...PRESETS["Argos 2026"] };
+  const HIGH_AREA_COOLDOWN = 0.1; // kHighAreaCooldown
+
+  // Tag area (% of image) → XY σ (m), from constants/vision.h. Linear between points, held flat past the ends.
+  const SINGLE_TAG_MAP = [[0.04, 12], [0.08, 7], [0.1, 5], [0.2, 2.5], [0.5, 1.2], [1, 0.6], [2, 0.4]];
+  const MULTI_TAG_MAP = [[0.04, 4], [0.05, 3], [0.1, 1], [0.15, 0.5], [0.2, 0.3], [0.3, 0.2], [0.5, 0.12], [1, 0.08], [2, 0.05]];
+  const SINGLE_FLOOR = 0.5, MULTI_FLOOR = 0.15;
+  function interp(map, x) {
+    if (x <= map[0][0]) return map[0][1];
+    for (let i = 1; i < map.length; i++) {
+      const [x0, y0] = map[i - 1], [x1, y1] = map[i];
+      if (x <= x1) return y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
+    }
+    return map[map.length - 1][1];
+  }
+  let paused = false, sim;
+
+  function gauss() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+  const mean = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+
+  // ---------- Simulation ----------
+  // `truth` is where the robot really is. `odom` integrates what the wheels report, with the gyro supplying heading.
+  // vx/vy/w are the wheel (commanded) velocities; truth only moves where the walls allow.
+  function resetSim() {
+    const start = { x: 2.0, y: 2.0, th: 0 };
+    sim = {
+      t: 0, dist: 0,
+      truth: { ...start }, odom: { ...start }, est: { ...start },
+      estHist: [],                          // recent fused estimates, for latency compensation
+      highAreaUntil: CAMS.map(() => -1),    // per-camera high-area lockout end time
+      vx: 0, vy: 0, w: 0, onBump: false, blocked: false,
+      // Each robot gets a fixed wheel-calibration error: a scale error along travel and a slight sideways veer
+      bias: { scale: Math.random() < 0.5 ? -1 : 1, veer: (Math.random() * 2 - 1) * 0.5 },
+      hist: [], nextSample: 0,
+      truthHist: [],                       // recent true poses, for looking up where the robot was when a frame was captured
+      nextFrame: CAMS.map((_, i) => i / (LL.fps * CAMS.length)), // stagger the cameras
+      readings: [],                         // every camera frame that produced a pose
+      latest: CAMS.map(() => null),         // most recent frame per camera, for the table and sight lines
+    };
+  }
+
+  function step(dt) {
+    const T = sim.truth;
+
+    // Field-relative driver input: W/S along +x/−x (toward the red wall), A/D along +y/−y
+    const ix = (keys.w ? 1 : 0) - (keys.s ? 1 : 0);
+    const iy = (keys.a ? 1 : 0) - (keys.d ? 1 : 0);
+    const iw = (keys.q ? 1 : 0) - (keys.e ? 1 : 0);
+    const mag = Math.hypot(ix, iy);
+    const tvx = mag ? (ix / mag) * opts.maxSpeed : 0;
+    const tvy = mag ? (iy / mag) * opts.maxSpeed : 0;
+
+    // Acceleration-limited swerve
+    const dvx = tvx - sim.vx, dvy = tvy - sim.vy, dv = Math.hypot(dvx, dvy), maxDv = ROBOT.maxAccel * dt;
+    const k = dv > maxDv ? maxDv / dv : 1;
+    sim.vx += dvx * k; sim.vy += dvy * k;
+    sim.w += clamp(iw * ROBOT.maxOmega - sim.w, -ROBOT.maxAlpha * dt, ROBOT.maxAlpha * dt);
+
+    // Truth: move as commanded (a little slower while climbing a bump), then get pushed out of anything solid
+    sim.onBump = BUMPS.some((b) => inRect(b, T.x, T.y));
+    const slow = sim.onBump ? 0.85 : 1;
+    const cmdX = sim.vx * dt * slow, cmdY = sim.vy * dt * slow;
+    const prevX = T.x, prevY = T.y;
+    T.x += cmdX; T.y += cmdY;
+    T.th = wrap(T.th + sim.w * dt);
+    sim.blocked = resolveCollisions(T);
+    const actX = T.x - prevX, actY = T.y - prevY;
+    sim.dist += Math.hypot(actX, actY);
+    sim.lastSpeed = Math.hypot(actX, actY) / dt;
+
+    // Wheel displacement: what really happened, plus wheels spinning in place while pinned against something
+    let dx = actX + WALL_SPIN * (cmdX - actX), dy = actY + WALL_SPIN * (cmdY - actY);
+    if (sim.onBump) {
+      // Wheels roll along the 16° slope, so they count more distance than the robot covers across the floor,
+      // and they skid as the robot pitches over the peak
+      dx /= Math.cos(BUMP_ANGLE);
+      const dsb = Math.hypot(dx, dy);
+      dx += gauss() * opts.bumpSlip * dsb; dy += gauss() * opts.bumpSlip * dsb;
+    }
+    const ds = Math.hypot(dx, dy);
+
+    // Odometry: wheel displacement in the robot frame, with calibration error and random scrub
+    const c = Math.cos(T.th), s = Math.sin(T.th);
+    const fx = c * dx + s * dy, fy = -s * dx + c * dy;
+    const D = opts.drift;
+    const mfx = fx * (1 + D * sim.bias.scale) - fy * D * sim.bias.veer + gauss() * D * ds;
+    const mfy = fy * (1 + D * sim.bias.scale) + fx * D * sim.bias.veer + gauss() * D * ds;
+    // The same measured motion moves both the odometry-only pose and the fused estimate.
+    // The gyro gives an accurate heading, so both use the true heading.
+    const odx = Math.cos(T.th) * mfx - Math.sin(T.th) * mfy;
+    const ody = Math.sin(T.th) * mfx + Math.cos(T.th) * mfy;
+    const O = sim.odom, E = sim.est;
+    O.th = E.th = T.th;
+    O.x += odx; O.y += ody;
+    E.x += odx; E.y += ody;
+
+    sim.t += dt;
+    sim.truthHist.push({ t: sim.t, x: T.x, y: T.y, th: T.th, onBump: sim.onBump });
+    while (sim.truthHist.length && sim.truthHist[0].t < sim.t - 0.3) sim.truthHist.shift();
+    sim.estHist.push({ t: sim.t, x: E.x, y: E.y });
+    while (sim.estHist.length && sim.estHist[0].t < sim.t - 0.3) sim.estHist.shift();
+
+    for (let i = 0; i < CAMS.length; i++) {
+      if (sim.t >= sim.nextFrame[i]) { cameraFrame(i); sim.nextFrame[i] += 1 / LL.fps; }
+    }
+    sim.readings = sim.readings.filter((r) => r.t > sim.t - READING_KEEP);
+
+    if (sim.t >= sim.nextSample) {
+      sim.hist.push({ t: sim.t, odomErr: Math.hypot(O.x - T.x, O.y - T.y), fusedErr: Math.hypot(E.x - T.x, E.y - T.y) });
+      while (sim.hist.length && sim.hist[0].t < sim.t - HIST_LEN - 1) sim.hist.shift();
+      sim.nextSample += 0.05;
+    }
+  }
+
+  // Another robot shoves ours 0.6 m. The wheels slide sideways, so odometry never sees it.
+  function shove() {
+    const a = Math.random() * Math.PI * 2;
+    sim.truth.x += 0.6 * Math.cos(a);
+    sim.truth.y += 0.6 * Math.sin(a);
+    resolveCollisions(sim.truth);
+  }
+
+  // Push the robot (a rotated square) out of every solid it overlaps, along the direction of least overlap.
+  // Uses the separating axis test between the robot's box and each axis-aligned obstacle.
+  // Returns true if the robot was touching anything.
+  function resolveCollisions(P) {
+    const hs = ROBOT.size / 2;
+    let hit = false;
+    for (let iter = 0; iter < 3; iter++) {
+      let moved = false;
+      const c = Math.cos(P.th), s = Math.sin(P.th);
+      const axes = [[1, 0], [0, 1], [c, s], [-s, c]];
+      for (const o of SOLIDS) {
+        const ohx = (o.x1 - o.x0) / 2, ohy = (o.y1 - o.y0) / 2;
+        const dx = P.x - (o.x0 + ohx), dy = P.y - (o.y0 + ohy);
+        let best = Infinity, nx = 0, ny = 0;
+        for (const [ax, ay] of axes) {
+          const robotR = hs * (Math.abs(ax * c + ay * s) + Math.abs(-ax * s + ay * c));
+          const obstR = ohx * Math.abs(ax) + ohy * Math.abs(ay);
+          const d = dx * ax + dy * ay;
+          const overlap = robotR + obstR - Math.abs(d);
+          if (overlap <= 0) { best = -1; break; }
+          if (overlap < best) { best = overlap; const sg = d < 0 ? -1 : 1; nx = ax * sg; ny = ay * sg; }
+        }
+        if (best > 0) { P.x += nx * (best + 1e-4); P.y += ny * (best + 1e-4); hit = moved = true; }
+      }
+      if (!moved) break;
+    }
+    return hit;
+  }
+
+  // ---------- Vision ----------
+  function truthAt(t) {
+    for (let i = sim.truthHist.length - 1; i >= 0; i--) if (sim.truthHist[i].t <= t) return sim.truthHist[i];
+    return sim.truthHist[0] || sim.truth;
+  }
+
+  function camPose(cam, P) {
+    const c = Math.cos(P.th), s = Math.sin(P.th);
+    return { x: P.x + c * cam.x - s * cam.y, y: P.y + s * cam.x + c * cam.y, h: cam.h, yaw: P.th + cam.yaw };
+  }
+
+  // Which tags this camera can detect, and how big each one looks
+  function visibleTags(cp) {
+    const out = [];
+    for (const t of TAGS) {
+      if (!tagAllowed(t.id)) continue;                                    // filtered out by the tag mode
+      const dx = t.x - cp.x, dy = t.y - cp.y, d2 = Math.hypot(dx, dy);
+      if (d2 < 0.05) continue;
+      const rel = wrap(Math.atan2(dy, dx) - cp.yaw);
+      if (Math.abs(rel) > LL.hfov / 2) continue;                          // outside left/right view
+      const el = Math.atan2(t.z - cp.h, d2 * Math.cos(rel));
+      if (Math.abs(el - LL.pitch) > LL.vfov / 2) continue;                // above or below the tilted view
+      const facing = (Math.cos(t.yaw) * -dx + Math.sin(t.yaw) * -dy) / d2;
+      if (facing < Math.cos(75 * DEG)) continue;                          // seen edge-on or from behind
+      if (OCCLUDERS.some((o) => segHitsRect(cp.x, cp.y, t.x, t.y, o, 0.02))) continue; // hub or trench wall in the way
+      const d3 = Math.hypot(d2, t.z - cp.h);
+      const px = (TAG_SIZE * facing) / (2 * d3 * Math.tan(LL.hfov / 2)) * LL.resX;
+      if (px < LL.minPx) continue;                                        // too few pixels to decode
+      const area = ((TAG_SIZE * TAG_SIZE * facing) / (d3 * d3 * IMG_K)) * 100;
+      out.push({ tag: t, dist: d3, area, facing });
+    }
+    return out;
+  }
+
+  // One camera frame: find tags, then report a MegaTag2-style robot pose with realistic scatter.
+  // The frame is captured `latency` seconds ago, so it describes where the robot was then.
+  function cameraFrame(ci) {
+    if (!opts.camOn[ci]) { sim.latest[ci] = null; return; }
+    let latency = Math.max(0.02, 0.05 + 0.015 * gauss());
+    if (Math.random() < 0.02) latency += 0.06 + 0.08 * Math.random(); // occasional network hiccup
+    const P = truthAt(sim.t - latency);
+    const seen = visibleTags(camPose(CAMS[ci], P));
+    if (!seen.length) return;
+    const n = seen.length, dist = mean(seen.map((s) => s.dist)), area = mean(seen.map((s) => s.area));
+    const facing = mean(seen.map((s) => s.facing));
+    const L = opts.poseErr;
+
+    // How far off this reading will be (1σ, meters), built from what actually degrades a Limelight solve:
+    // 1. Distance: far tags are only a few pixels wide, so each corner is less precise. More tags constrain the solve.
+    const distErr = n >= 2 ? 0.015 + (0.008 * dist * dist) / Math.sqrt(n) : 0.025 + 0.02 * dist * dist;
+    // 2. Viewing angle: a tag seen from the side is squashed and its corners crowd together.
+    //    facing = 1 head-on, ~0.64 at 50°, ~0.26 at 75°
+    const angleMult = 1 / Math.pow(Math.max(facing, 0.26), 0.8);
+    // 3. Motion blur: during the exposure the image smears by (sideways speed ÷ distance + spin rate) × exposure radians.
+    //    Spinning blurs every tag; driving mostly blurs tags off to the side of the direction of travel.
+    const EXPOSURE = 0.012;
+    const camDir = P.th + CAMS[ci].yaw;
+    const vSide = Math.abs(-Math.sin(camDir) * sim.vx + Math.cos(camDir) * sim.vy);
+    const blurErr = 2 * dist * (vSide / dist + Math.abs(sim.w)) * EXPOSURE;
+    // 4. On a bump the robot is pitched, but MegaTag2 assumes it's flat on the floor
+    const bumpErr = P.onBump ? 0.25 : 0;
+    const sigma = L * (distErr * angleMult + blurErr + bumpErr);
+
+    let x = P.x + gauss() * sigma, y = P.y + gauss() * sigma, bad = false;
+    if (Math.random() < 0.01) { // occasional bad solve
+      const a = Math.random() * Math.PI * 2, r = 1 + 2 * Math.random();
+      x += r * Math.cos(a); y += r * Math.sin(a); bad = true;
+    }
+    const reading = { t: sim.t, cam: ci, x, y, n, dist, area, latency, ids: seen.map((s) => s.tag.id), bad, onBump: P.onBump,
+                      trueErr: { total: sigma, dist: L * distErr, angle: angleMult, angleDeg: Math.acos(Math.min(1, facing)) / DEG, blur: L * blurErr, bump: L * bumpErr } };
+    filterAndFuse(reading);
+    sim.readings.push(reading);
+    sim.latest[ci] = reading;
+  }
+
+  // Why a reading was turned away, in the 2026 code's check order (Vision::IsEstimateRejected, then the jump check).
+  // Returns null if it passes.
+  function rejectReason(r) {
+    const gateOn = (key) => filt[key] !== GATES.find((g) => g.key === key).off;
+    if (gateOn("maxArea")) {
+      if (r.area > filt.maxArea) { sim.highAreaUntil[r.cam] = sim.t + HIGH_AREA_COOLDOWN; return "Tag area too big"; }
+      if (sim.t < sim.highAreaUntil[r.cam]) return "Tag area lockout";
+    }
+    if (gateOn("maxLatency") && r.latency * 1000 > filt.maxLatency) return "Latency too high";
+    if (gateOn("maxSpeed") && Math.hypot(sim.vx, sim.vy) > filt.maxSpeed) return "Robot moving too fast";
+    if (gateOn("maxSpin") && Math.abs(sim.w) / DEG > filt.maxSpin) return "Robot spinning too fast";
+    if (gateOn("minArea") && r.area < filt.minArea) return "Tag area too small";
+    if (r.x < -0.5 || r.x > FIELD.L + 0.5 || r.y < -0.5 || r.y > FIELD.W + 0.5) return "Off the field";
+    if (gateOn("maxJump") && Math.hypot(r.x - sim.est.x, r.y - sim.est.y) > filt.maxJump) return "Too far from estimate";
+    if (filt.gateBump && r.onBump) return "Robot on a bump";
+    return null;
+  }
+
+  // Decide whether to trust a reading, and if so, how much; then pull the fused estimate toward it.
+  function filterAndFuse(r) {
+    r.reason = rejectReason(r);
+    r.accepted = !r.reason;
+    if (r.reason === "Robot moving too fast") wt.tooFast++;
+    if (r.reason === "Too far from estimate") wt.jumps++;
+    if (!r.accepted) return;
+
+    // σ from the 2026 tag-area tables, with their floors (Vision::EvaluateAndSubmitEstimate)
+    let sigma = r.n >= 2 ? Math.max(MULTI_FLOOR, interp(MULTI_TAG_MAP, r.area)) : Math.max(SINGLE_FLOOR, interp(SINGLE_TAG_MAP, r.area));
+    sigma *= filt.trust;
+    if (filt.speedTrust) sigma *= 1 + 0.25 * Math.hypot(sim.vx, sim.vy);
+    r.sigma = sigma;
+    wt.minSigma = Math.min(wt.minSigma, sigma); wt.maxSigma = Math.max(wt.maxSigma, sigma);
+
+    // WPILib pose estimator gain for each axis: K = q² / (q² + √(q²·r²)) = q / (q + r)
+    const K = filt.q / (filt.q + sigma);
+    r.gain = K;
+
+    // Latency compensation: compare the reading with where the estimate was when the frame was captured,
+    // then shift the estimate (and its recent history) by that correction
+    const tc = sim.t - r.latency;
+    let past = sim.estHist[0] || sim.est;
+    for (let i = sim.estHist.length - 1; i >= 0; i--) if (sim.estHist[i].t <= tc) { past = sim.estHist[i]; break; }
+    const cx = K * (r.x - past.x), cy = K * (r.y - past.y);
+    sim.est.x += cx; sim.est.y += cy;
+    for (const h of sim.estHist) if (h.t >= tc) { h.x += cx; h.y += cy; }
+  }
+
+  // ---------- Drawing ----------
+  function tokens() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = (n) => cs.getPropertyValue(n).trim();
+    return { ink: g("--ink"), muted: g("--muted"), line: g("--line"), grid: g("--grid"), panel: g("--panel"),
+             carpet: g("--carpet"), carpetLine: g("--carpet-line"), blue: g("--blue"), red: g("--red"),
+             truth: g("--truth"), odom: g("--odom"), fused: g("--fused"), reject: g("--reject"), tag: g("--tag"), tagSeen: g("--tag-seen"), brand: g("--brand"),
+             cams: [g("--cam0"), g("--cam1"), g("--cam2")], mono: g("--f-mono"), body: g("--f-body") };
+  }
+
+  function fit(c) {
+    const r = c.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+    const ctx = c.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, r.width, r.height);
+    return { ctx, w: r.width, h: r.height };
+  }
+
+  // Screen mapping, blue driver station view: +x (toward red) is up, +y is left.
+  // A field heading φ points at canvas angle −φ − 90°.
+  let S, sc;
+  const screenAngle = (phi) => -phi - Math.PI / 2;
+
+  function drawField(C) {
+    const { ctx, w, h } = fit($("field"));
+    const m = 12;
+    sc = Math.min((w - 2 * m) / FIELD.W, (h - 2 * m) / FIELD.L);
+    const ox = (w - FIELD.W * sc) / 2, oy = (h - FIELD.L * sc) / 2;
+    S = (x, y) => [ox + (FIELD.W - y) * sc, oy + (FIELD.L - x) * sc];
+    const rectF = (x0, x1, y0, y1) => { const [sx, sy] = S(x1, y1); return [sx, sy, (y1 - y0) * sc, (x1 - x0) * sc]; };
+    const line = (x0, y0, x1, y1) => { ctx.beginPath(); ctx.moveTo(...S(x0, y0)); ctx.lineTo(...S(x1, y1)); ctx.stroke(); };
+
+    // Carpet, center line, alliance walls (blue at the bottom, red at the top)
+    ctx.fillStyle = C.carpet; ctx.fillRect(...rectF(0, FIELD.L, 0, FIELD.W));
+    ctx.strokeStyle = C.carpetLine; ctx.lineWidth = 1; line(FIELD.L / 2, 0, FIELD.L / 2, FIELD.W);
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = C.blue; line(0, 0, 0, FIELD.W);
+    ctx.strokeStyle = C.red; line(FIELD.L, 0, FIELD.L, FIELD.W);
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.strokeRect(...rectF(0, FIELD.L, 0, FIELD.W));
+
+    // Bumps: drivable peaked ramps. The solid line is the peak; the short marks point downhill.
+    for (const b of BUMPS) {
+      const col = b.side === "blue" ? C.blue : C.red, mid = (b.x0 + b.x1) / 2;
+      ctx.fillStyle = col; ctx.globalAlpha = 0.12; ctx.fillRect(...rectF(b.x0, b.x1, b.y0, b.y1)); ctx.globalAlpha = 1;
+      ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.strokeRect(...rectF(b.x0, b.x1, b.y0, b.y1));
+      ctx.lineWidth = 2; line(mid, b.y0, mid, b.y1);
+      ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
+      for (let y = b.y0 + 0.2; y < b.y1 - 0.1; y += 0.3) {
+        line(mid + 0.1, y, b.x1 - 0.1, y);
+        line(mid - 0.1, y, b.x0 + 0.1, y);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Trench openings: the bar is overhead, so robots drive underneath
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
+    for (const t of TRENCH_OPENINGS) ctx.strokeRect(...rectF(t.x0, t.x1, t.y0, t.y1));
+    ctx.setLineDash([]);
+
+    // Solid structures: trench walls and hubs
+    ctx.fillStyle = C.muted;
+    for (const t of TRENCH_WALLS) ctx.fillRect(...rectF(t.x0, t.x1, t.y0, t.y1));
+    for (const hb of HUBS) {
+      const r = rectF(hb.x0, hb.x1, hb.y0, hb.y1);
+      ctx.fillStyle = hb.side === "blue" ? C.blue : C.red;
+      ctx.globalAlpha = 0.45; ctx.fillRect(...r); ctx.globalAlpha = 1;
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 2; ctx.strokeRect(...r);
+    }
+
+    // Camera view cones from the true robot, out to 5 m (the robot's max trusted tag distance)
+    const T = sim.truth;
+    CAMS.forEach((cam, i) => {
+      if (!opts.camOn[i]) return;
+      const cp = camPose(cam, T), [cx, cy] = S(cp.x, cp.y);
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, 5 * sc, screenAngle(cp.yaw + LL.hfov / 2), screenAngle(cp.yaw - LL.hfov / 2));
+      ctx.closePath();
+      ctx.fillStyle = C.cams[i]; ctx.globalAlpha = 0.08; ctx.fill(); ctx.globalAlpha = 1;
+    });
+
+    // Sight lines from each camera to the tags in its latest frame
+    const seenIds = new Set();
+    CAMS.forEach((cam, i) => {
+      const r = sim.latest[i];
+      if (!r || sim.t - r.t > HOLD) return;
+      const cp = camPose(cam, T);
+      ctx.strokeStyle = C.cams[i]; ctx.lineWidth = 1.25; ctx.globalAlpha = 0.7;
+      for (const id of r.ids) { const t = TAGS[id - 1]; seenIds.add(id); line(cp.x, cp.y, t.x, t.y); }
+      ctx.globalAlpha = 1;
+    });
+
+    // AprilTags: a bar across the tag face with a tick showing which way it faces
+    const tagHalf = 0.17;
+    ctx.font = `10px ${C.mono}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (const t of TAGS) {
+      const nx = Math.cos(t.yaw), ny = Math.sin(t.yaw), seen = seenIds.has(t.id);
+      ctx.globalAlpha = tagAllowed(t.id) ? 1 : 0.25;
+      ctx.strokeStyle = seen ? C.tagSeen : C.tag; ctx.lineCap = "round";
+      ctx.lineWidth = seen ? 5 : 3; line(t.x - ny * tagHalf, t.y + nx * tagHalf, t.x + ny * tagHalf, t.y - nx * tagHalf);
+      ctx.lineWidth = 1.5; line(t.x, t.y, t.x + nx * 0.14, t.y + ny * 0.14);
+      ctx.lineCap = "butt";
+      ctx.fillStyle = seen ? C.ink : C.muted;
+      ctx.fillText(String(t.id), ...S(t.x + nx * 0.36, t.y + ny * 0.36));
+    }
+    ctx.globalAlpha = 1;
+
+    // Vision readings, fading out over 1.5 s. Accepted: a dot in the camera's color, plus a 1σ circle
+    // for the newest ones (bigger circle = trusted less). Rejected: a red ×.
+    for (const r of sim.readings) {
+      const age = sim.t - r.t;
+      if (age > READING_SHOW) continue;
+      const [px, py] = S(r.x, r.y);
+      ctx.globalAlpha = Math.max(0, 1 - age / READING_SHOW);
+      if (r.accepted) {
+        ctx.fillStyle = C.cams[r.cam];
+        ctx.beginPath(); ctx.arc(px, py, 3.2, 0, Math.PI * 2); ctx.fill();
+        if (age < 0.35) {
+          ctx.strokeStyle = C.cams[r.cam]; ctx.lineWidth = 1; ctx.globalAlpha *= 0.6;
+          ctx.beginPath(); ctx.arc(px, py, Math.min(r.sigma, 3) * sc, 0, Math.PI * 2); ctx.stroke();
+        }
+      } else {
+        ctx.strokeStyle = C.reject; ctx.lineWidth = 1.75;
+        ctx.beginPath(); ctx.moveTo(px - 3.5, py - 3.5); ctx.lineTo(px + 3.5, py + 3.5);
+        ctx.moveTo(px + 3.5, py - 3.5); ctx.lineTo(px - 3.5, py + 3.5); ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Error line from truth to odometry
+    const O = sim.odom;
+    if (Math.hypot(O.x - T.x, O.y - T.y) > 0.03) {
+      ctx.strokeStyle = C.odom; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]); line(T.x, T.y, O.x, O.y); ctx.setLineDash([]);
+    }
+
+    drawRobot(ctx, O, { stroke: C.odom, dash: [5, 4], fill: null, C });
+    drawRobot(ctx, T, { stroke: C.truth, dash: [], fill: opts.alliance === "red" ? C.red : C.blue, C, cams: true });
+    drawRobot(ctx, sim.est, { stroke: C.fused, dash: [], fill: null, C, width: 2.5 });
+
+    if (!started) {
+      ctx.fillStyle = C.ink; ctx.font = `600 13px ${C.body}`;
+      const [, y] = S(FIELD.L - 0.6, 0);
+      ctx.fillText("Click the field, then drive with W A S D", w / 2, y);
+      ctx.fillText("and turn with Q / E", w / 2, y + 18);
+    }
+  }
+
+  function drawRobot(ctx, p, st) {
+    const s = ROBOT.size * sc;
+    ctx.save();
+    ctx.translate(...S(p.x, p.y));
+    ctx.rotate(screenAngle(p.th)); // local +x = robot forward, local −y = robot left
+    if (st.fill) {
+      ctx.fillStyle = st.fill; ctx.fillRect(-s / 2, -s / 2, s, s);
+      ctx.fillStyle = st.C.panel; ctx.fillRect(-s / 2 + s * 0.12, -s / 2 + s * 0.12, s * 0.76, s * 0.76);
+    }
+    ctx.strokeStyle = st.stroke; ctx.lineWidth = st.width || 2; ctx.setLineDash(st.dash);
+    ctx.strokeRect(-s / 2, -s / 2, s, s);
+    ctx.setLineDash([]);
+    // Front (intake side) marker
+    ctx.fillStyle = st.stroke;
+    ctx.beginPath(); ctx.moveTo(s * 0.38, 0); ctx.lineTo(s * 0.14, -s * 0.14); ctx.lineTo(s * 0.14, s * 0.14); ctx.closePath(); ctx.fill();
+    if (st.cams) {
+      ctx.strokeStyle = st.C.ink; ctx.lineWidth = 1;
+      CAMS.forEach((cam, i) => {
+        ctx.fillStyle = opts.camOn[i] ? st.C.cams[i] : st.C.panel;
+        ctx.beginPath(); ctx.arc(cam.x * sc, -cam.y * sc, Math.max(2.5, s * 0.07), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      });
+    }
+    ctx.restore();
+  }
+
+  function drawErrPlot(C) {
+    const { ctx, w, h } = fit($("err-plot"));
+    const Lp = 52, Rp = 8, Tp = 8, Bp = 20, pw = w - Lp - Rp, ph = h - Tp - Bp;
+    const x1 = Math.max(sim.t, HIST_LEN), x0 = x1 - HIST_LEN;
+    const peak = Math.max(0.5, ...sim.hist.map((p) => Math.max(p.odomErr, p.fusedErr)));
+    const st = peak > 2 ? 1 : peak > 1 ? 0.5 : 0.25;
+    const yMax = Math.ceil((peak * 1.1) / st) * st;
+    const X = (t) => Lp + ((t - x0) / HIST_LEN) * pw, Y = (v) => Tp + (1 - v / yMax) * ph;
+
+    ctx.font = `11px ${C.mono}`; ctx.lineWidth = 1;
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let v = 0; v <= yMax + 1e-9; v += st) {
+      const y = Math.round(Y(v)) + 0.5;
+      ctx.strokeStyle = v === 0 ? C.line : C.grid;
+      ctx.beginPath(); ctx.moveTo(Lp, y); ctx.lineTo(Lp + pw, y); ctx.stroke();
+      ctx.fillStyle = C.muted; ctx.fillText(v.toFixed(2) + " m", Lp - 6, y);
+    }
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (let t = Math.ceil(x0 / 5) * 5; t <= x1; t += 5) {
+      const x = Math.round(X(t)) + 0.5;
+      ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.moveTo(x, Tp); ctx.lineTo(x, Tp + ph); ctx.stroke();
+      ctx.fillStyle = C.muted; ctx.fillText(t + " s", x, Tp + ph + 5);
+    }
+    ctx.save();
+    ctx.beginPath(); ctx.rect(Lp, Tp, pw, ph); ctx.clip();
+    ctx.beginPath();
+    for (const [key, color] of [["odomErr", C.odom], ["fusedErr", C.fused]]) {
+      ctx.beginPath();
+      sim.hist.forEach((p, i) => (i ? ctx.lineTo(X(p.t), Y(p[key])) : ctx.moveTo(X(p.t), Y(p[key]))));
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+    }
+    ctx.restore();
+    ctx.strokeStyle = C.line; ctx.strokeRect(Lp + 0.5, Tp + 0.5, pw - 1, ph - 1);
+  }
+
+  const fmtPose = (p) => `${p.x.toFixed(2)}, ${p.y.toFixed(2)} m · ${Math.round(p.th / DEG)}°`;
+  function updateReadouts() {
+    $("ro-true").textContent = fmtPose(sim.truth);
+    $("ro-odom").textContent = fmtPose(sim.odom);
+    $("ro-fused").textContent = fmtPose(sim.est);
+    $("ro-err").textContent = Math.hypot(sim.odom.x - sim.truth.x, sim.odom.y - sim.truth.y).toFixed(2) + " m";
+    $("ro-ferr").textContent = Math.hypot(sim.est.x - sim.truth.x, sim.est.y - sim.truth.y).toFixed(2) + " m";
+    $("ro-dist").textContent = sim.dist.toFixed(1) + " m";
+    $("ro-speed").textContent = (sim.lastSpeed || 0).toFixed(1) + " m/s";
+    $("ro-surface").textContent = sim.blocked ? "Pinned, wheels slipping" : sim.onBump ? "On a bump" : "Carpet";
+
+    // Camera table, holding values for 250 ms like the robot's kTelemetryClearDelay
+    const rows = CAMS.map((cam, i) => {
+      const dot = `<i class="dot" style="background:var(--cam${i})"></i>`;
+      if (!opts.camOn[i]) return `<tr><td>${dot}${cam.name}</td><td class="off" colspan="4">Turned off</td></tr>`;
+      const r = sim.latest[i];
+      if (!r || sim.t - r.t > HOLD) return `<tr><td>${dot}${cam.name}</td><td class="off" colspan="4">No tags in view</td></tr>`;
+      const result = r.accepted
+        ? `<td class="ok">σ ${r.sigma.toFixed(2)} · pull ${Math.round(r.gain * 100)}%</td>`
+        : `<td class="bad">${r.reason}</td>`;
+      return `<tr><td>${dot}${cam.name}</td><td>${r.ids.join(", ")}</td><td>${r.dist.toFixed(2)} m</td><td>${r.area.toFixed(3)}%</td>${result}</tr>`;
+    }).join("");
+    if ($("cam-table").innerHTML !== rows) $("cam-table").innerHTML = rows;
+
+    // True error breakdown per camera (the simulation knows it; the robot doesn't)
+    const bd = CAMS.map((cam, i) => {
+      const r = sim.latest[i], dot = `<i class="dot" style="background:var(--cam${i})"></i>`;
+      if (!opts.camOn[i] || !r || sim.t - r.t > HOLD) return `<span>${dot}${cam.name}</span><b>–</b><span class="parts"></span>`;
+      const e = r.trueErr;
+      const parts = [`${e.dist.toFixed(2)} dist × ${e.angle.toFixed(1)} angle (${Math.round(e.angleDeg)}°)`];
+      if (e.blur >= 0.005) parts.push(`${e.blur.toFixed(2)} blur`);
+      if (e.bump) parts.push(`${e.bump.toFixed(2)} bump`);
+      return `<span>${dot}${cam.name}</span><b>${e.total.toFixed(2)} m</b><span class="parts">= ${parts.join(" + ")}</span>`;
+    }).join("");
+    if ($("err-breakdown").innerHTML !== bd) $("err-breakdown").innerHTML = bd;
+
+    // Filter results over the last 2 s: accepted first, then each rejection reason
+    const counts = new Map([["Accepted", 0]]);
+    for (const r of sim.readings) { const k = r.accepted ? "Accepted" : r.reason; counts.set(k, (counts.get(k) || 0) + 1); }
+    const total = Math.max(1, sim.readings.length);
+    const res = [...counts].map(([k, n]) =>
+      `<span>${k}</span><span class="bar${k === "Accepted" ? " ok" : ""}"><i style="width:${(n / total) * 100}%"></i></span><span class="n">${n}</span>`).join("")
+      + (sim.readings.length ? "" : `<span class="note" style="grid-column:1/-1">No readings yet. Drive toward some tags.</span>`);
+    if ($("results").innerHTML !== res) $("results").innerHTML = res;
+  }
+
+  // ---------- Loop ----------
+  const DT = 0.004; // 250 Hz, the rate CTRE swerve odometry runs at
+  let last = performance.now(), started = false;
+  function frame(now) {
+    const fdt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    if (!paused) {
+      const end = sim.t + fdt;
+      while (sim.t < end) step(DT);
+    }
+    const C = tokens();
+    drawField(C);
+    drawErrPlot(C);
+    updateReadouts();
+    updateWalkthrough();
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- Input ----------
+  function setKey(e, down) {
+    const k = e.key.toLowerCase();
+    if (!(k in keys)) return;
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") return;
+    keys[k] = down;
+    if (down) started = true;
+    document.querySelector(`kbd[data-key="${k}"]`).classList.toggle("on", down);
+  }
+  window.addEventListener("keydown", (e) => setKey(e, true));
+  window.addEventListener("keyup", (e) => setKey(e, false));
+  // Release everything if the page loses focus, so the robot doesn't drive off on its own
+  window.addEventListener("blur", () => {
+    for (const k of Object.keys(keys)) { keys[k] = false; document.querySelector(`kbd[data-key="${k}"]`).classList.remove("on"); }
+  });
+  $("field").addEventListener("pointerdown", () => $("field").focus());
+
+  $("cam-toggles").innerHTML = CAMS.map((cam, i) =>
+    `<button class="cam-btn" data-cam="${i}" aria-pressed="true"><i class="dot" style="background:var(--cam${i})"></i>${cam.name}</button>`).join("");
+  $("cam-toggles").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-cam]");
+    if (!b) return;
+    const i = +b.dataset.cam;
+    opts.camOn[i] = !opts.camOn[i];
+    b.setAttribute("aria-pressed", String(opts.camOn[i]));
+  });
+  $("lg-cams").innerHTML = CAMS.map((cam, i) => `<i class="dot" style="background:var(--cam${i})"></i>`).join("") + "Vision readings";
+
+  $("max-speed").addEventListener("input", (e) => { opts.maxSpeed = +e.target.value; $("max-speed-val").textContent = opts.maxSpeed.toFixed(1); });
+  $("drift").addEventListener("input", (e) => { opts.drift = +e.target.value / 100; $("drift-val").textContent = (+e.target.value).toFixed(1); });
+  $("shove").addEventListener("click", shove);
+  $("pose-err").addEventListener("input", (e) => { opts.poseErr = +e.target.value; $("pose-err-val").textContent = "×" + opts.poseErr.toFixed(1); });
+  $("bump-slip").addEventListener("input", (e) => { opts.bumpSlip = +e.target.value / 100; $("bump-slip-val").textContent = e.target.value; });
+  $("reset-odom").addEventListener("click", () => { Object.assign(sim.odom, sim.truth); Object.assign(sim.est, sim.truth); sim.estHist = []; });
+
+  // Filter and Kalman sliders, built from GATES and KF so presets can update them
+  function sliderRow(def, onInput) {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `<label for="f-${def.key}"><span class="k">${def.label}</span><span class="u">${def.unit}</span></label>
+      <input type="range" id="f-${def.key}" min="${def.min}" max="${def.max}" step="${def.step}">
+      <span class="val" id="f-${def.key}-val"></span>`;
+    const input = row.querySelector("input");
+    input.addEventListener("input", () => { filt[def.key] = +input.value; showFilter(); onInput && onInput(); });
+    return row;
+  }
+  $("gate-rows").replaceChildren(...GATES.map((g) => sliderRow(g)));
+  $("kf-rows").replaceChildren(...KF.map((k) => sliderRow(k)));
+
+  function showFilter() {
+    for (const def of [...GATES, ...KF]) {
+      $(`f-${def.key}`).value = filt[def.key];
+      $(`f-${def.key}-val`).textContent = def.off !== undefined && filt[def.key] === def.off ? "off" : def.fmt(filt[def.key]);
+    }
+    $("gate-bump").checked = filt.gateBump;
+    $("kf-speed").checked = filt.speedTrust;
+    for (const b of $("filter-presets").children) {
+      const p = PRESETS[b.dataset.name];
+      b.setAttribute("aria-pressed", String(Object.keys(p).every((k) => p[k] === filt[k])));
+    }
+  }
+  $("filter-presets").innerHTML = Object.keys(PRESETS).map((n) => `<button data-name="${n}">${n}</button>`).join("");
+  $("filter-presets").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-name]");
+    if (b) { Object.assign(filt, PRESETS[b.dataset.name]); showFilter(); }
+  });
+  $("gate-bump").addEventListener("change", (e) => { filt.gateBump = e.target.checked; showFilter(); });
+  $("kf-speed").addEventListener("change", (e) => { filt.speedTrust = e.target.checked; showFilter(); });
+  showFilter();
+  // ---------- Alliance and tag filter mode ----------
+  function setAlliance(a) {
+    opts.alliance = a;
+    $("al-blue").setAttribute("aria-pressed", String(a === "blue"));
+    $("al-red").setAttribute("aria-pressed", String(a === "red"));
+  }
+  function setTagMode(mode) {
+    opts.tagMode = mode;
+    for (const b of $("tag-modes").children) b.setAttribute("aria-pressed", String(b.dataset.mode === mode));
+  }
+  function setCams(on) {
+    opts.camOn = opts.camOn.map(() => on);
+    for (const b of $("cam-toggles").children) b.setAttribute("aria-pressed", String(on));
+  }
+  function applyPreset(name) { Object.assign(filt, PRESETS[name]); showFilter(); }
+  $("tag-modes").innerHTML = Object.entries(TAG_MODES).map(([k, m]) => `<button data-mode="${k}">${m.label}</button>`).join("");
+  $("tag-modes").addEventListener("click", (e) => { const b = e.target.closest("button[data-mode]"); if (b) setTagMode(b.dataset.mode); });
+  $("al-blue").addEventListener("click", () => setAlliance("blue"));
+  $("al-red").addEventListener("click", () => setAlliance("red"));
+  setTagMode("all");
+
+  // ---------- Walkthrough ----------
+  // Each step sets up a scenario on enter(), and status() returns [text, goodYet] for the live pill
+  const odomErr = () => Math.hypot(sim.odom.x - sim.truth.x, sim.odom.y - sim.truth.y);
+  const fusedErr = () => Math.hypot(sim.est.x - sim.truth.x, sim.est.y - sim.truth.y);
+  const STEPS = [
+    {
+      tag: "Drift", title: "Drive with odometry only",
+      body: `<p>All three cameras are off, so the robot only knows where it is from its wheels and gyro. Drive around: cross a bump, push into the hub for a second, or get shoved by another robot.</p>
+        <p>The dashed gold odometry robot drifts away from the real one. The green estimate drifts with it, because nothing is correcting it yet.</p>`,
+      enter: () => { setCams(false); applyPreset("Argos 2026"); setTagMode("all"); },
+      action: ["Get shoved by a robot", shove],
+      status: () => [`Odometry error: ${odomErr().toFixed(2)} m`, odomErr() > 0.4],
+    },
+    {
+      tag: "Vision", title: "Turn the cameras on",
+      body: `<p>The cameras are back on with the 2026 robot's settings. Drive toward a hub and stop where the cameras can see it.</p>
+        <p>Each accepted reading pulls the green estimate part of the way toward where the camera says the robot is. While you're stopped with a clear view, readings keep arriving, and the estimate settles onto the real robot. The gold odometry robot stays wrong.</p>`,
+      enter: () => setCams(true),
+      status: () => [`Fused error: ${fusedErr().toFixed(2)} m`, fusedErr() < 0.1],
+    },
+    {
+      tag: "Trust", title: "Close tags count more",
+      body: `<p>Watch the circles around new readings and the <b>Result</b> column. The 2026 robot picked each reading's σ from tag area. A tag that looks big in the image is close, so it gets a small σ and a strong pull.</p>
+        <p>Find a spot where a camera only sees tags far away (σ of 2 m or more), then get close to a hub face (σ near 0.15 m).</p>`,
+      enter: () => { wt.minSigma = Infinity; wt.maxSigma = 0; },
+      status: () => {
+        const f = (v) => (Number.isFinite(v) && v > 0 ? v.toFixed(2) : "–");
+        return [`σ seen: ${f(wt.minSigma)} to ${f(wt.maxSigma)} m`, wt.minSigma <= 0.2 && wt.maxSigma >= 2];
+      },
+    },
+    {
+      tag: "Speed", title: "Moving fast blurs the image",
+      body: `<p>The <b>Strict</b> preset is on now. It rejects readings while the robot moves faster than 2 m/s. The 2026 limit was 5.5 m/s, which is faster than this simulated robot can drive, so it never triggers here.</p>
+        <p>Drive across the field at full speed. Rejected readings show as red ×'s, and the estimate coasts on odometry. Slow down near some tags and watch it snap back.</p>`,
+      enter: () => { applyPreset("Strict"); wt.tooFast = 0; },
+      status: () => [`Rejected for speed: ${wt.tooFast}`, wt.tooFast >= 30],
+    },
+    {
+      tag: "Outliers", title: "Catch the bad readings",
+      body: `<p><b>Accept everything</b> is on now, and vision is trusted 4× more. Park near a hub and watch. About 1 reading in 100 is a bad solve that lands meters away, and the estimate jerks toward it.</p>
+        <p>Set <b>Max jump from estimate</b> to 1.5 m, or press the button. Readings that land far from the current estimate now get rejected.</p>`,
+      enter: () => { applyPreset("Accept everything"); wt.jumps = 0; },
+      action: ["Set max jump to 1.5 m", () => { filt.maxJump = 1.5; showFilter(); }],
+      status: () => [`Rejected as too far: ${wt.jumps}`, wt.jumps >= 1],
+    },
+    {
+      tag: "Tags", title: "Choose which tags to use",
+      body: `<p>The 2026 robot could tell its Limelights to ignore some tags. Pick <b>Our hub</b> under Cameras, then drive near a trench or the other hub. Those tags gray out and stop producing readings.</p>
+        <p>Fewer tags means fewer readings, but you get to keep only the ones you trust most.</p>`,
+      enter: () => applyPreset("Argos 2026"),
+      status: () => [`Tag filter: ${TAG_MODES[opts.tagMode].label}`, opts.tagMode !== "all"],
+    },
+    {
+      tag: "Done", title: "Questions for next season",
+      body: `<p>Everything is back to the 2026 robot's settings. Some things to test before rewriting the vision code:</p>
+        <ul><li>Should the speed limit be low enough to actually trigger?</li><li>Should readings taken on a bump be rejected?</li><li>Would raising σ with speed work better than a hard cutoff? Try <b>Trust vision less while moving</b>.</li><li>Is the jump check worth turning back on?</li></ul>`,
+      enter: () => { applyPreset("Argos 2026"); setTagMode("all"); setCams(true); },
+    },
+  ];
+  const walk = { on: false, i: 0 };
+  let lastStatus = "";
+
+  function goStep(i) {
+    walk.i = i;
+    const st = STEPS[i];
+    if (st.enter) st.enter();
+    $("wt-steps").innerHTML = STEPS.map((x, j) => `<li class="${j < i ? "done" : j === i ? "now" : ""}">${j + 1}. ${x.tag}</li>`).join("");
+    $("wt-title").textContent = st.title;
+    $("wt-body").innerHTML = st.body;
+    $("wt-action").style.visibility = st.action ? "visible" : "hidden";
+    $("wt-action").textContent = st.action ? st.action[0] : "–";
+    $("wt-back").disabled = i === 0;
+    $("wt-next").hidden = i === STEPS.length - 1;
+    lastStatus = "";
+  }
+  function updateWalkthrough() {
+    if (!walk.on) return;
+    const st = STEPS[walk.i], el = $("wt-status");
+    if (!st.status) { el.style.visibility = "hidden"; return; }
+    const [text, good] = st.status();
+    const key = text + good;
+    if (key === lastStatus) return;
+    lastStatus = key;
+    el.style.visibility = "visible";
+    el.textContent = (good ? "Good · " : "") + text;
+    el.title = el.textContent;
+    el.classList.toggle("good", good);
+  }
+  function setWalkthrough(on) {
+    walk.on = on;
+    $("walk").hidden = !on;
+    $("wt-toggle").setAttribute("aria-pressed", String(on));
+    if (on) goStep(0);
+  }
+  $("wt-toggle").addEventListener("click", () => setWalkthrough(!walk.on));
+  $("wt-exit").addEventListener("click", () => setWalkthrough(false));
+  $("wt-back").addEventListener("click", () => goStep(Math.max(0, walk.i - 1)));
+  $("wt-next").addEventListener("click", () => goStep(Math.min(STEPS.length - 1, walk.i + 1)));
+  $("wt-action").addEventListener("click", () => { const a = STEPS[walk.i].action; if (a) a[1](); });
+
+  $("reset").addEventListener("click", resetSim);
+  $("pause").addEventListener("click", (e) => {
+    paused = !paused;
+    e.currentTarget.setAttribute("aria-pressed", String(paused));
+    e.currentTarget.textContent = paused ? "Resume" : "Pause";
+  });
+
+  resetSim();
+  requestAnimationFrame(frame);
+})();
+</script>
