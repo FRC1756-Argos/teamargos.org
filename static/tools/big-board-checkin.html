@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><!-- the site defaults to dark (docusaurus.config.js colorMode) -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- Argos check-in kiosk, served from static/tools/ and embedded by src/pages/big-board/checkin.js.
+     For the shop tablet, open /tools/big-board-checkin.html directly in full-screen mode.
+     Data comes from the Apps Script web app in apps-script/big-board/. -->
+<style>body { margin: 0; } [hidden] { display: none !important; }</style>
+<title>Argos Check-In</title>
+<script>
+  // Match teamargos.org's light/dark mode (same approach as the other tools in static/tools/).
+  (function () {
+    const embedded = window.parent !== window;
+    if (embedded) document.documentElement.classList.add("embedded");
+    function syncTheme() {
+      let t = null;
+      try { if (embedded) t = window.parent.document.documentElement.getAttribute("data-theme"); } catch (e) {}
+      if (!t) { try { t = localStorage.getItem("theme"); } catch (e) {} }
+      if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+    }
+    syncTheme();
+    try {
+      if (embedded) new MutationObserver(syncTheme).observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    } catch (e) {}
+  })();
+</script>
+<style>
+:root {
+  --bg: #ffffff; --panel: #f5f6f7; --ink: #1c1e21; --muted: #606770; --line: #dadde1;
+  --brand: #ffc800; --on-brand: #000000; --accent: #404040; --warn: #d4282e;
+  --radius: 0.4rem;
+  --f-body: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1d; --panel: #242526; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950;
+    --accent: #ffc800; --warn: #fa383e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1d; --panel: #242526; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950;
+  --accent: #ffc800; --warn: #fa383e; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h1 { margin: 0; font-size: clamp(26px, 3.5vw, 36px); line-height: 1.2; }
+
+/* Passcode screen */
+.lock { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.lock-card { width: min(420px, 100%); display: grid; gap: 14px; padding: 28px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; }
+.lock-card p { margin: 0; color: var(--muted); }
+.lock-card input { width: 100%; font-size: 24px; padding: 10px 14px; background: var(--bg);
+  border: 1px solid var(--line); border-radius: var(--radius); -webkit-user-select: text; user-select: text; }
+.primary { font-size: 20px; font-weight: 700; padding: 12px; border: 0; border-radius: var(--radius);
+  background: var(--brand); color: var(--on-brand); }
+.primary:disabled { opacity: 0.6; cursor: wait; }
+.msg { color: var(--warn) !important; min-height: 1.5em; }
+
+/* Kiosk */
+.app { max-width: 1600px; margin: 0 auto; padding: 20px 20px 40px; display: grid; gap: 16px; }
+@media (max-width: 520px) { .app { padding-inline: 16px; } }
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; }
+.sub { margin: 4px 0 0; color: var(--muted); font-size: 18px; }
+.right { display: flex; align-items: center; gap: 20px; }
+.clock { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.count { font-size: 18px; color: var(--muted); }
+.ghost { font-size: 14px; padding: 6px 12px; background: transparent; border: 1px solid var(--line);
+  border-radius: var(--radius); color: var(--muted); text-decoration: none; white-space: nowrap; }
+a.ghost:hover { color: var(--ink); border-color: var(--muted); }
+
+.banner { padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--warn); color: var(--warn); font-weight: 600; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.tile { min-height: 116px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px;
+  text-align: left; padding: 14px 16px; background: var(--panel); border: 2px solid var(--line);
+  border-radius: 10px; transition: transform 80ms ease; }
+.tile:active { transform: scale(0.97); }
+.tile .name { font-size: 22px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+.tile .team { font-size: 14px; color: var(--muted); }
+.tile .status { font-size: 15px; font-weight: 600; color: var(--muted); }
+.tile.in { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.tile.in .team, .tile.in .status { color: var(--on-brand); opacity: 0.8; }
+.empty { color: var(--muted); font-size: 18px; }
+
+/* Confirmation overlay */
+.toast { position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
+  background: rgba(0, 0, 0, 0.45); z-index: 10; }
+.toast-card { width: min(560px, 100%); padding: 32px 28px; text-align: center; border-radius: 16px;
+  background: var(--brand); color: var(--on-brand); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35); }
+.toast.error .toast-card { background: var(--warn); color: #fff; }
+.toast-title { font-size: clamp(30px, 5vw, 44px); font-weight: 800; line-height: 1.15; }
+.toast-sub { margin-top: 8px; font-size: 20px; opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div id="lock" class="lock" hidden>
+  <form id="lockForm" class="lock-card">
+    <h1>Argos Check-In</h1>
+    <p>Enter the team passcode to unlock this device.</p>
+    <input id="codeInput" type="password" autocomplete="off" aria-label="Team passcode" required>
+    <button id="unlockBtn" class="primary" type="submit">Unlock</button>
+    <p id="lockMsg" class="msg" role="alert"></p>
+  </form>
+</div>
+
+<div id="app" class="app" hidden>
+  <header class="bar">
+    <div>
+      <h1>Check in / out</h1>
+      <p class="sub">Tap your name when you arrive and when you leave.</p>
+    </div>
+    <div class="right">
+      <span id="count" class="count"></span>
+      <span id="clock" class="clock"></span>
+      <a id="boardLink" class="ghost" href="big-board.html">To big board</a>
+      <button id="lockBtn" class="ghost" type="button">Lock</button>
+    </div>
+  </header>
+  <div id="banner" class="banner" role="status" hidden></div>
+  <main id="grid" class="grid"></main>
+</div>
+
+<div id="toast" class="toast" role="status" hidden>
+  <div class="toast-card">
+    <div id="toastTitle" class="toast-title"></div>
+    <div id="toastSub" class="toast-sub"></div>
+  </div>
+</div>
+
+<script src="big-board-common.js"></script>
+<script>
+// Server URL, saved passcode and api() live in big-board-common.js.
+//
+// How taps are saved: a tap updates the tile immediately and goes into a
+// queue as the state the student should end up in. The queue is sent in one
+// batch a moment later, so several students tapping at once cost one server
+// request instead of one each. If the server can't be reached, the queue is
+// kept and retried, so taps aren't lost when the Wi-Fi drops.
+const { api } = BigBoard;
+const REFRESH_MS = 60 * 1000;
+const TOAST_MS = 2500;
+const BATCH_DELAY_MS = 300;     // wait this long after a tap to collect others
+const DOUBLE_TAP_MS = 600;      // a second tap on the same tile this soon is ignored
+const RETRY_MS = [2000, 5000, 10000, 30000];
+
+const $ = (id) => document.getElementById(id);
+let students = [];
+let refreshTimer = null;
+let toastTimer = null;
+
+const queued = new Map();   // id -> { id, checkedIn, at } waiting to be sent
+const sending = new Map();  // id -> item in the request that's in flight
+const lastTap = new Map();  // id -> time of the last tap (double-tap guard)
+let flushTimer = null;
+let inFlight = false;
+let failures = 0;
+let lastSaveAt = 0;         // when the last batch finished (for refresh)
+
+// ---- Lock / unlock ------------------------------------------------------
+
+function showLock(message) {
+  BigBoard.setCode('');
+  clearInterval(refreshTimer);
+  clearTimeout(flushTimer);
+  students = [];
+  queued.clear();
+  render();
+  $('app').hidden = true;
+  $('lock').hidden = false;
+  $('lockMsg').textContent = message || '';
+  $('codeInput').value = '';
+  $('codeInput').focus();
+}
+
+$('lockForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('unlockBtn');
+  btn.disabled = true;
+  $('lockMsg').textContent = '';
+  const typed = $('codeInput').value.trim();
+  try {
+    const data = await api({ view: 'ping' }, null, typed);
+    if (data.ok) {
+      BigBoard.setCode(typed);
+      start();
+    } else {
+      $('lockMsg').textContent = BigBoard.unlockError(data);
+    }
+  } catch (err) {
+    $('lockMsg').textContent = BigBoard.unlockError(err);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// Inside the site page (/big-board/checkin/), go to the board's site page
+// rather than loading the board inside this frame.
+if (document.documentElement.classList.contains('embedded')) {
+  $('boardLink').href = '/big-board/';
+  $('boardLink').target = '_top';
+}
+
+$('lockBtn').addEventListener('click', () => {
+  const waiting = queued.size + sending.size;
+  const warn = waiting ? '\n\n' + waiting + ' check-in(s) have not saved yet and will be lost.' : '';
+  if (confirm('Lock this device? The passcode will be needed to unlock it.' + warn)) showLock('');
+});
+
+function start() {
+  $('lock').hidden = true;
+  $('app').hidden = false;
+  render();
+  refresh();
+  clearInterval(refreshTimer);
+  refreshTimer = setInterval(refresh, REFRESH_MS);
+}
+
+// ---- Roster -------------------------------------------------------------
+
+async function refresh() {
+  if (!BigBoard.code) return;
+  const startedAt = Date.now();
+  try {
+    const data = await api({ view: 'roster' });
+    if (data.ok) {
+      // Skip a roster that was read while taps were being saved; it may be
+      // missing them. The next refresh will catch up.
+      if (inFlight || lastSaveAt > startedAt) return;
+      students = data.students.map((s) => {
+        if (!queued.has(s.id)) return s;
+        return students.find((o) => o.id === s.id) || s; // keep the on-screen state for unsent taps
+      });
+      if (!failures) setBanner('');
+      render();
+    } else if (data.error === 'unauthorized') {
+      showLock('The passcode has changed. Enter the new one.');
+    } else {
+      setBanner('Server error: ' + data.error);
+    }
+  } catch (err) {
+    setBanner("Can't reach the server. Check the Wi-Fi.");
+  }
+}
+
+function setBanner(text) {
+  $('banner').textContent = text;
+  $('banner').hidden = !text;
+}
+
+// ---- Tiles --------------------------------------------------------------
+// Tiles are built once and then updated in place, so a reply arriving from
+// the server never replaces a tile someone is in the middle of tapping.
+
+const tiles = new Map();  // id -> { tile, status }
+let layoutKey = null;
+
+function render() {
+  const list = [...students].sort((a, b) => a.name.localeCompare(b.name));
+  const key = list.map((s) => s.id + '|' + s.name + '|' + s.subteam).join('\n');
+  if (key !== layoutKey) {
+    layoutKey = key;
+    buildGrid(list);
+  }
+  list.forEach(updateTile);
+  updateCount();
+}
+
+function buildGrid(list) {
+  const grid = $('grid');
+  grid.replaceChildren();
+  tiles.clear();
+  if (!list.length) {
+    grid.append(el('p', 'empty', 'Loading roster…'));
+    return;
+  }
+  list.forEach((s) => {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'tile';
+    const top = document.createElement('div');
+    top.append(el('div', 'name', s.name));
+    if (s.subteam) top.append(el('div', 'team', s.subteam));
+    const status = el('div', 'status', '');
+    tile.append(top, status);
+    tile.addEventListener('click', () => tap(s.id));
+    tiles.set(s.id, { tile, status });
+    grid.append(tile);
+  });
+}
+
+function updateTile(s) {
+  const t = tiles.get(s.id);
+  if (!t) return;
+  t.tile.classList.toggle('in', s.checkedIn);
+  t.tile.setAttribute('aria-label', s.name + (s.checkedIn ? ', checked in. Tap to check out.' : ', checked out. Tap to check in.'));
+  t.status.dataset.base = s.todayMs || 0;
+  if (s.checkedIn) t.status.dataset.since = s.since; else delete t.status.dataset.since;
+  t.status.textContent = s.checkedIn || s.todayMs > 0 ? todayText(t.status) : 'Tap to check in';
+}
+
+function updateCount() {
+  const here = students.filter((s) => s.checkedIn).length;
+  $('count').textContent = students.length ? here + ' here now' : '';
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  e.className = cls;
+  e.textContent = text;
+  return e;
+}
+
+// ---- Check in / out -----------------------------------------------------
+
+function tap(id) {
+  const s = students.find((x) => x.id === id);
+  if (!s) return;
+  const now = Date.now();
+  if (now - (lastTap.get(id) || 0) < DOUBLE_TAP_MS) return;
+  lastTap.set(id, now);
+
+  if (s.checkedIn) {
+    s.todayMs = (s.todayMs || 0) + Math.max(0, now - new Date(s.since));
+    s.checkedIn = false;
+    s.since = null;
+  } else {
+    s.checkedIn = true;
+    s.since = new Date(now).toISOString();
+  }
+  updateTile(s);
+  updateCount();
+
+  queued.set(id, { id, checkedIn: s.checkedIn, at: new Date(now).toISOString() });
+  scheduleFlush(BATCH_DELAY_MS);
+}
+
+function scheduleFlush(delay) {
+  if (flushTimer) return; // a send is already scheduled; this tap will ride along
+  flushTimer = setTimeout(() => { flushTimer = null; flush(); }, delay);
+}
+
+async function flush() {
+  if (inFlight || !queued.size || !BigBoard.code) return;
+  inFlight = true;
+  const items = [...queued.values()];
+  queued.clear();
+  items.forEach((it) => sending.set(it.id, it));
+
+  let retry = false;
+  try {
+    const data = await api(null, { action: 'set', items });
+    if (data.ok) {
+      failures = 0;
+      setBanner('');
+      data.students.forEach((r) => {
+        if (queued.has(r.id)) return; // tapped again since; the newer tap wins
+        const s = students.find((x) => x.id === r.id);
+        if (!s) return;
+        if (r.error) {
+          showToast("Didn't save", s.name + ': ' + r.error + '. Tell a mentor.', 'error');
+          return;
+        }
+        Object.assign(s, r);
+        updateTile(s);
+      });
+      updateCount();
+    } else if (data.error === 'unauthorized') {
+      showLock('The passcode has changed. Enter the new one.');
+    } else {
+      retry = true;
+    }
+  } catch (err) {
+    retry = true;
+  } finally {
+    // Put unsaved items back in the queue unless the student has tapped again since.
+    if (retry) {
+      items.forEach((it) => { if (!queued.has(it.id)) queued.set(it.id, it); });
+      failures++;
+      const waiting = queued.size;
+      setBanner("Can't reach the server. " + waiting + (waiting === 1 ? ' tap is' : ' taps are') +
+        " waiting and will save automatically. Don't close this page.");
+    }
+    sending.clear();
+    inFlight = false;
+    lastSaveAt = Date.now();
+    if (queued.size) {
+      scheduleFlush(retry ? RETRY_MS[Math.min(failures - 1, RETRY_MS.length - 1)] : BATCH_DELAY_MS);
+    }
+  }
+}
+
+// Warn before closing the page with unsaved taps.
+window.addEventListener('beforeunload', (e) => {
+  if (queued.size || sending.size) { e.preventDefault(); e.returnValue = ''; }
+});
+
+function showToast(title, sub, kind) {
+  $('toastTitle').textContent = title;
+  $('toastSub').textContent = sub;
+  $('toast').className = 'toast ' + kind;
+  $('toast').hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, kind === 'error' ? TOAST_MS * 2 : TOAST_MS);
+}
+function hideToast() { $('toast').hidden = true; }
+$('toast').addEventListener('click', hideToast);
+
+// ---- Clock and formatting -----------------------------------------------
+
+function fmtTime(d) { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+function fmtDuration(ms) {
+  const mins = Math.max(0, Math.round(ms / 60000));
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return h ? h + ' h ' + m + ' min' : m + ' min';
+}
+// Today's total: finished sessions (data-base, from the server) plus the open
+// session, if any (data-since).
+function todayText(statusEl) {
+  let ms = Number(statusEl.dataset.base) || 0;
+  if (statusEl.dataset.since) ms += Date.now() - new Date(statusEl.dataset.since);
+  return 'Today: ' + fmtDuration(ms);
+}
+
+function tickClock() {
+  $('clock').textContent = fmtTime(new Date());
+  document.querySelectorAll('.status[data-since]').forEach((e) => { e.textContent = todayText(e); });
+}
+tickClock();
+setInterval(tickClock, 10 * 1000);
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+
+// ---- Start --------------------------------------------------------------
+
+if (BigBoard.code) start(); else showLock('');
+</script>
+</body>
+</html>

@@ -13,6 +13,7 @@ Welcome to the Argos Useful Links page! This page holds all the useful links for
 - **[Argos on The Blue Alliance](https://www.thebluealliance.com/team/1756)** - Our team page with match history and stats
 - **[2026 General Issue List ](https://github.com/orgs/FRC1756-Argos/projects/10)** - 2026 Pre season issues list
 - **[Scouting Dashboard](https://teamargos.org/scouting-dashboard)** - Live scouting data dashboard
+- **[Big Board](/big-board/)** - Meeting dashboard: who's here, reminders and deadlines (team passcode required)
 
 
 ## FRC & Robotics Resources

@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><!-- the site defaults to dark (docusaurus.config.js colorMode) -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- Argos big board admin: edit the board's announcements and deadlines. Served from static/tools/ and
+     embedded by src/pages/big-board/admin.js. Needs the ADMIN_PASSCODE (not the team passcode).
+     Data comes from the Apps Script web app in apps-script/big-board/ via big-board-common.js. -->
+<style>body { margin: 0; } [hidden] { display: none !important; }</style>
+<title>Big Board Admin</title>
+<script>
+  // Match teamargos.org's light/dark mode (same approach as the other tools in static/tools/).
+  (function () {
+    const embedded = window.parent !== window;
+    if (embedded) document.documentElement.classList.add("embedded");
+    function syncTheme() {
+      let t = null;
+      try { if (embedded) t = window.parent.document.documentElement.getAttribute("data-theme"); } catch (e) {}
+      if (!t) { try { t = localStorage.getItem("theme"); } catch (e) {} }
+      if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+    }
+    syncTheme();
+    try {
+      if (embedded) new MutationObserver(syncTheme).observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    } catch (e) {}
+  })();
+</script>
+<style>
+:root {
+  --bg: #ffffff; --panel: #f5f6f7; --field: #ffffff; --ink: #1c1e21; --muted: #606770; --line: #dadde1; --grid: #ebedf0;
+  --brand: #ffc800; --on-brand: #000000; --accent: #404040; --link: #404040; --warn: #d4282e;
+  --radius: 0.4rem;
+  --f-body: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1d; --panel: #242526; --field: #1b1b1d; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950; --grid: #303236;
+    --accent: #ffc800; --link: #ffc800; --warn: #fa383e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1d; --panel: #242526; --field: #1b1b1d; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950; --grid: #303236;
+  --accent: #ffc800; --link: #ffc800; --warn: #fa383e; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; font-size: 14px; font-weight: 600; line-height: 1.4; background: var(--panel);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 12px; }
+button:hover { border-color: var(--muted); }
+button:disabled { opacity: 0.6; cursor: wait; }
+button:focus-visible, input:focus-visible, .day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type="text"], input[type="password"], input[type="date"] { width: 100%; padding: 8px 10px; background: var(--field);
+  border: 1px solid var(--line); border-radius: var(--radius); }
+.primary { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+.danger { color: var(--warn); }
+.ghost { background: transparent; color: var(--muted); }
+/* Links in the header styled like the Lock button */
+a.ghost { display: inline-block; font-size: 14px; font-weight: 600; line-height: 1.4; padding: 6px 12px;
+  border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; }
+a.ghost:hover { border-color: var(--muted); }
+h1 { margin: 0; font-size: clamp(26px, 3.5vw, 36px); line-height: 1.2; }
+h2 { margin: 0 0 12px; font-size: 20px; }
+a { color: var(--link); }
+
+/* Passcode screen */
+.lock { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.lock-card { width: min(420px, 100%); display: grid; gap: 14px; padding: 28px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; }
+.lock-card p { margin: 0; color: var(--muted); }
+.lock-card input { font-size: 20px; }
+.lock-card .primary { font-size: 18px; padding: 10px; }
+.msg { color: var(--warn) !important; min-height: 1.5em; }
+
+/* Page */
+.app { max-width: 1400px; margin: 0 auto; padding: 24px 20px 48px; display: grid; gap: 20px; }
+@media (max-width: 520px) { .app { padding-inline: 16px; } }
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.bar .sub { margin: 4px 0 0; color: var(--muted); }
+.bar .actions { display: flex; gap: 8px; align-items: center; }
+.banner { padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--warn); color: var(--warn); font-weight: 600; }
+.cols { display: grid; grid-template-columns: minmax(280px, 1fr) 2.2fr; gap: 20px; align-items: start; }
+@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; min-width: 0; }
+.hint { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+
+/* Announcements */
+.ann-list { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+.ann { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; padding: 10px 12px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); }
+.ann .text { font-weight: 600; overflow-wrap: anywhere; }
+.ann .when { display: block; font-size: 13px; color: var(--muted); font-weight: 400; }
+.ann .btns { display: flex; gap: 6px; }
+.ann.editing { grid-template-columns: 1fr; }
+.ann.editing .btns { justify-content: flex-end; }
+.add-row { display: flex; gap: 8px; }
+.add-row input { flex: 1; }
+.empty { color: var(--muted); margin: 0 0 12px; }
+
+/* Calendar */
+.cal-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+.cal-head h2 { margin: 0; }
+.cal-nav { display: flex; gap: 6px; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.dow { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 0 6px 4px; }
+.day { min-height: 104px; padding: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  display: flex; flex-direction: column; gap: 4px; cursor: pointer; min-width: 0; }
+.day:hover { border-color: var(--muted); }
+.day.other { opacity: 0.45; }
+.day .num { font-size: 13px; font-weight: 700; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+.day.today .num span { background: var(--brand); color: var(--on-brand); border-radius: 99px; padding: 0 7px; }
+.day .plus { font-size: 18px; line-height: 1; color: var(--muted); opacity: 0; background: none; border: 0;
+  padding: 0 4px; border-radius: 4px; }
+.day .plus:hover { color: var(--ink); background: var(--grid); }
+.day:hover .plus, .day:focus-within .plus { opacity: 1; }
+@media (hover: none) { .day .plus { opacity: 1; } }
+.day.selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.day .count { margin-top: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+.chip { display: block; width: 100%; text-align: left; font-size: 12.5px; font-weight: 700; padding: 3px 6px;
+  background: var(--brand); color: var(--on-brand); border: 0; border-radius: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip:hover { filter: brightness(0.92); }
+@media (max-width: 600px) {
+  .day { min-height: 64px; padding: 4px; }
+  .chip { font-size: 11px; padding: 2px 4px; }
+  .dow { padding-inline: 2px; font-size: 11px; }
+}
+
+/* Selected day: deadlines and sessions */
+.right-col { display: grid; gap: 20px; min-width: 0; }
+.day-dls { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.day-dls .chip { width: auto; max-width: 100%; font-size: 13px; padding: 4px 10px; }
+.day-card .banner { margin-bottom: 12px; }
+.tbl-wrap { overflow-x: auto; }
+table.ses { width: 100%; border-collapse: collapse; font-size: 15px; }
+.ses th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  padding: 0 8px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.ses td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+.ses td.name { font-weight: 600; white-space: normal; }
+.ses td.acts { text-align: right; }
+.ses td.acts button + button { margin-left: 6px; }
+.ses tfoot td { border-bottom: 0; color: var(--muted); font-size: 14px; padding-top: 10px; }
+.ses input[type="time"] { width: 8.5rem; padding: 4px 6px; }
+.ses select { font: inherit; color: inherit; padding: 4px 6px; background: var(--field); border: 1px solid var(--line);
+  border-radius: var(--radius); max-width: 100%; }
+.ses tr.editing td { background: var(--grid); }
+.tag { display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; padding: 1px 6px; border-radius: 99px; border: 1px solid var(--warn); color: var(--warn); vertical-align: 1px; }
+.still { font-weight: 700; color: var(--on-brand); background: var(--brand); padding: 1px 8px; border-radius: 99px; font-size: 13px; }
+.next-day { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
+/* Deadline dialog */
+dialog { width: min(440px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--panel); color: var(--ink); }
+dialog::backdrop { background: rgba(0, 0, 0, 0.5); }
+.dlg { display: grid; gap: 12px; padding: 20px; }
+.dlg h2 { margin: 0; }
+.dlg .msg { margin: 0; min-height: 0; }
+.dlg .msg:empty { display: none; }
+.dlg label { display: grid; gap: 4px; font-size: 14px; font-weight: 600; }
+.dlg label small { font-weight: 400; color: var(--muted); }
+.dlg .row { display: flex; gap: 8px; justify-content: flex-end; align-items: center; }
+.dlg .row .danger { margin-right: auto; }
+</style>
+</head>
+<body>
+
+<div id="lock" class="lock" hidden>
+  <form id="lockForm" class="lock-card">
+    <h1>Big Board Admin</h1>
+    <p>Enter the admin passcode. This is not the team passcode students use.</p>
+    <input id="codeInput" type="password" autocomplete="off" aria-label="Admin passcode" required>
+    <button id="unlockBtn" class="primary" type="submit">Unlock</button>
+    <p id="lockMsg" class="msg" role="alert"></p>
+  </form>
+</div>
+
+<div id="app" class="app" hidden>
+  <header class="bar">
+    <div>
+      <h1>Big Board admin</h1>
+      <p class="sub">Changes show on the board within a minute.</p>
+    </div>
+    <div class="actions">
+      <a id="hoursLink" class="ghost" href="big-board-hours.html">Season hours</a>
+      <a id="boardLink" class="ghost" href="big-board.html">← Back to board</a>
+      <button id="lockBtn" class="ghost" type="button">Lock</button>
+    </div>
+  </header>
+  <div id="banner" class="banner" role="alert" hidden></div>
+
+  <div class="cols">
+    <section class="card">
+      <h2>Reminders</h2>
+      <p class="hint">Shown on the board's "Reminders" card, in this order.</p>
+      <ul id="annList" class="ann-list"></ul>
+      <form id="annAdd" class="add-row">
+        <input id="annText" type="text" maxlength="300" placeholder="New reminder" aria-label="New reminder" required>
+        <button class="primary" type="submit">Add</button>
+      </form>
+    </section>
+
+    <div class="right-col">
+      <section class="card">
+        <div class="cal-head">
+          <h2 id="calTitle"></h2>
+          <div class="cal-nav">
+            <button id="prevMonth" type="button" aria-label="Previous month">‹</button>
+            <button id="thisMonth" type="button">Today</button>
+            <button id="nextMonth" type="button" aria-label="Next month">›</button>
+          </div>
+        </div>
+        <p class="hint">Click a day to see its check-ins below. Use + on a day to add a deadline, and click a deadline to change it. The board shows the next 60 days of deadlines.</p>
+        <div id="cal" class="cal"></div>
+      </section>
+
+      <section class="card day-card">
+        <div class="cal-head">
+          <h2 id="dayTitle"></h2>
+          <div class="cal-nav">
+            <button id="dayAddDl" type="button">+ Deadline</button>
+            <button id="dayAddSes" class="primary" type="button">+ Session</button>
+          </div>
+        </div>
+        <div id="dayDls" class="day-dls"></div>
+        <div id="dayMsg" class="banner" role="alert" hidden></div>
+        <div class="tbl-wrap">
+          <table class="ses">
+            <thead><tr><th>Student</th><th>In</th><th>Out</th><th>Hours</th><th></th></tr></thead>
+            <tbody id="sesBody"></tbody>
+            <tfoot><tr><td id="sesTotal" colspan="5"></td></tr></tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <form id="dlgForm" class="dlg">
+    <h2 id="dlgTitle">Add deadline</h2>
+    <label>Title
+      <input id="fTitle" type="text" maxlength="120" required>
+    </label>
+    <label>Date
+      <input id="fDate" type="date" required>
+    </label>
+    <label>Category <small>optional, for example Mechanical or Event</small>
+      <input id="fCat" type="text" maxlength="40" list="cats">
+      <datalist id="cats"></datalist>
+    </label>
+    <p id="dlgMsg" class="msg" role="alert"></p>
+    <div class="row">
+      <button id="dlgDelete" class="danger" type="button">Delete</button>
+      <button id="dlgCancel" type="button">Cancel</button>
+      <button id="dlgSave" class="primary" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="big-board-common.js"></script>
+<script>
+// The admin passcode is kept separately from the team passcode.
+const ADMIN_KEY = 'argosBigBoard.adminCode';
+const $ = (id) => document.getElementById(id);
+
+let adminCode = '';
+try { adminCode = localStorage.getItem(ADMIN_KEY) || ''; } catch (e) {}
+function setAdminCode(v) {
+  adminCode = v || '';
+  try { adminCode ? localStorage.setItem(ADMIN_KEY, adminCode) : localStorage.removeItem(ADMIN_KEY); } catch (e) {}
+}
+
+// Inside the site page (/big-board/admin/), go back to the board's site page
+// rather than loading the board inside this frame.
+if (document.documentElement.classList.contains('embedded')) {
+  $('boardLink').href = '/big-board/';
+  $('boardLink').target = '_top';
+  $('hoursLink').href = '/big-board/hours/';
+  $('hoursLink').target = '_top';
+}
+
+let data = { announcements: [], deadlines: [] };
+let month = startOfMonth(new Date());
+let editingAnn = null;   // id of the announcement being edited inline
+let editingDl = null;    // deadline open in the dialog (null = adding)
+let selectedDay = dayKey(new Date());
+let dayData = null;      // { date, sessions, students } for selectedDay
+let editingSes = null;   // sheet row being edited, or 'new'
+const monthCounts = {};  // "yyyy-MM" -> { "yyyy-MM-dd": number of sessions }
+const countsLoading = new Set();
+
+// ---- Lock / unlock ------------------------------------------------------
+
+function showLock(message) {
+  setAdminCode('');
+  $('app').hidden = true;
+  $('lock').hidden = false;
+  $('lockMsg').textContent = message || '';
+  $('codeInput').value = '';
+  $('codeInput').focus();
+}
+
+$('lockForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('unlockBtn');
+  btn.disabled = true;
+  $('lockMsg').textContent = '';
+  const typed = $('codeInput').value.trim();
+  try {
+    const res = await BigBoard.api({ view: 'admin' }, null, typed);
+    if (res.ok) {
+      setAdminCode(typed);
+      show(res);
+    } else {
+      $('lockMsg').textContent = BigBoard.unlockError(res);
+    }
+  } catch (err) {
+    $('lockMsg').textContent = BigBoard.unlockError(err);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('lockBtn').addEventListener('click', () => showLock(''));
+
+function show(res) {
+  $('lock').hidden = true;
+  $('app').hidden = false;
+  setData(res);
+  loadDay(selectedDay);
+}
+
+// ---- Server -------------------------------------------------------------
+
+async function load() {
+  try {
+    const res = await BigBoard.api({ view: 'admin' }, null, adminCode);
+    if (res.ok) show(res);
+    else if (res.error === 'unauthorized') showLock('The admin passcode has changed. Enter the new one.');
+    else showLock('Server error: ' + res.error);
+  } catch (err) {
+    showLock(BigBoard.unlockError(err));
+  }
+}
+
+/** Calls the server with the admin passcode. Resolves to { res } or { err: message }. */
+async function adminApi(params, body) {
+  try {
+    const res = await BigBoard.api(params, body, adminCode);
+    if (res.ok) return { res };
+    if (res.error === 'unauthorized') {
+      showLock('The admin passcode has changed. Enter the new one.');
+      return { err: 'Locked.' };
+    }
+    return { err: res.error };
+  } catch (err) {
+    return { err: "Can't reach the server. Check the Wi-Fi and try again." };
+  }
+}
+
+/** Sends a reminder or deadline change. Resolves to an error message, or '' on success. */
+async function send(body) {
+  setBanner('');
+  const { res, err } = await adminApi(null, body);
+  if (res) setData(res);
+  return err || '';
+}
+
+function setData(res) {
+  data = { announcements: res.announcements || [], deadlines: res.deadlines || [] };
+  renderAnnouncements();
+  renderCalendar();
+  renderDay();
+}
+
+function setBanner(text) {
+  $('banner').textContent = text;
+  $('banner').hidden = !text;
+}
+
+/** Disables a button while fn runs. */
+async function busy(btn, fn) {
+  btn.disabled = true;
+  try { return await fn(); } finally { btn.disabled = false; }
+}
+
+// ---- Announcements ------------------------------------------------------
+
+function renderAnnouncements() {
+  const ul = $('annList');
+  ul.replaceChildren();
+  if (!data.announcements.length) {
+    ul.append(el('p', 'empty', 'No reminders yet.'));
+  }
+  data.announcements.forEach((a) => {
+    const li = el('li', 'ann');
+    if (editingAnn === a.id) {
+      li.classList.add('editing');
+      const input = el('input');
+      input.type = 'text';
+      input.maxLength = 300;
+      input.value = a.text;
+      input.setAttribute('aria-label', 'Reminder text');
+      const save = el('button', 'primary', 'Save');
+      const cancel = el('button', '', 'Cancel');
+      const doSave = () => busy(save, async () => {
+        const err = await send({ action: 'announcement.update', id: a.id, text: input.value });
+        if (err) setBanner(err); else { editingAnn = null; renderAnnouncements(); }
+      });
+      save.addEventListener('click', doSave);
+      cancel.addEventListener('click', () => { editingAnn = null; renderAnnouncements(); });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') doSave();
+        if (e.key === 'Escape') cancel.click();
+      });
+      const btns = el('div', 'btns');
+      btns.append(cancel, save);
+      li.append(input, btns);
+      ul.append(li);
+      setTimeout(() => input.focus());
+      return;
+    }
+    const text = el('div', 'text', a.text);
+    const when = scheduleText(a);
+    if (when) text.append(el('span', 'when', when));
+    const edit = el('button', '', 'Edit');
+    const del = el('button', 'danger', 'Delete');
+    edit.addEventListener('click', () => { editingAnn = a.id; renderAnnouncements(); });
+    del.addEventListener('click', () => {
+      if (!confirm('Delete this reminder?\n\n' + a.text)) return;
+      busy(del, async () => { const err = await send({ action: 'announcement.delete', id: a.id }); if (err) setBanner(err); });
+    });
+    const btns = el('div', 'btns');
+    btns.append(edit, del);
+    li.append(text, btns);
+    ul.append(li);
+  });
+}
+
+/** Only for rows that have Show From / Show Until dates set in the Sheet. */
+function scheduleText(a) {
+  const f = a.showFrom && fmtDay(a.showFrom), u = a.showUntil && fmtDay(a.showUntil);
+  if (f && u) return 'Shows ' + f + ' – ' + u;
+  if (f) return 'Shows from ' + f;
+  if (u) return 'Shows until ' + u;
+  return '';
+}
+
+$('annAdd').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const btn = e.submitter || $('annAdd').querySelector('button');
+  busy(btn, async () => {
+    const err = await send({ action: 'announcement.add', text: $('annText').value });
+    if (err) setBanner(err); else $('annText').value = '';
+  });
+});
+
+// ---- Calendar -----------------------------------------------------------
+
+function renderCalendar() {
+  $('calTitle').textContent = month.toLocaleDateString([], { month: 'long', year: 'numeric' });
+  const byDate = {};
+  data.deadlines.forEach((d) => { if (d.date) (byDate[d.date] ||= []).push(d); });
+  const todayKey = dayKey(new Date());
+
+  const cal = $('cal');
+  cal.replaceChildren();
+  ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach((d) => cal.append(el('div', 'dow', d)));
+
+  const first = new Date(month);
+  const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+  const weeks = Math.ceil((first.getDay() + daysInMonth) / 7);
+  const cursor = new Date(first);
+  cursor.setDate(1 - first.getDay());
+
+  for (let i = 0; i < weeks * 7; i++) {
+    const key = dayKey(cursor);
+    const label = cursor.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+    const cell = el('div', 'day');
+    if (cursor.getMonth() !== month.getMonth()) cell.classList.add('other');
+    if (key === todayKey) cell.classList.add('today');
+    if (key === selectedDay) cell.classList.add('selected');
+    cell.tabIndex = 0;
+    cell.setAttribute('role', 'button');
+    cell.setAttribute('aria-label', 'Show check-ins for ' + label);
+
+    const num = el('div', 'num');
+    const plus = el('button', 'plus', '+');
+    plus.type = 'button';
+    plus.title = 'Add deadline';
+    plus.setAttribute('aria-label', 'Add deadline on ' + label);
+    plus.addEventListener('click', (e) => { e.stopPropagation(); openDialog(null, key); });
+    num.append(el('span', '', String(cursor.getDate())), plus);
+    cell.append(num);
+
+    (byDate[key] || []).sort((a, b) => a.title.localeCompare(b.title)).forEach((d) => {
+      const chip = el('button', 'chip', d.title);
+      chip.type = 'button';
+      chip.title = d.title + (d.category ? ' · ' + d.category : '');
+      chip.addEventListener('click', (e) => { e.stopPropagation(); openDialog(d); });
+      cell.append(chip);
+    });
+
+    const n = (monthCounts[key.slice(0, 7)] || {})[key];
+    if (n) cell.append(el('div', 'count', n + (n === 1 ? ' check-in' : ' check-ins')));
+
+    cell.addEventListener('click', () => loadDay(key));
+    cell.addEventListener('keydown', (e) => {
+      if (e.target === cell && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); loadDay(key); }
+    });
+    cal.append(cell);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  loadMonthCounts(monthKey(month));
+}
+
+/** Fetches how many check-ins each day of a month had (once per month). */
+async function loadMonthCounts(key, force) {
+  if ((!force && monthCounts[key]) || countsLoading.has(key)) return;
+  countsLoading.add(key);
+  const { res } = await adminApi({ view: 'sessionDays', month: key });
+  countsLoading.delete(key);
+  if (res) { monthCounts[key] = res.days; renderCalendar(); }
+}
+
+$('prevMonth').addEventListener('click', () => { month.setMonth(month.getMonth() - 1); renderCalendar(); });
+$('nextMonth').addEventListener('click', () => { month.setMonth(month.getMonth() + 1); renderCalendar(); });
+$('thisMonth').addEventListener('click', () => { month = startOfMonth(new Date()); renderCalendar(); });
+
+// ---- Selected day: deadlines and sessions -------------------------------
+
+async function loadDay(day) {
+  selectedDay = day;
+  dayData = null;
+  editingSes = null;
+  setDayMsg('');
+  renderCalendar();
+  renderDay();
+  const { res, err } = await adminApi({ view: 'sessions', date: day });
+  if (selectedDay !== day) return; // another day was picked meanwhile
+  if (err) { setDayMsg(err); return; }
+  dayData = res;
+  renderDay();
+}
+
+function setDayMsg(text) {
+  $('dayMsg').textContent = text;
+  $('dayMsg').hidden = !text;
+}
+
+function renderDay() {
+  if ($('app').hidden) return;
+  $('dayTitle').textContent = fromDayKey(selectedDay)
+    .toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  $('dayAddSes').disabled = selectedDay > dayKey(new Date()) || !dayData || editingSes !== null;
+
+  const dls = $('dayDls');
+  dls.replaceChildren();
+  data.deadlines.filter((d) => d.date === selectedDay).forEach((d) => {
+    const chip = el('button', 'chip', d.title + (d.category ? ' · ' + d.category : ''));
+    chip.type = 'button';
+    chip.addEventListener('click', () => openDialog(d));
+    dls.append(chip);
+  });
+  dls.hidden = !dls.children.length;
+
+  const body = $('sesBody');
+  body.replaceChildren();
+  $('sesTotal').textContent = '';
+  if (!dayData) {
+    body.append(messageRow('Loading…'));
+    return;
+  }
+  if (editingSes === 'new') body.append(editRow(null));
+  dayData.sessions.forEach((s) => body.append(editingSes === s.row ? editRow(s) : viewRow(s)));
+  if (!dayData.sessions.length && editingSes !== 'new') body.append(messageRow('No check-ins this day.'));
+
+  const closed = dayData.sessions.filter((s) => s.out);
+  const open = dayData.sessions.length - closed.length;
+  const hours = closed.reduce((sum, s) => sum + s.hours, 0);
+  if (dayData.sessions.length) {
+    $('sesTotal').textContent = dayData.sessions.length + (dayData.sessions.length === 1 ? ' session' : ' sessions') +
+      ' · ' + (Math.round(hours * 100) / 100) + ' h total' + (open ? ' · ' + open + ' still here' : '');
+  }
+}
+
+function messageRow(text) {
+  const tr = el('tr');
+  const td = el('td', 'empty', text);
+  td.colSpan = 5;
+  tr.append(td);
+  return tr;
+}
+
+function viewRow(s) {
+  const tr = el('tr');
+  const name = el('td', 'name', s.id);
+  if (s.autoClosed) {
+    const tag = el('span', 'tag', 'auto');
+    tag.title = 'Checked out automatically at midnight. Fix the time if you know it.';
+    name.append(tag);
+  }
+  const out = el('td');
+  if (s.out) {
+    out.textContent = fmtTime(new Date(s.out));
+    if (dayKey(new Date(s.out)) !== selectedDay) out.append(el('span', 'next-day', '(next day)'));
+  } else {
+    out.append(el('span', 'still', 'Still here'));
+  }
+  const acts = el('td', 'acts');
+  const edit = el('button', '', 'Edit');
+  const del = el('button', 'danger', 'Delete');
+  edit.type = del.type = 'button';
+  edit.disabled = del.disabled = editingSes !== null;
+  edit.addEventListener('click', () => { editingSes = s.row; setDayMsg(''); renderDay(); });
+  del.addEventListener('click', () => {
+    if (!confirm('Delete this session for ' + s.id + '?\n\n' + fmtTime(new Date(s.in)) + ' – ' +
+      (s.out ? fmtTime(new Date(s.out)) : 'still here'))) return;
+    busy(del, () => sendSession({ action: 'session.delete', row: s.row, id: s.id, origIn: s.in }));
+  });
+  acts.append(edit, del);
+  tr.append(name, el('td', '', fmtTime(new Date(s.in))), out, el('td', '', s.out ? fmtHours(s.hours) : '—'), acts);
+  return tr;
+}
+
+/** Inline editor. s = null adds a new session on the selected day. */
+function editRow(s) {
+  const tr = el('tr', 'editing');
+  const nameTd = el('td', 'name');
+  let pick = null;
+  if (s) {
+    nameTd.textContent = s.id;
+  } else {
+    pick = el('select');
+    pick.setAttribute('aria-label', 'Student');
+    pick.append(new Option('Pick a student…', ''));
+    dayData.students.forEach((st) => pick.append(new Option(st.id, st.id)));
+    nameTd.append(pick);
+  }
+  const inInput = timeInput('Check-in time', s ? toTimeValue(s.in) : '');
+  const outInput = timeInput('Check-out time (blank = still here)', s && s.out ? toTimeValue(s.out) : '');
+  const acts = el('td', 'acts');
+  const save = el('button', 'primary', 'Save');
+  const cancel = el('button', '', 'Cancel');
+  save.type = cancel.type = 'button';
+  cancel.addEventListener('click', () => { editingSes = null; setDayMsg(''); renderDay(); });
+  save.addEventListener('click', () => {
+    if (!inInput.value) { setDayMsg('Enter a check-in time.'); return; }
+    const body = {
+      in: timeToIso(selectedDay, inInput.value),
+      out: outInput.value ? timeToIso(selectedDay, outInput.value, true) : '',
+    };
+    if (s) Object.assign(body, { action: 'session.update', row: s.row, id: s.id, origIn: s.in });
+    else {
+      if (!pick.value) { setDayMsg('Pick a student.'); return; }
+      Object.assign(body, { action: 'session.add', id: pick.value });
+    }
+    busy(save, () => sendSession(body));
+  });
+  [inInput, outInput].forEach((i) => i.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') save.click();
+    if (e.key === 'Escape') cancel.click();
+  }));
+  acts.append(cancel, save);
+  const inTd = el('td'); inTd.append(inInput);
+  const outTd = el('td'); outTd.append(outInput);
+  tr.append(nameTd, inTd, outTd, el('td', '', '—'), acts);
+  setTimeout(() => (pick || inInput).focus());
+  return tr;
+}
+
+function timeInput(label, value) {
+  const i = el('input');
+  i.type = 'time';
+  i.value = value;
+  i.setAttribute('aria-label', label);
+  i.title = label;
+  return i;
+}
+
+/** Sends a session change; the reply is the selected day's new session list. */
+async function sendSession(body) {
+  setDayMsg('');
+  const { res, err } = await adminApi(null, { ...body, day: selectedDay });
+  if (err) { setDayMsg(err); return; }
+  dayData = res;
+  editingSes = null;
+  renderDay();
+  loadMonthCounts(selectedDay.slice(0, 7), true);
+}
+
+$('dayAddSes').addEventListener('click', () => { editingSes = 'new'; setDayMsg(''); renderDay(); });
+$('dayAddDl').addEventListener('click', () => openDialog(null, selectedDay));
+
+// ---- Deadline dialog ----------------------------------------------------
+
+function openDialog(deadline, dateKey) {
+  editingDl = deadline;
+  $('dlgTitle').textContent = deadline ? 'Edit deadline' : 'Add deadline';
+  $('fTitle').value = deadline ? deadline.title : '';
+  $('fDate').value = deadline ? deadline.date : dateKey;
+  $('fCat').value = deadline ? deadline.category : '';
+  $('dlgDelete').hidden = !deadline;
+  $('dlgMsg').textContent = '';
+  const cats = [...new Set(data.deadlines.map((d) => d.category).filter(Boolean))].sort();
+  $('cats').replaceChildren(...cats.map((c) => { const o = document.createElement('option'); o.value = c; return o; }));
+  $('dlg').showModal();
+  $('fTitle').focus();
+}
+
+$('dlgCancel').addEventListener('click', () => $('dlg').close());
+
+$('dlgForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  busy($('dlgSave'), async () => {
+    const fields = { title: $('fTitle').value, date: $('fDate').value, category: $('fCat').value };
+    const err = editingDl
+      ? await send({ action: 'deadline.update', id: editingDl.id, ...fields })
+      : await send({ action: 'deadline.add', ...fields });
+    if (err) { $('dlgMsg').textContent = err; return; }
+    $('dlg').close();
+    // Jump to the deadline's month if it was moved or added off-screen.
+    const [y, m] = fields.date.split('-').map(Number);
+    if (y !== month.getFullYear() || m - 1 !== month.getMonth()) { month = new Date(y, m - 1, 1); renderCalendar(); }
+  });
+});
+
+$('dlgDelete').addEventListener('click', () => {
+  if (!editingDl || !confirm('Delete "' + editingDl.title + '"?')) return;
+  busy($('dlgDelete'), async () => {
+    const err = await send({ action: 'deadline.delete', id: editingDl.id });
+    if (err) $('dlgMsg').textContent = err; else $('dlg').close();
+  });
+});
+
+// ---- Helpers ------------------------------------------------------------
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function startOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function monthKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+function fromDayKey(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+function fmtTime(d) { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+function fmtHours(h) {
+  const mins = Math.round(h * 60);
+  return Math.floor(mins / 60) + ' h ' + String(mins % 60).padStart(2, '0') + ' m';
+}
+/** ISO time -> "HH:MM" for a time input, in local time. */
+function toTimeValue(iso) {
+  const d = new Date(iso);
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+/**
+ * "HH:MM" on a day -> ISO time. For a check-out, 00:00 means midnight at the
+ * end of the day (how automatic checkout records it).
+ */
+function timeToIso(day, hhmm, isOut) {
+  const [h, m] = hhmm.split(':').map(Number);
+  const d = fromDayKey(day);
+  d.setHours(h, m, 0, 0);
+  if (isOut && h === 0 && m === 0) d.setDate(d.getDate() + 1);
+  return d.toISOString();
+}
+function dayKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function fmtDay(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
+// ---- Start --------------------------------------------------------------
+
+if (adminCode) load(); else showLock('');
+</script>
+</body>
+</html>
