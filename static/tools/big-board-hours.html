@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><!-- the site defaults to dark (docusaurus.config.js colorMode) -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- Argos big board: season hours (admin). Served from static/tools/ and embedded by
+     src/pages/big-board/hours.js. Needs the ADMIN_PASSCODE. Hours come from check-ins
+     (the Sessions tab) via the Apps Script web app in apps-script/big-board/. -->
+<style>body { margin: 0; } [hidden] { display: none !important; }</style>
+<title>Big Board Hours</title>
+<script>
+  // Match teamargos.org's light/dark mode (same approach as the other tools in static/tools/).
+  (function () {
+    const embedded = window.parent !== window;
+    if (embedded) document.documentElement.classList.add("embedded");
+    function syncTheme() {
+      let t = null;
+      try { if (embedded) t = window.parent.document.documentElement.getAttribute("data-theme"); } catch (e) {}
+      if (!t) { try { t = localStorage.getItem("theme"); } catch (e) {} }
+      if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+    }
+    syncTheme();
+    try {
+      if (embedded) new MutationObserver(syncTheme).observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    } catch (e) {}
+  })();
+</script>
+<style>
+:root {
+  --bg: #ffffff; --panel: #f5f6f7; --field: #ffffff; --ink: #1c1e21; --muted: #606770; --line: #dadde1; --grid: #ebedf0;
+  --brand: #ffc800; --on-brand: #000000; --accent: #404040; --link: #404040; --warn: #c4262c;
+  --bar: #b07a00;          /* chart bars: darker gold so they read on white */
+  --met-bg: #fff1b8; --met-ink: #5c4300;
+  --radius: 0.4rem;
+  --f-body: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1d; --panel: #242526; --field: #1b1b1d; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950; --grid: #303236;
+    --accent: #ffc800; --link: #ffc800; --warn: #ff6b6b; --bar: #ffc800; --met-bg: #4a3c08; --met-ink: #ffe27a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1d; --panel: #242526; --field: #1b1b1d; --ink: #e3e3e3; --muted: #a8adb4; --line: #444950; --grid: #303236;
+  --accent: #ffc800; --link: #ffc800; --warn: #ff6b6b; --bar: #ffc800; --met-bg: #4a3c08; --met-ink: #ffe27a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; font-size: 14px; font-weight: 600; line-height: 1.4; background: var(--panel);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 12px; }
+button:hover { border-color: var(--muted); }
+button:disabled { opacity: 0.6; cursor: wait; }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input, select { padding: 6px 8px; background: var(--field); border: 1px solid var(--line); border-radius: var(--radius); }
+.primary { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+.ghost { background: transparent; color: var(--muted); }
+/* Links in the header styled like the Lock button */
+a.ghost { display: inline-block; font-size: 14px; font-weight: 600; line-height: 1.4; padding: 6px 12px;
+  border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; }
+a.ghost:hover { border-color: var(--muted); }
+h1 { margin: 0; font-size: clamp(26px, 3.5vw, 36px); line-height: 1.2; }
+h2 { margin: 0; font-size: 20px; }
+a { color: var(--link); }
+
+/* Passcode screen */
+.lock { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.lock-card { width: min(420px, 100%); display: grid; gap: 14px; padding: 28px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; }
+.lock-card p { margin: 0; color: var(--muted); }
+.lock-card input { font-size: 20px; padding: 10px 14px; }
+.lock-card .primary { font-size: 18px; padding: 10px; }
+.msg { color: var(--warn) !important; min-height: 1.5em; }
+
+/* Page */
+.app { max-width: 1600px; margin: 0 auto; padding: 24px 20px 48px; display: grid; gap: 16px; }
+@media (max-width: 520px) { .app { padding-inline: 16px; } }
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.bar .sub { margin: 4px 0 0; color: var(--muted); }
+.bar .actions { display: flex; gap: 10px; align-items: center; }
+.banner { padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--warn); color: var(--warn); font-weight: 600; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; min-width: 0; }
+
+.settings { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 16px; }
+.settings label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.settings input[type="number"] { width: 6rem; }
+.settings .note { margin: 0; color: var(--muted); font-size: 14px; flex: 1 1 260px; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 12px; }
+.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.tabs button { border: 0; border-radius: 0; padding: 6px 16px; background: var(--bg); }
+.tabs button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.toolbar label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); font-weight: 600; }
+.key { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-left: auto; font-size: 13px; color: var(--muted); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { display: inline-block; min-width: 2.2em; text-align: center; padding: 0 6px; border-radius: 4px; font-weight: 700; font-size: 12px; }
+
+/* Tables */
+.tbl-wrap { overflow: auto; max-height: calc(100vh - 220px); border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+table.hours { border-collapse: separate; border-spacing: 0; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 100%; }
+.hours th, .hours td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.hours thead th { position: sticky; top: 0; z-index: 2; background: var(--panel); font-size: 12px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.04em; vertical-align: bottom; }
+.hours thead tr.weeks th { text-transform: none; letter-spacing: 0; font-size: 12.5px; color: var(--ink);
+  border-left: 1px solid var(--line); text-align: center; }
+.hours thead tr.goals th { font-size: 12px; text-transform: none; letter-spacing: 0; padding-top: 4px; padding-bottom: 6px; }
+.hours thead tr.goals input { width: 4.2rem; padding: 2px 4px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; }
+.hours thead tr.goals input.custom { border-color: var(--accent); font-weight: 700; }
+.hours thead tr.goals input:disabled { opacity: 0.5; }
+.hours th small { display: block; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.hours th.name, .hours td.name { position: sticky; left: 0; z-index: 1; text-align: left; background: var(--bg); border-right: 1px solid var(--line); }
+.hours thead th.name { z-index: 3; background: var(--panel); }
+.hours td.name button { all: unset; cursor: pointer; font-weight: 600; color: var(--ink); text-decoration: underline;
+  text-decoration-color: var(--line); text-underline-offset: 3px; }
+.hours td.name button:hover { text-decoration-color: currentColor; }
+.hours td.name button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hours td.name small { color: var(--muted); margin-left: 6px; font-weight: 400; }
+.hours .wk-start { border-left: 1px solid var(--line); }
+.hours td.total, .hours th.total { font-weight: 700; border-left: 1px solid var(--line); }
+.hours tbody tr:hover td { background: var(--panel); }
+.hours td.zero { color: var(--muted); }
+.met { background: var(--met-bg) !important; color: var(--met-ink); font-weight: 700; }
+.under { color: var(--warn); font-weight: 600; }
+.partial { color: var(--muted); font-style: italic; }
+.auto-mark { color: var(--warn); font-weight: 700; margin-left: 2px; cursor: help; }
+.empty { color: var(--muted); padding: 24px; text-align: center; }
+
+/* Season summary */
+.season-top { display: grid; gap: 14px; margin-bottom: 14px; }
+.hours td.pct { font-weight: 700; }
+
+/* Student dialog */
+dialog { width: min(980px, calc(100vw - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--panel); color: var(--ink); }
+dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+.dlg { padding: 20px 22px 22px; display: grid; gap: 14px; position: relative; }
+.dlg-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.dlg-head p { margin: 4px 0 0; color: var(--muted); }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; }
+.stat { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; min-width: 120px; }
+.stat b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.chart-title { margin: 6px 0 2px; font-size: 14px; font-weight: 700; }
+.chart-sub { margin: 0 0 6px; font-size: 13px; color: var(--muted); }
+.chart { position: relative; overflow-x: auto; }
+.chart svg { display: block; }
+.chart text { font-family: var(--f-body); }
+.tip { position: fixed; z-index: 20; pointer-events: none; background: var(--bg); color: var(--ink); border: 1px solid var(--line);
+  border-radius: 6px; padding: 6px 10px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.25); white-space: nowrap; }
+.tip b { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div id="lock" class="lock" hidden>
+  <form id="lockForm" class="lock-card">
+    <h1>Season Hours</h1>
+    <p>Enter the admin passcode. This is not the team passcode students use.</p>
+    <input id="codeInput" type="password" autocomplete="off" aria-label="Admin passcode" required>
+    <button id="unlockBtn" class="primary" type="submit">Unlock</button>
+    <p id="lockMsg" class="msg" role="alert"></p>
+  </form>
+</div>
+
+<div id="app" class="app" hidden>
+  <header class="bar">
+    <div>
+      <h1>Season hours</h1>
+      <p id="subtitle" class="sub"></p>
+    </div>
+    <div class="actions">
+      <a id="adminLink" class="ghost" href="big-board-admin.html">← Admin</a>
+      <button id="lockBtn" class="ghost" type="button">Lock</button>
+    </div>
+  </header>
+  <div id="banner" class="banner" role="alert" hidden></div>
+
+  <form id="settings" class="card settings">
+    <label>Season start (week 1, day 1)
+      <input id="fStart" type="date" required>
+    </label>
+    <label>Weekly goal (hours)
+      <input id="fGoal" type="number" min="0.5" max="80" step="0.5" required>
+    </label>
+    <button id="saveSettings" class="primary" type="submit">Save</button>
+    <p class="note">Weeks are 7 days starting on the season start date. A meeting day is any day with at least one check-in. To change one week's goal (for example, a meeting canceled for weather), use the Goal row in the weekly summary.</p>
+  </form>
+
+  <section class="card">
+    <div class="toolbar">
+      <div class="tabs" role="group" aria-label="View">
+        <button id="tabWeeks" type="button" aria-pressed="true">Weekly summary</button>
+        <button id="tabDays" type="button" aria-pressed="false">By meeting day</button>
+        <button id="tabSeason" type="button" aria-pressed="false">Season summary</button>
+      </div>
+      <label id="weekPickWrap" hidden>Week
+        <select id="weekPick"></select>
+      </label>
+      <label>Sort
+        <select id="sortPick">
+          <option value="name">Name</option>
+          <option value="low">Total, lowest first</option>
+          <option value="high">Total, highest first</option>
+        </select>
+      </label>
+      <button id="csvBtn" type="button" title="Every student's hours on every meeting day this season">Download CSV</button>
+      <div class="key" id="key"></div>
+    </div>
+    <div id="seasonTop" class="season-top" hidden>
+      <div class="stats" id="seasonStats"></div>
+      <div>
+        <p class="chart-title">Students checked in per meeting day</p>
+        <p class="chart-sub">Every day the team met this season.</p>
+        <div class="chart" id="attChart"></div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table id="table" class="hours"></table>
+    </div>
+  </section>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <div class="dlg-head">
+      <div>
+        <h2 id="dName"></h2>
+        <p id="dSub"></p>
+      </div>
+      <button id="dClose" type="button">Close</button>
+    </div>
+    <div class="stats" id="dStats"></div>
+    <div>
+      <p class="chart-title">Hours per week</p>
+      <p class="chart-sub" id="wkSub"></p>
+      <div class="chart" id="wkChart"></div>
+    </div>
+    <div>
+      <p class="chart-title">Hours per meeting day</p>
+      <p class="chart-sub">Every day the team met this season. A bar's height is the hours checked in that day.</p>
+      <div class="chart" id="dayChart"></div>
+    </div>
+  </div>
+</dialog>
+<div id="tip" class="tip" hidden></div>
+
+<script src="big-board-common.js"></script>
+<script>
+const ADMIN_KEY = 'argosBigBoard.adminCode'; // same saved code as the admin page
+const $ = (id) => document.getElementById(id);
+
+let adminCode = '';
+try { adminCode = localStorage.getItem(ADMIN_KEY) || ''; } catch (e) {}
+function setAdminCode(v) {
+  adminCode = v || '';
+  try { adminCode ? localStorage.setItem(ADMIN_KEY, adminCode) : localStorage.removeItem(ADMIN_KEY); } catch (e) {}
+}
+
+if (document.documentElement.classList.contains('embedded')) {
+  $('adminLink').href = '/big-board/admin/';
+  $('adminLink').target = '_top';
+}
+
+let data = null;       // server response for view=hours
+let view = 'weeks';    // 'weeks' | 'days'
+let weekFilter = null; // week number for the day view, or 0 for all weeks
+let sortBy = 'name';
+
+// ---- Lock / unlock ------------------------------------------------------
+
+function showLock(message) {
+  setAdminCode('');
+  $('app').hidden = true;
+  $('lock').hidden = false;
+  $('lockMsg').textContent = message || '';
+  $('codeInput').value = '';
+  $('codeInput').focus();
+}
+
+$('lockForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('unlockBtn');
+  btn.disabled = true;
+  $('lockMsg').textContent = '';
+  const typed = $('codeInput').value.trim();
+  try {
+    const res = await BigBoard.api({ view: 'hours' }, null, typed);
+    if (res.ok) { setAdminCode(typed); show(res); }
+    else $('lockMsg').textContent = BigBoard.unlockError(res);
+  } catch (err) {
+    $('lockMsg').textContent = BigBoard.unlockError(err);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('lockBtn').addEventListener('click', () => showLock(''));
+
+async function load() {
+  try {
+    const res = await BigBoard.api({ view: 'hours' }, null, adminCode);
+    if (res.ok) show(res);
+    else if (res.error === 'unauthorized') showLock('The admin passcode has changed. Enter the new one.');
+    else showLock('Server error: ' + res.error);
+  } catch (err) {
+    showLock(BigBoard.unlockError(err));
+  }
+}
+
+function show(res) {
+  $('lock').hidden = true;
+  $('app').hidden = false;
+  data = res;
+  $('fStart').value = data.settings.seasonStart;
+  $('fGoal').value = data.settings.weeklyGoal;
+  weekFilter = null;
+  render();
+}
+
+function setBanner(text) {
+  $('banner').textContent = text;
+  $('banner').hidden = !text;
+}
+
+$('settings').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('saveSettings');
+  btn.disabled = true;
+  setBanner('');
+  try {
+    const res = await BigBoard.api(null, { action: 'settings.update', seasonStart: $('fStart').value,
+      weeklyGoal: Number($('fGoal').value) }, adminCode);
+    if (res.ok) show(res);
+    else if (res.error === 'unauthorized') showLock('The admin passcode has changed. Enter the new one.');
+    else setBanner(res.error);
+  } catch (err) {
+    setBanner("Can't reach the server. Check the Wi-Fi and try again.");
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ---- Season math --------------------------------------------------------
+// Weeks are 7-day blocks starting on the season start date.
+
+function season() {
+  const start = data.settings.seasonStart;
+  const goal = data.settings.weeklyGoal;
+  const current = start && data.today >= start ? weekOf(data.today) : 0;
+  const weeks = [];
+  for (let w = 1; w <= current; w++) weeks.push(w);
+  return { start, goal, current, weeks };
+}
+/** A week's goal: its own override if one is set, otherwise the default. */
+function goalFor(w) {
+  const o = (data.settings.weekGoals || {})[w];
+  return o === undefined ? data.settings.weeklyGoal : Number(o);
+}
+function isCustomGoal(w) { return (data.settings.weekGoals || {})[w] !== undefined; }
+function metGoal(h, w) { return h >= goalFor(w) - 1e-9; }
+/** Average goal over finished weeks, to compare against a student's average. */
+function avgGoal(sea) {
+  const done = sea.current - 1;
+  if (done < 1) return sea.goal;
+  let sum = 0;
+  for (let w = 1; w <= done; w++) sum += goalFor(w);
+  return sum / done;
+}
+function weekOf(day) { return Math.floor(daysBetween(data.settings.seasonStart, day) / 7) + 1; }
+function weekStart(w) { return addDays(data.settings.seasonStart, (w - 1) * 7); }
+function weekHours(s, w) {
+  let sum = 0;
+  for (const [d, h] of Object.entries(s.days)) if (weekOf(d) === w) sum += h;
+  return sum;
+}
+function totalHours(s) { return Object.values(s.days).reduce((a, b) => a + b, 0); }
+/** Average over finished weeks (the current week is still in progress). */
+function avgWeek(s, sea) {
+  const done = sea.current - 1;
+  if (done < 1) return null;
+  let sum = 0;
+  for (let w = 1; w <= done; w++) sum += weekHours(s, w);
+  return sum / done;
+}
+function weeksMet(s, sea) {
+  let n = 0;
+  for (let w = 1; w < sea.current; w++) if (metGoal(weekHours(s, w), w)) n++;
+  return n;
+}
+
+// ---- Rendering ----------------------------------------------------------
+
+function render() {
+  const sea = season();
+  $('subtitle').textContent = !sea.start
+    ? 'Set the season start date to see weekly hours.'
+    : sea.current === 0
+      ? 'The season starts ' + fmtDay(sea.start, true) + '.'
+      : 'Week ' + sea.current + ' of the season · goal ' + fmtH(sea.goal) + ' per week' +
+        (sea.weeks.some(isCustomGoal) ? ' (some weeks adjusted)' : '') + ' · ' +
+        data.meetingDays.length + ' meeting day' + (data.meetingDays.length === 1 ? '' : 's') + ' so far';
+
+  $('tabWeeks').setAttribute('aria-pressed', String(view === 'weeks'));
+  $('tabDays').setAttribute('aria-pressed', String(view === 'days'));
+  $('tabSeason').setAttribute('aria-pressed', String(view === 'season'));
+  $('seasonTop').hidden = view !== 'season' || !sea.current;
+  $('csvBtn').disabled = !sea.current || !data.meetingDays.length;
+  $('weekPickWrap').hidden = view !== 'days' || !sea.current;
+  if (weekFilter === null) weekFilter = sea.current;
+  const pick = $('weekPick');
+  pick.replaceChildren(new Option('All weeks', '0'), ...sea.weeks.map((w) =>
+    new Option('Week ' + w + ' (' + fmtDay(weekStart(w)) + ')' + (w === sea.current ? ' – this week' : ''), String(w))));
+  pick.value = String(weekFilter);
+
+  renderKey(sea);
+  const table = $('table');
+  table.replaceChildren();
+  if (!sea.current) {
+    table.append(emptyRow(sea.start ? 'No hours yet. The season hasn\'t started.' : 'Set the season start date above.'));
+    return;
+  }
+  if (view === 'weeks') renderWeeks(table, sea);
+  else if (view === 'days') renderDays(table, sea);
+  else renderSeason(table, sea);
+  stickHeaderRows(table);
+}
+
+/** Stacks the header rows when scrolling: each row sticks below the ones above it. */
+function stickHeaderRows(table) {
+  let top = 0;
+  table.querySelectorAll('thead tr').forEach((tr) => {
+    tr.querySelectorAll('th').forEach((c) => { c.style.top = top + 'px'; });
+    top += tr.getBoundingClientRect().height;
+  });
+}
+
+function renderKey(sea) {
+  const key = $('key');
+  key.replaceChildren();
+  const item = (cls, text, label) => {
+    const s = el('span');
+    s.append(el('span', 'swatch ' + cls, text), label);
+    key.append(s);
+  };
+  if (view === 'weeks') {
+    item('met', '✓', 'met that week\'s goal');
+    item('under', '4.5', 'under goal');
+    item('partial', '3.0', 'this week so far');
+  }
+  if (view === 'season') {
+    item('met', '100%', 'on track');
+    item('under', '72%', 'behind');
+  }
+  const auto = el('span');
+  auto.append(el('span', 'auto-mark', '*'), 'includes an automatic midnight checkout');
+  key.append(auto);
+}
+
+function sortedStudents() {
+  const list = [...data.students];
+  if (sortBy === 'name') return list.sort((a, b) => a.name.localeCompare(b.name));
+  const dir = sortBy === 'low' ? 1 : -1;
+  return list.sort((a, b) => dir * (totalHours(a) - totalHours(b)) || a.name.localeCompare(b.name));
+}
+
+function renderWeeks(table, sea) {
+  const head = el('thead');
+  const hr = el('tr');
+  hr.append(th('Student', 'name'));
+  sea.weeks.forEach((w) => {
+    const c = th('Wk ' + w);
+    c.append(el('small', '', fmtDay(weekStart(w))));
+    hr.append(c);
+  });
+  hr.append(th('Total', 'total'), th('Avg / wk'), th('Weeks met'));
+
+  // Goal row: each week's target, editable (for example, a canceled meeting).
+  const gr = el('tr', 'goals');
+  const gl = th('Goal (h)', 'name');
+  gl.title = 'Each week\'s target hours. Change a week (for example, a meeting canceled for weather); clear it to use the default.';
+  gr.append(gl);
+  sea.weeks.forEach((w) => {
+    const c = th('');
+    const input = el('input', isCustomGoal(w) ? 'custom' : '');
+    input.type = 'number';
+    input.min = '0';
+    input.max = '80';
+    input.step = '0.5';
+    input.value = isCustomGoal(w) ? String(goalFor(w)) : '';
+    input.placeholder = String(sea.goal);
+    input.setAttribute('aria-label', 'Goal hours for week ' + w);
+    input.title = isCustomGoal(w) ? 'Adjusted for this week. Clear it to use the default (' + fmtH(sea.goal) + ').'
+      : 'Default goal. Type a number to change it for this week.';
+    input.addEventListener('change', () => saveWeekGoal(w, input));
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') input.blur(); });
+    c.append(input);
+    gr.append(c);
+  });
+  gr.append(th('', 'total'), th(''), th(''));
+  head.append(hr, gr);
+
+  const body = el('tbody');
+  sortedStudents().forEach((s) => {
+    const tr = el('tr');
+    tr.append(nameCell(s));
+    sea.weeks.forEach((w) => {
+      const h = weekHours(s, w);
+      const td = el('td', '', fmtNum(h));
+      if (w === sea.current) td.className = 'partial';
+      else if (metGoal(h, w)) { td.className = 'met'; td.textContent = '✓ ' + fmtNum(h); }
+      else td.className = h === 0 ? 'under zero' : 'under';
+      if (s.autoDays.some((d) => weekOf(d) === w)) td.append(autoMark());
+      td.title = s.name + ', week ' + w + ': ' + fmtH(h) + (w === sea.current ? ' so far' : '') + ' (goal ' + fmtH(goalFor(w)) + ')';
+      tr.append(td);
+    });
+    const avg = avgWeek(s, sea);
+    const done = sea.current - 1;
+    tr.append(el('td', 'total', fmtNum(totalHours(s))),
+      el('td', avg === null ? 'zero' : (avg >= avgGoal(sea) - 1e-9 ? '' : 'under'), avg === null ? '—' : fmtNum(avg)),
+      el('td', '', done ? weeksMet(s, sea) + ' / ' + done : '—'));
+    body.append(tr);
+  });
+  table.append(head, body);
+}
+
+async function saveWeekGoal(w, input) {
+  input.disabled = true;
+  setBanner('');
+  try {
+    const res = await BigBoard.api(null, { action: 'weekGoal.set', week: w, goal: input.value === '' ? '' : Number(input.value) }, adminCode);
+    if (res.ok) { data = res; render(); return; }
+    if (res.error === 'unauthorized') { showLock('The admin passcode has changed. Enter the new one.'); return; }
+    setBanner(res.error);
+  } catch (err) {
+    setBanner("Can't reach the server. The goal for week " + w + ' was not saved.');
+  }
+  input.disabled = false;
+}
+
+function renderDays(table, sea) {
+  const days = data.meetingDays.filter((d) => !weekFilter || weekOf(d) === weekFilter);
+  if (!days.length) {
+    table.append(emptyRow('No meeting days ' + (weekFilter ? 'in week ' + weekFilter : 'yet') + '.'));
+    return;
+  }
+  const head = el('thead');
+  // Row 1: weeks spanning their days
+  const wr = el('tr', 'weeks');
+  wr.append(th('', 'name'));
+  const groups = [];
+  days.forEach((d) => {
+    const w = weekOf(d);
+    if (!groups.length || groups[groups.length - 1].w !== w) groups.push({ w, n: 0 });
+    groups[groups.length - 1].n++;
+  });
+  groups.forEach((g) => {
+    const c = th('Week ' + g.w + (g.w === sea.current ? ' (this week)' : ''));
+    c.colSpan = g.n;
+    wr.append(c);
+  });
+  wr.append(th('', 'total'));
+  // Row 2: days
+  const dr = el('tr');
+  dr.append(th('Student', 'name'));
+  days.forEach((d, i) => {
+    const c = th(fromKey(d).toLocaleDateString([], { weekday: 'short' }), i === 0 || weekOf(d) !== weekOf(days[i - 1]) ? 'wk-start' : '');
+    c.append(el('small', '', fmtDay(d)));
+    dr.append(c);
+  });
+  const totHead = th(weekFilter ? 'Week total' : 'Total', 'total');
+  if (weekFilter) totHead.append(el('small', '', 'goal ' + fmtH(goalFor(weekFilter))));
+  dr.append(totHead);
+  head.append(wr, dr);
+
+  const body = el('tbody');
+  sortedStudents().forEach((s) => {
+    const tr = el('tr');
+    tr.append(nameCell(s));
+    let sum = 0;
+    days.forEach((d, i) => {
+      const h = s.days[d] || 0;
+      sum += h;
+      const cls = (i === 0 || weekOf(d) !== weekOf(days[i - 1]) ? 'wk-start ' : '') + (h ? '' : 'zero');
+      const td = el('td', cls, h ? fmtNum(h) : '—');
+      if (s.autoDays.includes(d)) td.append(autoMark());
+      td.title = s.name + ', ' + fmtDay(d, true) + ': ' + (h ? fmtH(h) : 'not checked in');
+      tr.append(td);
+    });
+    const tot = el('td', 'total', fmtNum(sum));
+    if (weekFilter && weekFilter !== sea.current) tot.classList.add(metGoal(sum, weekFilter) ? 'met' : 'under');
+    tr.append(tot);
+    body.append(tr);
+  });
+  table.append(head, body);
+}
+
+// ---- Season summary -----------------------------------------------------
+// Goal progress uses finished weeks only, so the week in progress doesn't
+// make everyone look behind.
+
+function goalToDate(sea) {
+  let sum = 0;
+  for (let w = 1; w < sea.current; w++) sum += goalFor(w);
+  return sum;
+}
+function finishedHours(s, sea) {
+  let sum = 0;
+  for (let w = 1; w < sea.current; w++) sum += weekHours(s, w);
+  return sum;
+}
+/** Share of the goal for finished weeks, or null before week 1 has finished. */
+function goalPct(s, sea) {
+  const goal = goalToDate(sea);
+  return goal > 0 ? finishedHours(s, sea) / goal : null;
+}
+function daysAttended(s) { return data.meetingDays.filter((d) => s.days[d]).length; }
+function lastSeen(s) {
+  const days = Object.keys(s.days).sort();
+  return days.length ? days[days.length - 1] : '';
+}
+
+function renderSeason(table, sea) {
+  // Team numbers
+  const active = data.students.filter((s) => s.active);
+  const teamHours = data.students.reduce((sum, s) => sum + totalHours(s), 0);
+  const nDays = data.meetingDays.length;
+  const perDay = data.meetingDays.map((d) => data.students.filter((s) => s.days[d]).length);
+  const avgPerDay = nDays ? perDay.reduce((a, b) => a + b, 0) / nDays : 0;
+  const onTrack = active.filter((s) => { const p = goalPct(s, sea); return p !== null && p >= 1 - 1e-9; }).length;
+  $('seasonStats').replaceChildren(
+    stat(fmtNum(teamHours) + ' h', 'team hours'),
+    stat(String(nDays), 'meeting days'),
+    stat(fmtNum(avgPerDay), 'avg students per meeting'),
+    stat(sea.current > 1 ? onTrack + ' / ' + active.length : '—', 'students on track'));
+
+  $('attChart').replaceChildren(nDays ? barChart({
+    bars: data.meetingDays.map((d, i) => ({
+      label: fmtDay(d),
+      value: perDay[i],
+      weekBreak: i === 0 || weekOf(d) !== weekOf(data.meetingDays[i - 1]) ? weekOf(d) : null,
+      tip: fmtDay(d, true),
+      tipValue: perDay[i] + (perDay[i] === 1 ? ' student' : ' students'),
+    })),
+    height: 200,
+  }) : el('p', 'chart-sub', 'No meeting days yet.'));
+
+  // Per-student table
+  const goal = goalToDate(sea);
+  const head = el('thead');
+  const hr = el('tr');
+  const goalHead = th('% of goal');
+  goalHead.append(el('small', '', sea.current > 1 ? 'of ' + fmtH(goal) + ', weeks 1–' + (sea.current - 1) : 'after week 1'));
+  hr.append(th('Student', 'name'), th('Total hours', 'total'), goalHead, th('Days attended'),
+    th('Avg / wk'), th('Weeks met'), th('Best week'), th('Last check-in'));
+  head.append(hr);
+
+  const body = el('tbody');
+  sortedStudents().forEach((s) => {
+    const tr = el('tr');
+    tr.append(nameCell(s), el('td', 'total', fmtNum(totalHours(s))));
+
+    const p = goalPct(s, sea);
+    const pct = el('td', 'pct', p === null ? '—' : Math.round(p * 100) + '%');
+    if (p !== null) pct.classList.add(p >= 1 - 1e-9 ? 'met' : 'under');
+    pct.title = p === null ? 'Shown once week 1 is finished.' : fmtH(finishedHours(s, sea)) + ' of ' + fmtH(goal) + ' in finished weeks';
+    tr.append(pct);
+
+    const att = daysAttended(s);
+    tr.append(el('td', att ? '' : 'zero', att + ' / ' + nDays + (nDays ? '  (' + Math.round((att / nDays) * 100) + '%)' : '')));
+
+    const avg = avgWeek(s, sea);
+    tr.append(el('td', avg === null ? 'zero' : (avg >= avgGoal(sea) - 1e-9 ? '' : 'under'), avg === null ? '—' : fmtNum(avg)));
+    tr.append(el('td', '', sea.current > 1 ? weeksMet(s, sea) + ' / ' + (sea.current - 1) : '—'));
+
+    let best = 0, bestW = 0;
+    sea.weeks.forEach((w) => { const h = weekHours(s, w); if (h > best) { best = h; bestW = w; } });
+    tr.append(el('td', best ? '' : 'zero', best ? fmtNum(best) + ' (wk ' + bestW + ')' : '—'));
+
+    const last = lastSeen(s);
+    tr.append(el('td', last ? '' : 'zero', last ? fmtDay(last, true) : 'never'));
+    body.append(tr);
+  });
+  table.append(head, body);
+}
+
+// ---- CSV export ---------------------------------------------------------
+
+function downloadCsv() {
+  const sea = season();
+  const days = data.meetingDays;
+  const rows = [['Student', 'Subteam', 'On roster', ...days.map((d) => d + ' (wk ' + weekOf(d) + ')'),
+    ...sea.weeks.map((w) => 'Week ' + w + ' total'), 'Season total']];
+  rows.push(['Goal (h)', '', '', ...days.map(() => ''), ...sea.weeks.map((w) => goalFor(w)), goalToDate(sea)]);
+  sortedStudents().forEach((s) => {
+    rows.push([s.id, s.subteam, s.active ? 'yes' : 'no', ...days.map((d) => s.days[d] || 0),
+      ...sea.weeks.map((w) => Math.round(weekHours(s, w) * 100) / 100), Math.round(totalHours(s) * 100) / 100]);
+  });
+  const csv = rows.map((r) => r.map((v) => {
+    const t = String(v);
+    return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'argos-hours-' + data.settings.seasonStart + '-to-' + data.today + '.csv';
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function nameCell(s) {
+  const td = el('td', 'name');
+  const b = el('button', '', s.name);
+  b.type = 'button';
+  b.title = 'Show ' + s.name + '\'s hours by day';
+  b.addEventListener('click', () => openStudent(s));
+  td.append(b);
+  if (!s.active) td.append(el('small', '', 'not on roster'));
+  else if (s.subteam) td.append(el('small', '', s.subteam));
+  return td;
+}
+
+function autoMark() {
+  const m = el('span', 'auto-mark', '*');
+  m.title = 'Includes a session closed automatically at midnight. Check it on the admin page.';
+  return m;
+}
+
+function th(text, cls) { const c = el('th', cls, text); c.scope = 'col'; return c; }
+function emptyRow(text) {
+  const tb = el('tbody'); const tr = el('tr'); const td = el('td', 'empty', text);
+  td.colSpan = 99; tr.append(td); tb.append(tr); return tb;
+}
+
+$('tabWeeks').addEventListener('click', () => { view = 'weeks'; render(); });
+$('tabDays').addEventListener('click', () => { view = 'days'; render(); });
+$('tabSeason').addEventListener('click', () => { view = 'season'; render(); });
+$('csvBtn').addEventListener('click', downloadCsv);
+$('weekPick').addEventListener('change', () => { weekFilter = Number($('weekPick').value); render(); });
+$('sortPick').addEventListener('change', () => { sortBy = $('sortPick').value; render(); });
+
+// ---- Student dialog -----------------------------------------------------
+
+function openStudent(s) {
+  const sea = season();
+  $('dName').textContent = s.id;
+  $('dSub').textContent = [s.subteam, s.active ? '' : 'not on the roster'].filter(Boolean).join(' · ');
+  const avg = avgWeek(s, sea);
+  const done = sea.current - 1;
+  const attended = data.meetingDays.filter((d) => s.days[d]).length;
+  $('dStats').replaceChildren(
+    stat(fmtH(totalHours(s)), 'season total'),
+    stat(avg === null ? '—' : fmtH(avg), 'avg per finished week'),
+    stat(done ? weeksMet(s, sea) + ' / ' + done : '—', 'weeks at goal'),
+    stat(attended + ' / ' + data.meetingDays.length, 'meeting days attended'));
+
+  $('wkSub').textContent = 'Dashed marks: each week\'s goal (' + fmtH(sea.goal) + ' unless adjusted). The faded bar is this week, still in progress.';
+  $('wkChart').replaceChildren(barChart({
+    bars: sea.weeks.map((w) => ({
+      label: 'Wk ' + w,
+      value: weekHours(s, w),
+      goal: goalFor(w),
+      faded: w === sea.current,
+      tip: 'Week ' + w + ' (' + fmtDay(weekStart(w)) + ' – ' + fmtDay(addDays(weekStart(w), 6)) + ')',
+      tipValue: fmtH(weekHours(s, w)) + (w === sea.current ? ' so far' : '') + ' of ' + fmtH(goalFor(w)) + ' goal',
+    })),
+    height: 190,
+  }));
+
+  const days = data.meetingDays;
+  $('dayChart').replaceChildren(days.length ? barChart({
+    bars: days.map((d, i) => ({
+      label: fmtDay(d),
+      value: s.days[d] || 0,
+      weekBreak: i > 0 && weekOf(d) !== weekOf(days[i - 1]) ? weekOf(d) : (i === 0 ? weekOf(d) : null),
+      tip: fmtDay(d, true) + (s.autoDays.includes(d) ? ' (auto checkout)' : ''),
+      tipValue: s.days[d] ? fmtH(s.days[d]) : 'not checked in',
+    })),
+    height: 220,
+  }) : el('p', 'chart-sub', 'No meeting days yet.'));
+
+  $('dlg').showModal();
+}
+
+function stat(value, label) {
+  const d = el('div', 'stat');
+  d.append(el('b', '', value), el('span', '', label));
+  return d;
+}
+
+$('dClose').addEventListener('click', () => $('dlg').close());
+$('dlg').addEventListener('click', (e) => { if (e.target === $('dlg')) $('dlg').close(); });
+$('dlg').addEventListener('close', () => { $('tip').hidden = true; });
+
+// ---- Bar chart (inline SVG) ---------------------------------------------
+// One series, so no legend: the chart title names it. Thin bars with rounded
+// tops anchored to the baseline, a recessive grid, and a tooltip on each bar
+// whose hover target is the whole column.
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+function svg(tag, attrs, text) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function barChart({ bars, height }) {
+  const css = getComputedStyle(document.documentElement);
+  const col = (v) => css.getPropertyValue(v).trim();
+  const padL = 40, padR = 12, padT = 22, padB = 30;
+  const slot = Math.max(22, Math.min(64, 860 / Math.max(bars.length, 1)));
+  const width = padL + padR + slot * bars.length;
+  const plotH = height - padT - padB;
+
+  const maxVal = Math.max(...bars.map((b) => Math.max(b.value, b.goal || 0)), 1);
+  const step = niceStep(maxVal / 4);
+  const top = Math.ceil((maxVal * 1.08) / step) * step;
+  const y = (v) => padT + plotH - (v / top) * plotH;
+
+  const root = svg('svg', { width, height, viewBox: '0 0 ' + width + ' ' + height, role: 'img' });
+  root.append(svg('title', {}, bars.length + ' bars'));
+
+  // Grid and y labels
+  for (let v = 0; v <= top + 1e-9; v += step) {
+    root.append(svg('line', { x1: padL, x2: width - padR, y1: y(v), y2: y(v), stroke: col('--grid'), 'stroke-width': 1 }));
+    root.append(svg('text', { x: padL - 6, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: col('--muted') }, fmtNum(v, true)));
+  }
+
+  // Show every k-th x label so they never collide
+  const labelEvery = Math.ceil(46 / slot);
+
+  bars.forEach((b, i) => {
+    const x0 = padL + i * slot;
+    if (b.weekBreak) {
+      if (i > 0) root.append(svg('line', { x1: x0, x2: x0, y1: padT - 14, y2: padT + plotH, stroke: col('--line'), 'stroke-dasharray': '3 3' }));
+      root.append(svg('text', { x: x0 + 4, y: padT - 6, 'font-size': 10.5, fill: col('--muted') }, 'Wk ' + b.weekBreak));
+    }
+    const bw = Math.max(6, Math.min(36, slot - 2 - slot * 0.3));
+    const bx = x0 + (slot - bw) / 2;
+    if (b.value > 0) {
+      const by = y(b.value);
+      const h = padT + plotH - by;
+      const r = Math.min(4, bw / 2, h);
+      root.append(svg('path', {
+        d: 'M' + bx + ',' + (padT + plotH) + 'V' + (by + r) + 'Q' + bx + ',' + by + ' ' + (bx + r) + ',' + by +
+           'H' + (bx + bw - r) + 'Q' + (bx + bw) + ',' + by + ' ' + (bx + bw) + ',' + (by + r) + 'V' + (padT + plotH) + 'Z',
+        fill: col('--bar'), opacity: b.faded ? 0.45 : 1,
+      }));
+    }
+    // This bar's goal: a dashed mark across its column
+    if (b.goal !== undefined) {
+      const gy = y(b.goal);
+      root.append(svg('line', { x1: x0 + 3, x2: x0 + slot - 3, y1: gy, y2: gy, stroke: col('--ink'), 'stroke-width': 2, 'stroke-dasharray': '5 3' }));
+    }
+    if (i % labelEvery === 0) {
+      root.append(svg('text', { x: x0 + slot / 2, y: height - padB + 16, 'text-anchor': 'middle', 'font-size': 11, fill: col('--muted') }, b.label));
+    }
+    // Hover target: the whole column
+    const hit = svg('rect', { x: x0, y: padT, width: slot, height: plotH, fill: 'transparent' });
+    hit.addEventListener('mousemove', (e) => showTip(e, b));
+    hit.addEventListener('mouseleave', () => { $('tip').hidden = true; });
+    root.append(hit);
+  });
+
+  // Baseline
+  root.append(svg('line', { x1: padL, x2: width - padR, y1: padT + plotH, y2: padT + plotH, stroke: col('--muted'), 'stroke-width': 1 }));
+
+  return root;
+}
+
+function niceStep(raw) {
+  const p = Math.pow(10, Math.floor(Math.log10(raw)));
+  for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= raw) return m * p;
+  return 10 * p;
+}
+
+function showTip(e, b) {
+  const tip = $('tip');
+  tip.replaceChildren(document.createTextNode(b.tip + ': '), el('b', '', b.tipValue));
+  tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(window.innerWidth - r.width - 8, e.clientX + 12) + 'px';
+  tip.style.top = Math.max(8, e.clientY - r.height - 10) + 'px';
+}
+
+// ---- Helpers ------------------------------------------------------------
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function fromKey(key) { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d); }
+function keyOf(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function addDays(key, n) { const d = fromKey(key); d.setDate(d.getDate() + n); return keyOf(d); }
+function daysBetween(a, b) { return Math.round((Date.UTC(...ymd(b)) - Date.UTC(...ymd(a))) / 864e5); }
+function ymd(key) { const [y, m, d] = key.split('-').map(Number); return [y, m - 1, d]; }
+function fmtDay(key, long) {
+  return fromKey(key).toLocaleDateString([], long ? { weekday: 'short', month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric' });
+}
+/** 2.5 -> "2.5"; whole numbers without decimals in axis labels. */
+function fmtNum(h, axis) {
+  if (axis) return String(Math.round(h * 10) / 10);
+  return (Math.round(h * 10) / 10).toFixed(1);
+}
+/** Hours as "2 h 30 m". */
+function fmtH(h) {
+  const mins = Math.round(h * 60);
+  const hh = Math.floor(mins / 60), mm = mins % 60;
+  return mm ? hh + ' h ' + mm + ' m' : hh + ' h';
+}
+
+// ---- Start --------------------------------------------------------------
+
+if (adminCode) load(); else showLock('');
+</script>
+</body>
+</html>
